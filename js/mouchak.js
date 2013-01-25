@@ -212,21 +212,7 @@ M.type_map = type_map = {
   }
 };
 
-// var Media = Backbone.Model.extend({
-// 	defaults:{
-// 		"audio": new Audio() ,
-// 		"video": new Video(),
-// 		"image": new Image()
-// }
-
-// });
-
-var Texts = Backbone.Collection.extend({model: Text});
-var Images = Backbone.Collection.extend({model: Image});
-var Videos = Backbone.Collection.extend({model: Video});
-var RSSs = Backbone.Collection.extend({model: RSS});
-
-
+// model for each Page
 var Page = Backbone.Model.extend({
   defaults: {
     name: "index",
@@ -241,7 +227,6 @@ var Page = Backbone.Model.extend({
     this.set({id: M.sanitize(this.get('name'))});
   }
 });
-
 
 var Pages = Backbone.Collection.extend({
   model: Page
@@ -258,6 +243,7 @@ var PageView = Backbone.View.extend({
   },
   render: function() {
     $('#content-container').append(this.el);
+    this.appendNavTemplate();
     $(this.el).append('<h3>'+this.model.get('title')+'</h3>');
     var self = this;
     _.each(this.model.get('content'), function(item) {
@@ -275,6 +261,13 @@ var PageView = Backbone.View.extend({
         item_view.render(self.el);
       }
     });
+  },
+  appendNavTemplate: function() {
+    var li;
+    var nav_template = _.template($('#nav-template').html());
+    $(this.el).append(nav_template({
+      page: this.model.id
+    }));
   }
 });
 
@@ -287,12 +280,42 @@ var AppView = Backbone.View.extend({
     _.bindAll(this);
   },
   render: function() {
-    M.createNavigation();
     $('#index').show();
+    _.each(M.pages.models, function(page) {
+      this.createNavigation(page.id);
+    }, this);
   },
   navClicked: function(event) {
     $('.nav li').removeClass('active');
     $(event.currentTarget).parent().addClass('active');
+  },
+  createNavigation: function(page) {
+    var li;
+    if(page === 'index') {
+      li = '<li class="active"><a href="#/index"> Home </a></li>';
+      $('#nav-index .nav').append(li);
+    }
+    var dropdown_template = _.template($('#nav-dropdown-template').html());
+    var children = M.pages.get(page).get('children');
+    _.each(children, function(child) {
+      child = M.sanitize(child);
+      var model = M.pages.get(child);
+      var children = model.get('children');
+      if(_.isEmpty(children)) {
+        li = '<li><a href="#/' + child + '">' + M.humanReadable(child) + '</a></li>';
+      }
+      else {
+        li = dropdown_template({
+          name: M.humanReadable(model.get('name')),
+          list: _.map(children, M.humanReadable)
+        });
+      }
+      $(li).appendTo('#nav-' + page + ' .nav');
+    });
+  },
+  updateBreadcrumbs: function(event) {
+    //TODO: write code to use bootstrap's breadcrumbs to render a
+    // navigational breadcrumb
   }
 });
 
@@ -334,19 +357,21 @@ M.init = function() {
       }
       var item = new Item(content);
       contents.push(item);
+      M.createTagList(content, item);
 		});
     new_page.set({content: contents});
     var new_page_view = new PageView({model: new_page,
       id: new_page.get('id')});
     M.pages.add(new_page);
 	});
- 
+
   M.appView = new AppView();
   M.appView.render();
   var app_router = new AppRouter();
   Backbone.history.start();
   // start with index page
-  //app_router.index();
+  var location = window.location;
+  location.href = location.origin + location.pathname + '#/index';
   M.simHeir();
 };
 
@@ -371,43 +396,30 @@ M.appendAttrs = function(model, el) {
   });
 }
 
-//Helper method for making a list of id associated to tag
-	M.createTagList = function(item,x)
-	{
-
-		for(var i in item['tags'])
-		{
-			if( M.tags[item['tags'][i]] === undefined)
-			{
-				M.tags[item['tags'][i]] = [];
-				M.tags[item['tags'][i]].push(x);
-			}
-			else
-				M.tags[item['tags'][i]].push(x);
-		}
-	};
-
-//create navigational links
-M.createNavigation = function() {
-  var top_level = M.pages.get('index').get('children');
-  $('<li class="active"><a href="#/index">Home</a></li>').appendTo('.nav');;
-  _.each(top_level, function(child) {
-    child = M.sanitize(child);
-    var children = M.pages.get(child).get('children');
-    var page = M.pages.get(child);
-    var dropdown_template = _.template($('#nav-dropdown-template').html());
-    if(_.isEmpty(children)) {
-      li = '<li><a href="#/' + child + '">'+ M.humanReadable(child) +'</a></li>';
+// create the list of tags and associate the objects with related tags
+M.createTagList = function(content, model) {
+  for(var i in content.tags) {
+    if(!M.tags[content.tags[i]]) {
+      M.tags[content.tags[i]] = [];
     }
-    else {
-      li = dropdown_template({
-        //no: page.cid,
-        name: M.humanReadable(page.get('name')),
-        list: _.map(children, M.humanReadable)
-      });
+    M.tags[content.tags[i]].push(model);
+  }
+};
+
+// Filter the tags and return only those "content" objects which match a given tag.
+// @tags should be an array
+M.filterTags = function(tags) {
+	if(!_.isArray(tags)) {
+    console.log('You have to pass an array'); //TODO: raise an exception
+    return false;
+  }
+  var list = [];
+  _.each(tags, function(item) {
+    if(M.tags[item]) {
+      list.push(M.tags[item]);
     }
-    $(li).appendTo('.nav');
   });
+  return _.uniq(_.flatten(list));
 };
 
 // populate with news feeds in the news section
@@ -436,23 +448,8 @@ M.populateFeeds = function(rss_url) {
   });
 };
 
+
 /* Other helper functions */
-
-M.contentList = []; //A list to hold out filtered content objects.
-
-//Check for the tags and return only those "content" objects which match a given tag.
-M.checkTags = function(tags){
-	if(_.isArray(tags))
-	{
-		var list = [];
-		_.each(tags,function(item){
-			list.push(M.tags[item]);
-		});
-		return _.uniq(list);
-	}
-	else
-		return false; //Failure code, the function will only accept a list as input
-};
 
 // change all '-' to spaces and capitalize first letter of
 // every word
@@ -461,7 +458,6 @@ M.humanReadable = function(str) {
     str = '';
   }
   return '' + str.replace(/[-]+/g, ' ').replace(/[^\s]+/g, function(str) {
-  //return '' + str.replace(/[-]+/g, ' ').replace(/([A-Z])/g, function(s) { return ' '+s;}).replace(/[^\s]+/g, function(str) {
     return str.substr(0,1).toUpperCase() + str.substr(1).toLowerCase();
   });
 };

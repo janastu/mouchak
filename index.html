@@ -24,10 +24,6 @@
 
     <div class="container" id="container">
       <div id="header"></div>
-      <div id="nav">
-        <ul class="nav nav-pills"></ul>
-      </div>
-      <div class="clearfix"></div>
       <div id="content-container"></div>
       <div id="footer"></div>
     </div>
@@ -36,7 +32,7 @@
       //Code to initialize the framework
       window.M = window.M || {};
       window.onload = function() {
-        M.load("/maraa/data/maraa2.json");
+        M.load('example.json');
       };
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
@@ -45,7 +41,7 @@
     <script src="js/lib/backbone.js"></script>
     <script src="js/lib/bootstrap.js"></script>
     <script src="js/plugins.js"></script>
-    <script src="js/framework.js"></script>
+    <script src="js/mouchak.js"></script>
 
     <!-- Underscore templates -->
     <script type="text/template" id="news-template">
@@ -57,6 +53,12 @@
       <div class="news-item-wrapper">
         <div class="news-title"><%= title %></div>
         <a href="<%= link %>">Read More</a>
+      </div>
+    </script>
+
+    <script type="text/template" id="nav-template">
+      <div class="navigation" id="nav-<%= page %>">
+        <ul class="nav nav-pills"></ul>
       </div>
     </script>
     <script type="text/template" id="nav-dropdown-template">
@@ -76,6 +78,7 @@
       </ul>
       </li>
     </script>
+
     <script type="text/template" id="image-view-template">
       <div class="img-wrapper">
         <img src="<%= src %>">
