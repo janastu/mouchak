@@ -291,7 +291,7 @@ var AppView = Backbone.View.extend({
   },
   createNavigation: function(page) {
     var li;
-    if(page === 'index') {
+    if(page === 'index' && !_.isEmpty(M.pages.get(page).get('children'))) {
       li = '<li class="active"><a href="#/index"> Home </a></li>';
       $('#nav-index .nav').append(li);
     }
