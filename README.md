@@ -85,5 +85,5 @@ Email to rayanon at janastu dot org / arvind at janastu dot org for any kind of 
 Issues
 ======
 
-Report issues at http://bugzilla.pantoto.org/bugzilla3/describecomponents.cgi?product=Mouchak
+Report issues [here](http://bugzilla.pantoto.org/bugzilla3/describecomponents.cgi?product=Mouchak)
 
