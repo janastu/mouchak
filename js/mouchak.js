@@ -88,7 +88,7 @@ var Image = BaseType.extend({
 });
 
 var ImageView = Backbone.View.extend({
-  tagName: 'image',
+  tagName: 'img',
   className: '',
 
   initialize: function() {
