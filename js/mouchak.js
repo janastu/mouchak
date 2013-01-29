@@ -300,6 +300,10 @@ var AppView = Backbone.View.extend({
     _.each(children, function(child) {
       child = M.sanitize(child);
       var model = M.pages.get(child);
+      if(!_.isObject(model)) {
+        console.log('Error: Cannot find page '+ child +' which is defined as children of ' + page);
+        return false;
+      }
       var children = model.get('children');
       if(_.isEmpty(children)) {
         li = '<li><a href="#/' + child + '">' + M.humanReadable(child) + '</a></li>';
@@ -350,9 +354,13 @@ M.init = function() {
     var new_page = new Page(page);
     var contents = [];
 		_.each(page.content, function(content) {
+      if(_.isEmpty(content)) {
+        console.log('Empty content for ' + page.name);
+        return;
+      }
       var Item = type_map.model[content.type];
       if(!Item) {
-        console.log('Error initing item: ', content);
+        console.log('Error: Invalid type '+ content.type +' for ', content);
         return;
       }
       var item = new Item(content);
@@ -371,7 +379,8 @@ M.init = function() {
   Backbone.history.start();
   // start with index page
   var location = window.location;
-  location.href = location.origin + location.pathname + '#/index';
+  location.href = location.protocol + '//' + location.hostname +
+    location.pathname + '#/index';
   M.simHeir();
 };
 
