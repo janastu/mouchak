@@ -79,11 +79,11 @@ robots.txt - crawl spider rules
 Support
 =======
 
-Email to rayanon at janastu dot org for any kind of feedback.
+Email to rayanon at janastu dot org / arvind at janastu dot org for any kind of feedback.
 
 
 Issues
 ======
 
-Report issues at http://bugzilla.pantoto.org/bugzilla3/
+Report issues at http://bugzilla.pantoto.org/bugzilla3/describecomponents.cgi?product=Mouchak
 
