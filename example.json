@@ -1,0 +1,42 @@
+[
+  {
+    "name": "index",
+    "children": ["Motivation", "The JSON file"],
+    "title": "Mouchak",
+    "content": [
+      {
+        "type": "image",
+        "src": "img/mouchak.jpg"
+      },
+      {
+        "type": "text",
+        "title": "What's this?",
+        "data": "<p> Mouchak is a Javascript framework for building websites quickly.</p><p>It takes the components and the content of the website in a JSON format. The content in the JSON can be of type text or multimedia like images and videos.</p> It also has the capabilities to load external JS and CSS files to customize the website."
+      }
+    ]
+  },
+  {
+    "name": "Motivation",
+    "title": "Motivation",
+    "children": [],
+    "content": [
+      {
+        "type": "text",
+        "title": "Why Mouchak?",
+        "data": "Explanation of why we built this framework..."
+      }
+    ]
+  },
+  {
+    "name": "The JSON file",
+    "title": "The JSON format",
+    "children": [],
+    "content": [
+      {
+        "type": "text",
+        "title": "",
+        "data": "{ } Explain the JSON format here.."
+      }
+    ]
+  }
+]
