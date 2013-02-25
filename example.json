@@ -11,7 +11,7 @@
       {
         "type": "text",
         "title": "What's this?",
-        "data": "<p> Mouchak is a Javascript framework for building websites quickly.</p><p>It takes the components and the content of the website in a JSON format. The content in the JSON can be of type text or multimedia like images and videos.</p> It also has the capabilities to load external JS and CSS files to customize the website."
+        "data": "<p> Mouchak is a Javascript framework for building websites quickly.</p><p>It takes the components and the content of the website in a JSON format. The content in the JSON can be of type text or multimedia like images and videos.</p> <p>It also has the capabilities to load external JS and CSS files to customize the website.</p><br><b>PS</b>: Incase you are wondering, Mouchak is a Bengali word, which means Honeycomb."
       }
     ]
   },
