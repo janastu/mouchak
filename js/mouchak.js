@@ -28,7 +28,8 @@ var TextView = Backbone.View.extend({
   },
   render: function(el) {
     $(el).append(this.el);
-    var str = '<h4>'+ this.model.get('title') +'</h4> <p>' +
+    var title = this.model.get('title') || '';
+    var str = '<h4>'+ title +'</h4> <p>' +
       this.model.get('data') + '</p>';
     $(this.el).html(str);
     M.appendAttrs(this.model, this.el);
@@ -307,6 +308,7 @@ var AppView = Backbone.View.extend({
       var children = model.get('children');
       if(_.isEmpty(children)) {
         li = '<li><a href="#/' + child + '">' + M.humanReadable(child) + '</a></li>';
+        console.log(li);
       }
       else {
         li = dropdown_template({
@@ -314,7 +316,9 @@ var AppView = Backbone.View.extend({
           list: _.map(children, M.humanReadable)
         });
       }
-      $(li).appendTo('#nav-' + page + ' .nav');
+      console.log($('#nav-' + page + ' .nav'));
+      //$(li).appendTo('#nav-' + page + ' .nav');
+      $('#nav-'+page+' .nav').append(li);
     });
   },
   updateBreadcrumbs: function(event) {
@@ -494,5 +498,8 @@ M.load = function(content_url) {
     M.init();
   });
 };
+
+// export BaseType to the M namespace
+M.BaseType = BaseType;
 
 })(M);

@@ -11,4 +11,11 @@ if (!(window.console && console.log)) {
     }());
 }
 
-// Place any jQuery/helper plugins in here.
+(function(M) {
+  M.jsonEditor = {
+    edit: function() {
+      _.each(M.pages.models, function(page) {
+      });
+    }
+  };
+})(M);
