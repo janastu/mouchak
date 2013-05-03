@@ -308,7 +308,7 @@ var AppView = Backbone.View.extend({
       var children = model.get('children');
       if(_.isEmpty(children)) {
         li = '<li><a href="#/' + child + '">' + M.humanReadable(child) + '</a></li>';
-        console.log(li);
+        console.log('li: ', li);
       }
       else {
         li = dropdown_template({
@@ -316,7 +316,7 @@ var AppView = Backbone.View.extend({
           list: _.map(children, M.humanReadable)
         });
       }
-      console.log($('#nav-' + page + ' .nav'));
+      console.log('nav el: ', $('#nav-' + page + ' .nav'));
       //$(li).appendTo('#nav-' + page + ' .nav');
       $('#nav-'+page+' .nav').append(li);
     });
@@ -382,9 +382,9 @@ M.init = function() {
   var app_router = new AppRouter();
   Backbone.history.start();
   // start with index page
-  var location = window.location;
-  location.href = location.protocol + '//' + location.hostname +
-    location.pathname + '#/index';
+  //var location = window.location;
+  /*location.href = location.protocol + '//' + location.hostname +
+    location.pathname + '#/index';*/
   M.simHeir();
 };
 

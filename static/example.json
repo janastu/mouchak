@@ -6,7 +6,7 @@
     "content": [
       {
         "type": "image",
-        "src": "img/mouchak.jpg"
+        "src": "/static/img/mouchak.jpg"
       },
       {
         "type": "text",

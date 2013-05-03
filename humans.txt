@@ -3,7 +3,8 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Anon Ray <rayanon004@gmail.com> (@rayanon)
+    Arvind Khadri <arvindkhadri@gmail.com> (@arvindkhadri)
 
 # THANKS
 
@@ -13,3 +14,7 @@
 
     HTML5, CSS3
     jQuery, Modernizr
+    Underscore.js, Backbone.js
+    Bootstrap
+    
+    Python, Flask
