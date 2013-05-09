@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title> Mouchak - ummm!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico in the root directory -->
+
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <script src="/static/js/lib/modernizr-2.6.1.min.js"></script>
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+    <![endif]-->
+
+    <div class="container" id="container">
+      <div id="header"></div>
+      <div id="content-container">
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    <div id="footer"></div>
+
+    <script>
+      // initialize editor
+      window.M = window.M || {};
+      M.site_content = {{ content|tojson|safe }};
+      window.onload = function() {
+        M.editor.init();
+      };
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/static/js/lib/jquery-1.8.0.min.js"><\/script>')</script>
+    <script src="/static/js/lib/underscore.js"></script>
+    <script src="/static/js/lib/backbone-1.0.0.js"></script>
+    <script src="/static/js/lib/bootstrap.js"></script>
+    <script src="/static/js/lib/tinymce/tinymce.min.js"></script>
+    <script src="/static/js/lib/tinymce/jquery.tinymce.min.js"></script>
+    <script src="/static/js/plugins.js"></script>
+    <script src="/static/js/mouchak.js"></script>
+    <script src="/static/js/models.js"></script>
+    <script src="/static/js/editor.js"></script>
+
+    <!-- Underscore templates -->
+    <script type="text/template" id="page-list-template">
+      <div id="pagelistview">
+        <h4> List of Pages </h4>
+        <div id="pagelist"></div>
+        <button class="btn btn-primary pull-right" id="addPage">Add Page</button>
+      </div>
+    </script>
+    <script type="text/template" id="page-list-item-template">
+      <div class="pagename">
+        <a class="disp" id="<%= id %>" href="#"><%= name %></a>
+        <span class="pull-right">
+          <a href="#" class="remove" for="<%= id %>">
+            <i class="icon-trash"></i>
+          </a>
+        </span>
+      </div>
+    </script>
+
+    <script type="text/template" id="page-template">
+      <div class="page">
+        <h4> Page Properties </h4>
+        <form class="form-horizontal">
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"> <strong> Name </strong></span>
+              <input id="name" type="text" placeholder="name of the page" value="<%= name %>">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"> <strong>Title</strong> </span>
+              <input id="title" type="text" placeholder="title of the page"
+               value="<%= title %>">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"> <strong>Children</strong> </span>
+              <input id="children" type="text" placeholder="csv of child pages"
+              value="<%= children %>">
+            </div> 
+          </div>
+          <label><strong> Content </strong></label>
+          <div id="content" class="content well">
+            <%= content %>
+            <p></p>
+            <button class="addContent btn btn-mini btn-primary">Add Content</button>
+          </div>
+          <button id="updatePage" type="submit" class="btn btn-primary pull-right"> Update </button>
+        </form>
+      </div>
+    </script>
+
+    <script type="text/template" id="content-list-template">
+      <div class="content-item-wrapper">
+        <span class="content-item" id="content-<%= no %>"> 
+          <span class="label label-info"> <%= type %> </span> 
+          <span class=""> 
+            [ <small> <%= title %>  <%= more %> </small> ]
+          </span>
+        </span>
+        <span class="pull-right">
+          <a href="#" class="remove" for="<%=no%>"><i class="icon-trash"></i></a>
+        </span>
+      </div>
+    </script>
+
+    <script type="text/template" id="content-template">
+      <div class="contentview">
+        <div class="">
+          <label><b>Type</b></label>
+          <select>
+            <% _.each(_.keys(M.types.model), function(type) { %>
+              <option><%= type %></option>
+            <%  }); %>
+          </select>
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"> <b>Title</b> </span>
+              <input type="text" placeholder="title of the content" value="<%=
+              title %>" m-data-target="title">
+            </div> 
+          </div>
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"> <strong>Tags</strong> </span>
+              <input type="text" placeholder="csv of tags for this content"
+              value="<%= tags %>" m-data-target="tags">
+            </div> 
+          </div>
+        </div>
+        <div id="specific-content"></div>
+        <button class="btn btn-info" id="done">Done</button>
+        <button class="btn btn-primary" id="updateContent">Update</button>
+      </div>
+    </script>
+
+    <script type="text/template" id="media-template">
+      <div class="data">
+        <div class="control-group">
+          <div class="input-prepend">
+            <span class="add-on"><strong>path to file</strong></span>
+            <input type="text" placeholder="src" value="<%= src %>"
+            m-data-target="src">
+          </div>
+        </div>
+        <div class="preview"></div>
+      </div>
+    </script>
+
+    <script type="text/template" id="text-template">
+      <div class="data">
+        <label><b> Content </b></label>
+        <p>
+        <span class="label label-important">Tip</span>
+        <span><small> You can unleash your HTML power here </small></span>
+        </p>
+        <textarea id="edit" m-data-target="data">
+          <%= data %>
+        </textarea>
+      </div>
+    </script>
+  </body>
+</html>

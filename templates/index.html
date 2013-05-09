@@ -31,17 +31,20 @@
     <script>
       //Code to initialize the framework
       window.M = window.M || {};
+      M.site_content = {{ content|tojson|safe }};
       window.onload = function() {
-        M.load('/static/example.json');
+        M.init();
       };
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="/static/js/lib/jquery-1.8.0.min.js"><\/script>')</script>
     <script src="/static/js/lib/underscore.js"></script>
-    <script src="/static/js/lib/backbone.js"></script>
+    <script src="/static/js/lib/backbone-1.0.0.js"></script>
     <script src="/static/js/lib/bootstrap.js"></script>
     <script src="/static/js/plugins.js"></script>
     <script src="/static/js/mouchak.js"></script>
+    <script src="/static/js/models.js"></script>
+    <script src="/static/js/views.js"></script>
 
     <!-- Underscore templates -->
     <script type="text/template" id="news-template">

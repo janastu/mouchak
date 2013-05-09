@@ -1,276 +1,7 @@
 (function(M) {
-/* Defining Backbone models, collections and views */
 
-var BaseType = Backbone.Model.extend({
-  defaults: {
-    tags: [],
-    title: "",
-    attr: {}
-  },
-  initialize: function() {
-  }
-});
-
-var Text = BaseType.extend({
-  defaults: {
-    data: "",
-  },
-  initialize: function() {
-  }
-});
-
-var TextView = Backbone.View.extend({
-  tagName: 'div',
-  className: '',
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-  },
-  render: function(el) {
-    $(el).append(this.el);
-    var title = this.model.get('title') || '';
-    var str = '<h4>'+ title +'</h4> <p>' +
-      this.model.get('data') + '</p>';
-    $(this.el).html(str);
-    M.appendAttrs(this.model, this.el);
-  }
-});
-
-var Table = BaseType.extend({
-  defaults: {
-    data : {
-      th: [],
-      tr:[]
-    }
-  },
-  initialize: function() {
-  }
-});
-
-var TableView = Backbone.View.extend({
-  tagName: 'table',
-  className: 'table',
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-  },
-  render: function(el) {
-    var heading = this.model.get('data').th;
-    var str = '<tr>';
-
-    for(var i = 0; i < heading.length; i++) {
-      str += '<th>' + heading[i] + '</th>';
-    }
-    str += '</tr>';
-
-    _.each(this.model.get('data').tr, function(row) {
-      str += '<tr>';
-      for(var i = 0; i < row.length; i++) {
-        if(row[i].match(/http.?:/)) {
-          //console.log(row[i].match(/http:/))
-        }
-        str += '<td>'+ row[i] + '</td>';
-      }
-      str += '</tr>';
-    });
-
-    $(el).append(this.el);
-    $(this.el).html(str);
-    M.appendAttrs(this.model, this.el);
-  }
-});
-
-var Image = BaseType.extend({
-	defaults: {
-		src: ""
-	},
-	initialize:function() {
-	}
-});
-
-var ImageView = Backbone.View.extend({
-  tagName: 'img',
-  className: '',
-
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-  },
-  render: function(el) {
-    $(el).append(this.el);
-    $(this.el).attr('src', this.model.get('src'));
-    M.appendAttrs(this.model, this.el);
-  }
-});
-
-
-var Video = BaseType.extend({
-	defaults: {
-		src: ""
-	},
-	initialize:function() {
-	}
-});
-
-var VideoView = Backbone.View.extend({
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-    // assuming cross-domain urls will have http in the src,
-    // so also assuming they are embedded flash urls,
-    // hence iframe
-    if(this.model.get('src').match('http')) {
-      this.tagName = 'iframe';
-    }
-    // otherwise, use html5 video tag, if the video is served
-    // from the same domain
-    else {
-      this.tagName = 'video';
-    }
-  },
-  render: function(el) {
-    $(el).append(this.el);
-    $(this.el).attr('src', this.model.get('src'));
-    M.appendAttrs(this.model, this.el);
-  }
-});
-
-var RSS = BaseType.extend({
-	defaults: {
-		src: ""
-	},
-	initialize:function() {
-	}
-});
-
-var RSSView = Backbone.View.extend({
-  el: '#feeds',
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-  },
-  render: function() {
-    M.populateFeeds(this.model.get('src'));
-  }
-});
-
-// Plugin model can be used to load dynamic components
-// to the website by loading external JS files.
-// Also the website can be styled by using external CSS files,
-// which can also be loaded via this plugin model.
-var Plugin = BaseType.extend({
-  defaults: {
-    src: "",
-    data: {},
-    callback: ""
-  },
-  initialize: function() {
-    if(this.get('src').match(/\.js/)) {
-      var script = document.createElement('script');
-      var callback = this.get('callback');
-      script.src = this.get('src');
-      document.body.appendChild(script);
-      script.onload = function() {
-        eval(callback);
-      };
-    }
-    else if(this.get('src').match(/\.css/)) {
-      var link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = this.get('src');
-      link.type = 'text/css';
-      document.body.appendChild(link);
-    }
-  }
-});
-
-var PluginView = Backbone.View.extend({
-  initialize: function() {
-    return;
-  },
-  render: function(el) {
-    return;
-  }
-});
-
-var type_map;
-M.type_map = type_map = {
-  model : {
-    'text': Text,
-    'image': Image,
-    'video': Video,
-    'rss': RSS,
-    'table': Table,
-    'plugin': Plugin
-  },
-  view: {
-    'text': TextView,
-    'image': ImageView,
-    'video': VideoView,
-    'rss': RSSView,
-    'table': TableView,
-    'plugin': PluginView
-  }
-};
-
-// model for each Page
-var Page = Backbone.Model.extend({
-  defaults: {
-    name: "index",
-    title: "",
-    children: [],
-    content: []
-  },
-  initialize: function() {
-    // adding the name of the model as its id.
-    // look up of this model through the collection
-    // is faster this way.
-    this.set({id: M.sanitize(this.get('name'))});
-  }
-});
-
-var Pages = Backbone.Collection.extend({
-  model: Page
-});
-
-var PageView = Backbone.View.extend({
-  tagName: 'div',
-  className: 'page',
-  initialize: function() {
-    _.bindAll(this);
-    _.bind(this.render, this);
-    this.render();
-    $(this.el).hide();
-  },
-  render: function() {
-    $('#content-container').append(this.el);
-    this.appendNavTemplate();
-    $(this.el).append('<h3>'+this.model.get('title')+'</h3>');
-    var self = this;
-    _.each(this.model.get('content'), function(item) {
-      var view = type_map.view[item.get('type')];
-      if(!view) {
-        console.log('Error initing view', item);
-        return;
-      }
-      if(item.get('type') === 'rss') {
-        M.rss_view = new view({model: item});
-        $(self.el).append(_.template($('#news-template').html()));
-      }
-      else {
-        var item_view = new view({model: item});
-        item_view.render(self.el);
-      }
-    });
-  },
-  appendNavTemplate: function() {
-    var li;
-    var nav_template = _.template($('#nav-template').html());
-    $(this.el).append(nav_template({
-      page: this.model.id
-    }));
-  }
-});
+var types;
+M.types = types = {};
 
 var AppView = Backbone.View.extend({
   el: 'body',
@@ -290,19 +21,22 @@ var AppView = Backbone.View.extend({
     $('.nav li').removeClass('active');
     $(event.currentTarget).parent().addClass('active');
   },
-  createNavigation: function(page) {
-    var li;
-    if(page === 'index' && !_.isEmpty(M.pages.get(page).get('children'))) {
+  createNavigation: function(pageid) {
+    var li, page = M.pages.get(pageid);
+    console.log(page.id, page.get('name'));
+    if(page.get('name') === 'index' && !_.isEmpty(page.get('children'))) {
+      var id = nameIdMap['index'];
       li = '<li class="active"><a href="#/index"> Home </a></li>';
-      $('#nav-index .nav').append(li);
+      $('#nav-'+ id +' .nav').append(li);
     }
     var dropdown_template = _.template($('#nav-dropdown-template').html());
-    var children = M.pages.get(page).get('children');
+    var children = page.get('children');
     _.each(children, function(child) {
-      child = M.sanitize(child);
-      var model = M.pages.get(child);
+      console.log('children of ', page.get('name'), child);
+      var id = nameIdMap[child];
+      var model = M.pages.get(id);
       if(!_.isObject(model)) {
-        console.log('Error: Cannot find page '+ child +' which is defined as children of ' + page);
+        console.log('Error: Cannot find page '+ child +' which is defined as children of ' + page.get('name'));
         return false;
       }
       var children = model.get('children');
@@ -316,9 +50,9 @@ var AppView = Backbone.View.extend({
           list: _.map(children, M.humanReadable)
         });
       }
-      console.log('nav el: ', $('#nav-' + page + ' .nav'));
+      console.log('nav el: ', $('#nav-' + page.id + ' .nav'));
       //$(li).appendTo('#nav-' + page + ' .nav');
-      $('#nav-'+page+' .nav').append(li);
+      $('#nav-'+ page.id +' .nav').append(li);
     });
   },
   updateBreadcrumbs: function(event) {
@@ -333,36 +67,42 @@ var AppRouter = Backbone.Router.extend({
     ':page' : 'showPage'
   },
   index: function() {
-    $('.page').hide();
-    $('#index').show();
+    $('.pageview').hide();
+    var id = nameIdMap['index'];
+    $('#'+id).show();
   },
   showPage: function(page) {
-    $('.page').hide();
+    $('.pageview').hide();
     //news pages are rendered on the fly,
     //as feeds have to be fetched.
     if(page === 'news') {
       M.rss_view.render();
     }
-    $('#'+page).show();
+    var id = nameIdMap[page];
+    $('#'+id).show();
     $('.'+page).show();
   }
 });
 
+// hashmap to maintain one-to-one lookup among page ids and 
+// their names
+var nameIdMap = {};
+
 /* Defining other necessary functions */
 M.init = function() {
 	M.tags = {}; //global tag cache
-  M.pages = new Pages(); //global collection of all pages
+  M.pages = new M.types.model.Pages(); //global collection of all pages
 
   // iterate through the JSON to intialize models and views
 	_.each(M.site_content, function(page) {
-    var new_page = new Page(page);
+    var new_page = new M.types.model.Page(page);
     var contents = [];
 		_.each(page.content, function(content) {
       if(_.isEmpty(content)) {
         console.log('Empty content for ' + page.name);
         return;
       }
-      var Item = type_map.model[content.type];
+      var Item = types.model[content.type];
       if(!Item) {
         console.log('Error: Invalid type '+ content.type +' for ', content);
         return;
@@ -372,15 +112,17 @@ M.init = function() {
       M.createTagList(content, item);
 		});
     new_page.set({content: contents});
-    var new_page_view = new PageView({model: new_page,
+    var new_page_view = new M.types.view.PageView({model: new_page,
       id: new_page.get('id')});
     M.pages.add(new_page);
+    nameIdMap[new_page.get('name')] = new_page.id; 
 	});
 
   M.appView = new AppView();
   M.appView.render();
   var app_router = new AppRouter();
   Backbone.history.start();
+  app_router.navigate('index', {trigger: true});
   // start with index page
   //var location = window.location;
   /*location.href = location.protocol + '//' + location.hostname +
@@ -485,21 +227,5 @@ M.sanitize = function(str) {
     return str.replace('&', 'and').toLowerCase();
   });
 };
-
-
-// Loader
-M.load = function(content_url) {
-  if(typeof content_url !== 'string') {
-    console.error('URL to load has to be of type string!!');//TODO: raise custom exception
-    return;
-  }
-  $.getJSON(content_url, function(data) {
-    M.site_content = data;
-    M.init();
-  });
-};
-
-// export BaseType to the M namespace
-M.BaseType = BaseType;
 
 })(M);

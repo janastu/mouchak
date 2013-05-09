@@ -93,21 +93,51 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.page {
+  border: 1px solid #999;
+  padding: 20px;
+  width: 400px;
+  height: 400px;
+}
+#pages {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  border: 1px solid black;
+  padding: 10px;
+  width: 300px;
+  height: 80%;
+}
+#page {
+  position: absolute;
+  left: 500px;
+  top: 90px;
+}
+#pagelist {
+  padding: 10px;
+}
+#content {
+  padding: 10px;
+  margin: 3px;
+  margin-bottom: 10px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.content-item:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+#contentview {
+  border: 1px solid #999;
+  padding: 10px;
+  margin: 10px;
+}
+.contentview {
+}
+#specific-content {
+  padding: 3px;
+  margin-bottom: 10px;
+}
 
 /* ==========================================================================
    Helper classes
