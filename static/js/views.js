@@ -121,7 +121,7 @@
     },
     render: function() {
       $('#content-container').append(this.el);
-      this.appendNavTemplate();
+      //this.appendNavTemplate();
       $(this.el).append('<h3>'+this.model.get('title')+'</h3>');
       var self = this;
       _.each(this.model.get('content'), function(item) {

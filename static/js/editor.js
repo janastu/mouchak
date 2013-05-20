@@ -1,4 +1,6 @@
 (function (M) {
+
+  /* view to manage list of pages - add, remove and show them */
   var PageListView = Backbone.View.extend({
     tagName: 'div',
     className: '',
@@ -77,6 +79,8 @@
     url: '/edit'
   });
 
+  /* view to manage each page and their properties - change page properties,
+   * add content, remove and show content, and update the page */
   var PageView = Backbone.View.extend({
     tagName: 'div',
     id: 'page',
@@ -210,6 +214,7 @@
     }
   });
 
+  /* view to manage, render and update each content */
   var ContentView = Backbone.View.extend({
     id: 'contentview',
     events: {
@@ -314,18 +319,34 @@
     }
   });
 
+  /* view to configure custom navigation menu */
+  var MenuConfigView = Backbone.View.extend({
+    el: '#menu-config',
+    events: {
+    },
+    initialize: function() {
+      _.bindAll(this);
+      this.template = _.template($('#menu-config-template').html());
+    },
+    render: function() {
+      $('#content-container').append(this.template({
+        menu: 'foo'
+      }));
+    }
+  });
+
   M.editor = {
     init: function() {
-      M.pages = new Pages();
-      _.each(M.site_content, function(page) {
-        M.pages.add(new Page(page));
-      });
+      M.pages = new Pages(M.site_content);
       var pagelistview = new PageListView();
       pagelistview.render();
       M.pages.on('add', function(page) {
         pagelistview.render();
       });
       M.pagelistview = pagelistview;
+
+      //var menuconfig = new MenuConfigView();
+      //menuconfig.render();
     }
   };
 

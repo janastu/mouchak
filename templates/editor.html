@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/bootstrap.css">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/editor.css">
     <script src="/static/js/lib/modernizr-2.6.1.min.js"></script>
   </head>
   <body>
@@ -23,12 +23,14 @@
     <![endif]-->
 
     <div class="container" id="container">
-      <div id="header"></div>
-      <div id="content-container">
-        <div class="clearfix"></div>
+      <div id="header"> </div>
+
+      <div id="content-container"></div>
+
+      <div id="footer">
       </div>
     </div>
-    <div id="footer"></div>
+    
 
     <script>
       // initialize editor
@@ -51,11 +53,20 @@
     <script src="/static/js/editor.js"></script>
 
     <!-- Underscore templates -->
+    <script type="text/template" id="menu-config-template">
+      <div id="menu-config">
+        <textarea id="menu">
+          <%= menu %>
+        </textarea>
+      </div>
+    </script>
+
     <script type="text/template" id="page-list-template">
       <div id="pagelistview">
         <h4> List of Pages </h4>
         <div id="pagelist"></div>
         <button class="btn btn-primary pull-right" id="addPage">Add Page</button>
+        <p><a href="/" class="btn"> Go to site </a></p>
       </div>
     </script>
     <script type="text/template" id="page-list-item-template">

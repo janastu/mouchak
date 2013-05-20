@@ -23,7 +23,9 @@
     <![endif]-->
 
     <div class="container" id="container">
-      <div id="header"></div>
+      <div id="header">
+        <div id="navigation"></div>
+      </div>
       <div id="content-container"></div>
       <div id="footer"></div>
     </div>
@@ -59,11 +61,32 @@
       </div>
     </script>
 
-    <script type="text/template" id="nav-template">
-      <div class="navigation" id="nav-<%= page %>">
+    <!-- navigation templates
+      the ones with .nav-type can be used interchangbly to render different
+      kinds of navigation bar / components
+      one can add more
+    -->
+    <script type="text/template" id="nav-bar-template" class="nav-type">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <!--a class="brand" href="#">Title</a-->
+          <ul class="nav"></ul>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/template" id="nav-pills-template" class="nav-type">
+      <div class="navigation">
         <ul class="nav nav-pills"></ul>
       </div>
     </script>
+
+    <script type="text/template" id="nav-item-template">
+      <li class="<%= cls %>">
+        <a href="#/<%=page%>"> <%= M.humanReadable(page) %> </a>
+      </li>
+    </script>
+
     <script type="text/template" id="nav-dropdown-template">
       <li class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#/<%= M.sanitize(name) %>"
