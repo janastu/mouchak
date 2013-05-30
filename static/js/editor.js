@@ -8,7 +8,8 @@
     events: {
       'click .pagename .disp': 'showPage',
       'click #addPage': 'addPage',
-      'click .pagename .remove': 'removePage'
+      'click .pagename .remove': 'removePage',
+      'click #menu-config': 'showMenu'
     },
     initialize: function() {
       _.bindAll(this);
@@ -19,6 +20,10 @@
       $('#content-container').append(this.$el);
       this.$el.append(this.template());
       this.$pagelist = $('#pagelist');
+      var menu = M.site_content.menu;
+      //console.log(menu);
+      this.menuconfig = new M.types.model.menu(menu);
+      this.menuconfigview = new MenuConfigView({model: this.menuconfig});
     },
     render: function() {
       // append the page list
@@ -37,7 +42,7 @@
       M.editor.pageview = pageview;
     },
     addPage: function() {
-      var newpage = new Page();
+      var newpage = new M.types.model.Page();
       M.pages.add(newpage);
       var newpageview = new PageView({model: newpage});
       newpageview.render();
@@ -59,24 +64,15 @@
           console.log('failed', model, xhr);
         }
       });
-    }
-  });
-
-  var Page = Backbone.Model.extend({
-    defaults: {
-      name: '',
-      title: '',
-      children: [],
-      content: []
     },
-    initialize: function() {
-      this.id = this.get('id');
+    showMenu: function(event) {
+      this.menuconfigview.render();
     }
   });
 
   var Pages = Backbone.Collection.extend({
-    model: Page,
-    url: '/edit'
+    model: M.types.model.Page,
+    url: '/page'
   });
 
   /* view to manage each page and their properties - change page properties,
@@ -115,15 +111,15 @@
       console.log('name changed', page);
     },
     render: function() {
-      console.log(this.$el);
       $('#page').html('');
-      console.log('content: ', this.model.get('content'));
+      //console.log('content: ', this.model.get('content'));
 
       this.$el.html(this.template({
         name: this.model.get('name'),
         title: this.model.get('title'),
         children: this.model.get('children'),
-        content: this.listContent()
+        content: this.listContent(),
+        checked: this.model.get('showNav') ? 'checked="checked"' : ''
       }));
 
       //hover effect
@@ -132,7 +128,6 @@
       }, function(event) {
         $(event.target).closest('.content-item').removeClass('alert-error')
       });
-      console.log('done');
     },
     listContent: function() {
       var content = '';
@@ -187,7 +182,7 @@
       console.log('recvd remove event..about to process..');
       var content = this.model.get('content');
       var idx = $(event.target).parent().attr('for');
-      idx = Number(idx);
+      idx = Number(idx); //is this a correct way of doing it?
       console.log('remove content: ', content[idx]);
       content.splice(idx, 1);
       this.model.set({'content': content});
@@ -202,9 +197,18 @@
       children = (children === '') ? [] : children.split(',');
       this.model.set({'name': name, 'title': title, 'children': children});
 
+      if($('#showNav').is(':checked')) {
+        this.model.set({'showNav': true});
+      }
+      else {
+        this.model.set({'showNav': false});
+      }
+
       this.model.save({}, {
         success: function(model, response) {
           console.log('saved', model, response);
+          model.set(response.page);
+          model.id = response.page.id;
         },
         error: function(model, xhr) {
           console.log('failed', model, xhr);
@@ -321,36 +325,75 @@
 
   /* view to configure custom navigation menu */
   var MenuConfigView = Backbone.View.extend({
-    el: '#menu-config',
+    tagName: 'div',
+    id: 'page',
     events: {
+      'change #custom-menu': 'customMenuChange',
+      'click #updateMenu': 'saveMenu'
     },
     initialize: function() {
       _.bindAll(this);
       this.template = _.template($('#menu-config-template').html());
     },
     render: function() {
-      $('#content-container').append(this.template({
-        menu: 'foo'
+      $('#page').remove();
+      $('#content-container').append(this.$el);
+      console.log('rendering..', this.$el);
+      this.$el.html(this.template({
+        pos: this.model.get('pos'),
+        menu: this.model.get('html')
       }));
+      this.$menuOptions = $('.menu-options');
+
+      if(this.model.get('customMenu') === true) {
+        $('#custom-menu').attr('checked', true);
+        this.$menuOptions.show();
+      }
+    },
+    showMenuOptions: function(bool) {
+      if(bool === true) {
+        this.$menuOptions.show();
+      }
+      else {
+        this.$menuOptions.hide();
+      }
+    },
+    customMenuChange: function(event) {
+      this.$menuOptions = $('.menu-options');
+      if($('#custom-menu').is(':checked')) {
+        this.model.set({'customMenu': true});
+      }
+      else {
+        this.model.set({'customMenu': false});
+      }
+      this.showMenuOptions(this.model.get('customMenu'));
+    },
+    saveMenu: function() {
+      var menuHTML = $('#menu').val().trim();
+      this.model.set({'html': menuHTML});
+      console.log(this.model.toJSON());
+      this.model.save({}, {
+        success: function(model, response) {
+        },
+        error: function(xhr, response) {
+        }
+      });
     }
   });
 
   M.editor = {
     init: function() {
-      M.pages = new Pages(M.site_content);
+      M.pages = new Pages(M.site_content.content);
       var pagelistview = new PageListView();
       pagelistview.render();
       M.pages.on('add', function(page) {
         pagelistview.render();
       });
       M.pagelistview = pagelistview;
-
-      //var menuconfig = new MenuConfigView();
-      //menuconfig.render();
     }
   };
 
-  function escapeHtml(string) {
+  var escapeHtml = function(string) {
     var entityMap = {
       "&": "&amp;",
       "<": "&lt;",
@@ -360,8 +403,8 @@
       "/": '&#x2F;'
     };
     return String(string).replace(/[&<>"'\/]/g, function (s) {
-        return entityMap[s];
-        });
+      return entityMap[s];
+    });
   }
 
 })(M);

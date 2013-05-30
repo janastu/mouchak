@@ -1,69 +1,122 @@
 #!/usr/bin/python
+
 # Mouchak Server -
 # A Flask Application (http://flask.pocoo.org/)
 
 import flask
 import pymongo
 import bson
+import readConfig
 
 app = flask.Flask(__name__)
 
+
+config = readConfig.readConfig()
+
 dbClient = pymongo.MongoClient()
-db = dbClient['mouchak']
-collection = db['content']
+db = dbClient[config['db']]
+siteContent = db['content']
+siteMenu = db['menu']
+if siteMenu.find_one() == None:
+    siteMenu.insert({'customMenu': False})
+
 # handy reference to otherwise long name
 bson.ObjId = bson.objectid.ObjectId
 
+
 def getContent():
     content = []
-    for i in collection.find():
+    for i in siteContent.find():
         objId = bson.ObjId(i['_id'])
         del(i['_id'])
         i['id'] = str(objId)
         content.append(i)
-    return content
+
+    menu = siteMenu.find_one()
+    objId = bson.ObjId(menu['_id'])
+    del(menu['_id'])
+    menu['id'] = str(objId)
+
+    return {'content': content, 'menu': menu}
+
 
 
 @app.route('/', methods=['GET'])
 def index():
-    return flask.render_template('index.html', content=getContent())
+    return flask.render_template('index.html', content=getContent(),
+                                 title=config['site_title'])
 
 
-@app.route('/edit', methods=['GET', 'POST'])
+@app.route('/edit', methods=['GET'])
 def edit():
-    if flask.request.method == 'GET':
-        return flask.render_template('editor.html', content=getContent())
+    return flask.render_template('editor.html', content=getContent(),
+                                 title=config['site_title'])
 
-    elif flask.request.method == 'POST':
-        newpage = flask.request.json
-        print newpage
-        res = collection.insert(newpage)
-        print res
-        return flask.jsonify(status='success')#, content=getContent())
 
-    
-@app.route('/edit/<_id>', methods=['PUT', 'DELETE'])
-def editPage(_id):
+@app.route('/page', methods=['POST'])
+def insertPage():
+    newpage = flask.request.json
+    print newpage
+    res = siteContent.insert(newpage)
+    _id = bson.ObjId(res)
+    newpage['id'] = str(_id)
+    del(newpage['_id'])
+    print newpage
+    # FIXME: handle errors
+    return flask.jsonify(status='ok', page=newpage)
+
+
+@app.route('/page/<_id>', methods=['PUT', 'DELETE'])
+def updatePage(_id):
     if flask.request.method == 'PUT':
         changedPage = flask.request.json
         print changedPage
-        res = collection.update({'_id' : bson.ObjId(_id)},
+        print '======='
+        res = siteContent.update({'_id': bson.ObjId(_id)},
                                 changedPage)
         print res
-        #print collection.find({'name': changed['name']})
-        #for i in collection.find({'name': changed['name']}):
-            #print i
-        return flask.jsonify(status='success')#, content=getContent())
+        if res['err'] == None:
+            print changedPage
+            return flask.jsonify(status='ok', page=changedPage)
 
     elif flask.request.method == 'DELETE':
         delPage = flask.request.url
         print delPage
         print _id
-        res = collection.remove({'_id': bson.ObjId(_id)})
+        res = siteContent.remove({'_id': bson.ObjId(_id)})
         print res
-        return flask.jsonify(status='success', msg='removed')
+        if res['err'] == None:
+            return flask.jsonify(status='ok')
+        else:
+            return flask.jsonify(error=res['err'], status='error')
+
+
+#@app.route('/menu', methods=['POST'])
+#def insertMenu():
+#    newmenu = flask.request.json
+#    print newmenu
+#    res = siteMenu.insert(newmenu)
+#    print res
+#    return flask.jsonify(status='success')#, content=getContent())
+#
+
+@app.route('/menu/<_id>', methods=['PUT'])
+def updateMenu(_id):
+    if flask.request.method == 'PUT':
+        changedMenu = flask.request.json
+        print changedMenu
+        res = siteMenu.update({'_id': bson.ObjId(_id)}, changedMenu)
+        print res
+        return flask.jsonify(status='ok',menu=changedMenu)
+
+    #elif flask.request.method == 'DELETE':
+    #    delMenu = flask.request.url
+    #    print delMenu
+    #    print _id
+    #    res = siteMenu.remove({'_id': bson.ObjId(_id)})
+    #    return flask.jsonify(status='deleted')
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
-
+    print config
+    app.run(debug=True, host=config['host'], port=config['port'])

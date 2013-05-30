@@ -13,7 +13,8 @@ var AppView = Backbone.View.extend({
     _.bindAll(this);
   },
   render: function() {
-    var navview = new NavigationView();
+    var menu = new M.types.model.menu(M.site_content.menu);
+    var navview = new NavigationView({model: menu});
     navview.render();
   },
   updateBreadcrumbs: function(event) {
@@ -32,14 +33,24 @@ var NavigationView = Backbone.View.extend({
     this.template = _.template($('#nav-bar-template').html());
   },
   render: function() {
-    this.$el.append(this.template({}));
-    this.$ul = $('.nav');
-    this.populate();
+    // if custom menu is not defined, render a default menu
+    console.log(this.model.toJSON());
+    if(this.model.get('customMenu') === false) {
+      console.log('generating default menu..');
+      this.$el.append(this.template({}));
+      this.$ul = $('.nav');
+      this.populate();
+    }
+    // else render the custom menu
+    else {
+      console.log('rendering custom menu..');
+      this.$el.append(this.model.get('html'));
+    }
   },
   populate: function() {
     var item_template = _.template($('#nav-item-template').html());
     _.each(M.pages.models, function(page) {
-      console.log(_.isEmpty(page.get('children')));
+      //console.log('no children?', _.isEmpty(page.get('children')));
       this.$ul.append(item_template({
         cls: (_.isEmpty(page.get('children'))) ? '' : 'dropdown',
         page: page.get('name')
@@ -74,8 +85,24 @@ var AppRouter = Backbone.Router.extend({
       M.rss_view.render();
     }
     var id = nameIdMap[page];
+    if(!id) {
+      this.render404();
+      return;
+    }
     $('#'+id).show();
     $('.'+page).show();
+    if(M.pages.get(id).get('showNav') === false) {
+      $('#navigation').hide();
+    }
+    else {
+      $('#navigation').show();
+    }
+  },
+  render404: function() {
+    $('.pageview').hide();
+    var notFound = "Sorry, a page corresponding to your URL was not found.\n" +
+      "Maybe you have typed the URL wrong, or this page is no longer available.";
+    alert(notFound);
   }
 });
 
@@ -88,7 +115,7 @@ M.init = function() {
 	M.tags = {}; //global tag cache
 
   // global collection of pages
-  M.pages = new types.model.Pages(M.site_content);
+  M.pages = new types.model.Pages(M.site_content.content);
 
   // iterate through pages to get their content and render them using views and
   // models

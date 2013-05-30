@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title> Mouchak - ummm!</title>
+    <title> Editing.. | {{title}} </title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
@@ -24,14 +24,11 @@
 
     <div class="container" id="container">
       <div id="header"> </div>
-
       <div id="content-container"></div>
-
       <div id="footer">
       </div>
     </div>
     
-
     <script>
       // initialize editor
       window.M = window.M || {};
@@ -54,10 +51,31 @@
 
     <!-- Underscore templates -->
     <script type="text/template" id="menu-config-template">
-      <div id="menu-config">
-        <textarea id="menu">
-          <%= menu %>
-        </textarea>
+      <div class="page">
+        <div class="menu-config">
+          <h4> Menu Config </h4>
+          <form class="form-horizontal">
+            <div class="control-group">
+              <input id="custom-menu" type="checkbox">
+              <span class=""><strong> Custom Menu </strong></span>
+            </div>
+            <button id="updateMenu" type="submit" class="btn btn-primary pull-right"> Update </button>
+            <div class="clearfix"></div>
+            <div class="menu-options" style="display: none;">
+              <div class="control-group">
+                <div class="input-prepend">
+                  <span class="add-on"> <strong> Position </strong></span>
+                  <input id="pos" type="text" placeholder="[left, top]"
+                  value="<%= pos %>">
+                </div>
+              </div>
+              <label><strong> HTML </strong></label>
+              <textarea id="menu">
+                <%= menu %>
+              </textarea>
+            </div>
+          </form>
+        </div>
       </div>
     </script>
 
@@ -65,18 +83,22 @@
       <div id="pagelistview">
         <h4> List of Pages </h4>
         <div id="pagelist"></div>
-        <button class="btn btn-primary pull-right" id="addPage">Add Page</button>
-        <p><a href="/" class="btn"> Go to site </a></p>
+        <button class="btn btn-primary" id="addPage">Add Page</button>
+        <hr>
+        <p> <a href="javascript:void(0);" id="menu-config"> Site Menu </a> </p>
+        <p><a href="/"> Go to site </a></p>
       </div>
     </script>
+
     <script type="text/template" id="page-list-item-template">
       <div class="pagename">
-        <a class="disp" id="<%= id %>" href="#"><%= name %></a>
+        <a class="disp" id="<%= id %>" href="javascript:void(0);"><%= name %></a>
         <span class="pull-right">
-          <a href="#" class="remove" for="<%= id %>">
+          <a href="javascript:void(0);" class="remove" for="<%= id %>">
             <i class="icon-trash"></i>
           </a>
         </span>
+        <span class="clearfix"></span>
       </div>
     </script>
 
@@ -104,6 +126,12 @@
               value="<%= children %>">
             </div> 
           </div>
+          <div class="control-group">
+            <div class="input-prepend">
+              <span class="add-on"><strong> Show Navigation </strong></span>
+              <input id="showNav" type="checkbox" <%=checked%>>
+            </div>
+          </div>
           <label><strong> Content </strong></label>
           <div id="content" class="content well">
             <%= content %>
@@ -111,6 +139,7 @@
             <button class="addContent btn btn-mini btn-primary">Add Content</button>
           </div>
           <button id="updatePage" type="submit" class="btn btn-primary pull-right"> Update </button>
+          <div class="clearfix"></div>
         </form>
       </div>
     </script>
@@ -124,8 +153,9 @@
           </span>
         </span>
         <span class="pull-right">
-          <a href="#" class="remove" for="<%=no%>"><i class="icon-trash"></i></a>
+          <a href="javascript:void(0);" class="remove" for="<%=no%>"><i class="icon-trash"></i></a>
         </span>
+        <span class="clearfix"></span>
       </div>
     </script>
 

@@ -86,16 +86,14 @@
   // model for each Page
   var Page = Backbone.Model.extend({
     defaults: {
-      name: "index",
+      name: "",
       title: "",
       children: [],
-      content: []
+      content: [],
+      showNav: true
     },
     initialize: function() {
-      // adding the name of the model as its id.
-      // look up of this model through the collection
-      // is faster this way.
-      //this.set({id: M.sanitize(this.get('name'))});
+      this.id = this.get('id');
       this.set({id: this.get('id')});
     }
   });
@@ -104,12 +102,25 @@
     model: Page
   });
 
+  var Menu = Backbone.Model.extend({
+    defaults: {
+      customMenu: false
+    },
+    url: function() {
+      return '/menu/' + this.id;
+    },
+    initialize: function() {
+      this.id = this.get('id');
+    },
+  });
+
   //export types to the typemap
   M.types = M.types || {};
   M.types.model = {
     'text': Text,
     'image': Image,
     'video': Video,
+    'menu': Menu,
     'rss': RSS,
     'table': Table,
     'plugin': Plugin,
