@@ -164,8 +164,10 @@ M.init = function() {
   var app_router = new AppRouter();
   Backbone.history.start();
 
-  //var startpage = M.pages.models[0].get('name');
-  //app_router.navigate(startpage, {trigger: true});
+  if(!location.hash) {
+    var startpage = M.pages.models[0].get('name');
+    app_router.navigate(startpage, {trigger: true});
+  }
 
   //M.simHeir();
 };

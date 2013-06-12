@@ -209,8 +209,6 @@
           console.log('saved', model, response);
           model.set(response.page);
           model.id = response.page.id;
-          //console.log(model);
-          //console.log(M.pages.models);
           M.pagelistview.render();
         },
         error: function(model, xhr) {
