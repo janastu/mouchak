@@ -107,7 +107,7 @@
       this.render();
     },
     nameChanged: function(page) {
-      M.pagelistview.render();
+      //M.pagelistview.render();
       console.log('name changed', page);
     },
     render: function() {
@@ -209,6 +209,9 @@
           console.log('saved', model, response);
           model.set(response.page);
           model.id = response.page.id;
+          //console.log(model);
+          //console.log(M.pages.models);
+          M.pagelistview.render();
         },
         error: function(model, xhr) {
           console.log('failed', model, xhr);

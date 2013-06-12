@@ -14,8 +14,9 @@ var AppView = Backbone.View.extend({
   },
   render: function() {
     var menu = new M.types.model.menu(M.site_content.menu);
-    var navview = new NavigationView({model: menu});
-    navview.render();
+    var navView = new NavigationView({model: menu});
+    navView.render();
+    this.navView = navView;
   },
   updateBreadcrumbs: function(event) {
     //TODO: write code to use bootstrap's breadcrumbs to render a
@@ -26,11 +27,13 @@ var AppView = Backbone.View.extend({
 var NavigationView = Backbone.View.extend({
   el: '#navigation',
   events: {
-    'click .nav li a' : 'navClicked'
+    'click .nav li a' : 'navClicked',
+    'navclicked': 'navClicked'
   },
   initialize: function() {
     _.bindAll(this);
     this.template = _.template($('#nav-bar-template').html());
+    this.bind('navclicked', this.navClicked);
   },
   render: function() {
     // if custom menu is not defined, render a default menu
@@ -46,6 +49,12 @@ var NavigationView = Backbone.View.extend({
       console.log('rendering custom menu..');
       this.$el.append(this.model.get('html'));
     }
+    var fragment = location.hash.split('/')[1];
+    var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+    if(!fragment) {
+      pos = 0;
+    }
+    $(this.$links[pos]).addClass('active');
   },
   populate: function() {
     var item_template = _.template($('#nav-item-template').html());
@@ -57,26 +66,27 @@ var NavigationView = Backbone.View.extend({
       }));
     }, this);
     this.$links = $('.nav li');
-    //console.log(this.$links[0]);
-    $(this.$links[0]).addClass('active');
   },
   navClicked: function(event) {
-    console.log('navClicked');
     this.$links.removeClass('active');
-    $(event.currentTarget).parent().addClass('active');
+    if(!event) {
+      var fragment = location.hash.split('/')[1];
+      var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+      if(!fragment) {
+        pos = 0;
+      }
+      $(this.$links[pos]).addClass('active');
+    }
+    else {
+      $(event.currentTarget).parent().addClass('active');
+    }
   }
 });
 
 var AppRouter = Backbone.Router.extend({
   routes : {
-    //'index' : 'index',
     ':page' : 'showPage'
   },
-  /*index: function() {
-    $('.pageview').hide();
-    var id = nameIdMap['index'];
-    $('#'+id).show();
-  },*/
   showPage: function(page) {
     $('.pageview').hide();
     //news pages are rendered on the fly,
@@ -97,6 +107,7 @@ var AppRouter = Backbone.Router.extend({
     else {
       $('#navigation').show();
     }
+    M.appView.navView.trigger('navclicked'); 
   },
   render404: function() {
     $('.pageview').hide();
@@ -153,8 +164,8 @@ M.init = function() {
   var app_router = new AppRouter();
   Backbone.history.start();
 
-  var startpage = M.pages.models[0].get('name');
-  app_router.navigate(startpage, {trigger: true});
+  //var startpage = M.pages.models[0].get('name');
+  //app_router.navigate(startpage, {trigger: true});
 
   //M.simHeir();
 };

@@ -122,7 +122,7 @@
     render: function() {
       $('#content-container').append(this.el);
       //this.appendNavTemplate();
-      $(this.el).append('<h3>'+this.model.get('title')+'</h3>');
+      $(this.el).append('<div class="title">'+this.model.get('title')+'</div>');
       var self = this;
       _.each(this.model.get('content'), function(item) {
         var view = M.types.view[item.get('type')];
