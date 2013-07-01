@@ -6,15 +6,14 @@
 import flask
 import pymongo
 import bson
-import readConfig
+import conf
 
 app = flask.Flask(__name__)
 
 
-config = readConfig.readConfig()
 
 dbClient = pymongo.MongoClient()
-db = dbClient[config['db']]
+db = dbClient[conf.DB]
 siteContent = db['content']
 siteMenu = db['menu']
 if siteMenu.find_one() == None:
@@ -44,13 +43,13 @@ def getContent():
 @app.route('/', methods=['GET'])
 def index():
     return flask.render_template('index.html', content=getContent(),
-                                 title=config['site_title'])
+                                 title=config.SITE_TITLE)
 
 
 @app.route('/edit', methods=['GET'])
 def edit():
     return flask.render_template('editor.html', content=getContent(),
-                                 title=config['site_title'])
+                                 title=config)
 
 
 @app.route('/page', methods=['POST'])
@@ -119,4 +118,5 @@ def updateMenu(_id):
 
 if __name__ == "__main__":
     print config
-    app.run(debug=True, host=config['host'], port=config['port'])
+    app.run(debug=True, host=config.HOST, port=config.PORT)
+
