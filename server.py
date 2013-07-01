@@ -43,13 +43,13 @@ def getContent():
 @app.route('/', methods=['GET'])
 def index():
     return flask.render_template('index.html', content=getContent(),
-                                 title=config.SITE_TITLE)
+                                 title=conf.SITE_TITLE)
 
 
 @app.route('/edit', methods=['GET'])
 def edit():
     return flask.render_template('editor.html', content=getContent(),
-                                 title=config)
+                                 title=conf)
 
 
 @app.route('/page', methods=['POST'])
@@ -117,6 +117,5 @@ def updateMenu(_id):
 
 
 if __name__ == "__main__":
-    print config
-    app.run(debug=True, host=config.HOST, port=config.PORT)
+    app.run(debug=True, host=conf.HOST, port=conf.PORT)
 
