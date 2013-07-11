@@ -255,23 +255,8 @@
         $('#specific-content').html(template({
           data: this.model.get('data')
         }));
-        // init the tinymce editor
-        tinymce.init({
-          selector: '#edit',
-          theme: 'modern',
-          height: 300,
-          plugins: ["advlist autolink link image lists charmap print preview hr",
-                    "anchor pagebreak spellchecker searchreplace wordcount",
-                    "visualblocks visualchars code fullscreen insertdatetime",
-                    "media nonbreaking save table contextmenu directionality",
-                    "emoticons template paste textcolor"
-          ],
-          toolbar: "undo redo | styleselect | bold italic | " +
-                   "alignleft aligncenter alignright alignjustify | " +
-                   "bullist numlist outdent indent | link image | " +
-                   "print preview media fullpage | forecolor backcolor emoticons"
-
-        });
+        // init the wysiwig editor
+        M.editor.wysiwig('#edit');
       } 
       else if(type === 'image' || type === 'video' || type === 'audio') {
         var template = _.template($('#media-template').html());
@@ -348,12 +333,16 @@
 
       if(this.model.get('customMenu') === true) {
         $('#custom-menu').attr('checked', true);
-        this.$menuOptions.show();
+        this.$menuOptions.show({complete: function() {
+          M.editor.wysiwig('#menu');
+        }});
       }
     },
     showMenuOptions: function(bool) {
       if(bool === true) {
-        this.$menuOptions.show();
+        this.$menuOptions.show({complete: function() {
+          //M.editor.wysiwig('#menu');
+        }});
       }
       else {
         this.$menuOptions.hide();
@@ -370,15 +359,19 @@
       this.showMenuOptions(this.model.get('customMenu'));
     },
     saveMenu: function() {
-      var menuHTML = $('#menu').val().trim();
-      this.model.set({'html': menuHTML});
-      console.log(this.model.toJSON());
-      this.model.save({}, {
+      //console.log('saving menu..');
+     // var menuHTML = $('#menu').val().trim();
+      //this.model.set({'html': menuHTML});
+      //console.log(this.model.toJSON());
+      //alert('saveMenu called');
+      /*this.model.save({}, {
         success: function(model, response) {
+          console.log(model, response);
         },
         error: function(xhr, response) {
         }
-      });
+      });*/
+      //alert('end of save menu');
     }
   });
 
@@ -391,6 +384,23 @@
         pagelistview.render();
       });
       M.pagelistview = pagelistview;
+    },
+    wysiwig: function($selector) {
+      tinymce.init({
+        selector: $selector,
+        theme: 'modern',
+        height: 300,
+        plugins: ["advlist autolink link image lists charmap print preview hr",
+          "anchor pagebreak spellchecker searchreplace wordcount",
+          "visualblocks visualchars code fullscreen insertdatetime",
+          "media nonbreaking save table contextmenu directionality",
+          "emoticons template paste textcolor"
+        ],
+        toolbar: "undo redo | styleselect | bold italic | " +
+          "alignleft aligncenter alignright alignjustify | " +
+          "bullist numlist outdent indent | link image | " +
+          "print preview media fullpage | forecolor backcolor emoticons"
+      });
     }
   };
 

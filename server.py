@@ -107,7 +107,7 @@ def updateMenu(_id):
         print changedMenu
         res = siteMenu.update({'_id': bson.ObjId(_id)}, changedMenu)
         print res
-        return flask.jsonify(status='ok',menu=changedMenu)
+        return flask.jsonify(status='ok', menu=changedMenu)
 
     #elif flask.request.method == 'DELETE':
     #    delMenu = flask.request.url
