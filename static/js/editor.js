@@ -257,13 +257,13 @@
         }));
         // init the wysiwig editor
         M.editor.wysiwig('#edit');
-      } 
+      }
       else if(type === 'image' || type === 'video' || type === 'audio') {
         var template = _.template($('#media-template').html());
         $('#specific-content').html(template({
           src: this.model.get('src')
         }));
-        
+
         //provide the users a preview
         /*var view = new M.types.view[type]({model: this.model});
         //$('#specific-content.preview').html();
@@ -359,18 +359,25 @@
       this.showMenuOptions(this.model.get('customMenu'));
     },
     saveMenu: function() {
-      //console.log('saving menu..');
+      console.log('saving menu..');
      // var menuHTML = $('#menu').val().trim();
       //this.model.set({'html': menuHTML});
       //console.log(this.model.toJSON());
       //alert('saveMenu called');
-      /*this.model.save({}, {
+			var bool;
+      if($("custom-menu").is(":checked")){
+				bool = true;
+			}
+			else{
+				bool = false;
+			}
+			this.model.save({customMenu: bool}, {
         success: function(model, response) {
           console.log(model, response);
         },
         error: function(xhr, response) {
         }
-      });*/
+      });
       //alert('end of save menu');
     }
   });

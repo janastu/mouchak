@@ -1,3 +1,7 @@
-
 *.*~
 *.pyc
+# For virtual-env
+bin/
+lib/
+local/
+include/

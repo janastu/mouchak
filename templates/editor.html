@@ -28,7 +28,7 @@
       <div id="footer">
       </div>
     </div>
-    
+
     <script>
       // initialize editor
       window.M = window.M || {};
@@ -54,12 +54,12 @@
       <div class="page">
         <div class="menu-config">
           <h4> Menu Config </h4>
-          <form class="form-horizontal">
+          <!-- <form class="form-horizontal"> -->
             <div class="control-group">
               <input id="custom-menu" type="checkbox">
               <span class=""><strong> Custom Menu </strong></span>
             </div>
-            <button id="updateMenu" type="submit" class="btn btn-primary pull-right"> Update </button>
+            <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
             <div class="clearfix"></div>
             <div class="menu-options" style="display: none;">
               <div class="control-group">
@@ -74,7 +74,7 @@
                 <%= menu %>
               </div>
             </div>
-          </form>
+          <!-- </form> -->
         </div>
       </div>
     </script>
@@ -124,7 +124,7 @@
               <span class="add-on"> <strong>Children</strong> </span>
               <input id="children" type="text" placeholder="csv of child pages"
               value="<%= children %>">
-            </div> 
+            </div>
           </div>
           <div class="control-group">
             <div class="input-prepend">
@@ -146,9 +146,9 @@
 
     <script type="text/template" id="content-list-template">
       <div class="content-item-wrapper">
-        <span class="content-item" id="content-<%= no %>"> 
-          <span class="label label-info"> <%= type %> </span> 
-          <span class=""> 
+        <span class="content-item" id="content-<%= no %>">
+          <span class="label label-info"> <%= type %> </span>
+          <span class="">
             [ <small> <%= title %>  <%= more %> </small> ]
           </span>
         </span>
@@ -173,14 +173,14 @@
               <span class="add-on"> <b>Title</b> </span>
               <input type="text" placeholder="title of the content" value="<%=
               title %>" m-data-target="title">
-            </div> 
+            </div>
           </div>
           <div class="control-group">
             <div class="input-prepend">
               <span class="add-on"> <strong>Tags</strong> </span>
               <input type="text" placeholder="csv of tags for this content"
               value="<%= tags %>" m-data-target="tags">
-            </div> 
+            </div>
           </div>
         </div>
         <div id="specific-content"></div>
