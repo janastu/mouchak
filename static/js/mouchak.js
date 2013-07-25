@@ -49,6 +49,12 @@ var NavigationView = Backbone.View.extend({
       console.log('rendering custom menu..');
       this.$el.append(this.model.get('html'));
     }
+    this.$links = $('.nav li');
+    if(!this.$links) {
+      throw new Error('Ill-formed menu! Please check you have <ul> element' +
+          'inside your menu with class nav and <li> elements inside it');
+      alert('Error in Menu: Please check console for details');
+    }
     var fragment = location.hash.split('/')[1];
     var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
     if(!fragment) {
@@ -65,7 +71,6 @@ var NavigationView = Backbone.View.extend({
         page: page.get('name')
       }));
     }, this);
-    this.$links = $('.nav li');
   },
   navClicked: function(event) {
     this.$links.removeClass('active');
