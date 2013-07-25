@@ -1,4 +1,8 @@
-
 *.*~
 *.pyc
 conf.py
+# For virtual-env
+bin/
+lib/
+local/
+include/
