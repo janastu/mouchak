@@ -266,8 +266,8 @@
 
         //provide the users a preview
         /*var view = new M.types.view[type]({model: this.model});
-        //$('#specific-content.preview').html();
-        view.render('.preview');*/
+         //$('#specific-content.preview').html();
+         view.render('.preview');*/
       }
     },
     typeChanged: function(event) {
@@ -339,8 +339,8 @@
       }
     },
     showMenuOptions: function(bool) {
-      if(bool === true) {
-        this.$menuOptions.show({complete: function() {
+    if(bool === true) {
+      this.$menuOptions.show({complete: function() {
           //M.editor.wysiwig('#menu');
         }});
       }
@@ -360,18 +360,18 @@
     },
     saveMenu: function() {
       console.log('saving menu..');
-     // var menuHTML = $('#menu').val().trim();
+			// var menuHTML = $('#menu').val().trim();
       //this.model.set({'html': menuHTML});
       //console.log(this.model.toJSON());
       //alert('saveMenu called');
-			var bool;
-      if($("custom-menu").is(":checked")){
-				bool = true;
-			}
-			else{
-				bool = false;
-			}
-			this.model.save({customMenu: bool}, {
+      var bool;
+      if($("custom-menu").is(":checked")) {
+        bool = true;
+      }
+      else {
+        bool = false;
+      }
+      this.model.save({customMenu: bool}, {
         success: function(model, response) {
           console.log(model, response);
         },
@@ -394,18 +394,18 @@
     },
     wysiwig: function($selector) {
       tinymce.init({
-        selector: $selector,
-        theme: 'modern',
-        height: 300,
-        plugins: ["advlist autolink link image lists charmap print preview hr",
-          "anchor pagebreak spellchecker searchreplace wordcount",
-          "visualblocks visualchars code fullscreen insertdatetime",
-          "media nonbreaking save table contextmenu directionality",
-          "emoticons template paste textcolor"
-        ],
-        toolbar: "undo redo | styleselect | bold italic | " +
-          "alignleft aligncenter alignright alignjustify | " +
-          "bullist numlist outdent indent | link image | " +
+          selector: $selector,
+          theme: 'modern',
+          height: 300,
+          plugins: ["advlist autolink link image lists charmap print preview hr",
+                    "anchor pagebreak spellchecker searchreplace wordcount",
+                    "visualblocks visualchars code fullscreen insertdatetime",
+                    "media nonbreaking save table contextmenu directionality",
+                    "emoticons template paste textcolor"
+                   ],
+          toolbar: "undo redo | styleselect | bold italic | " +
+              "alignleft aligncenter alignright alignjustify | " +
+              "bullist numlist outdent indent | link image | " +
           "print preview media fullpage | forecolor backcolor emoticons"
       });
     }
