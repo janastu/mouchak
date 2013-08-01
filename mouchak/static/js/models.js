@@ -11,45 +11,50 @@
   });
 
   var Text = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       data: "",
-    },
+    }),
     initialize: function() {
+      BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Table = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       data : {
         th: [],
         tr:[]
       }
-    },
+    }),
     initialize: function() {
+      BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Image = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       src: ""
-    },
+    }),
     initialize:function() {
+      BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Video = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       src: ""
-    },
+    }),
     initialize:function() {
+      BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var RSS = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       src: ""
-    },
+    }),
     initialize:function() {
+      BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
@@ -58,12 +63,14 @@
   // Also the website can be styled by using external CSS files,
   // which can also be loaded via this plugin model.
   var Plugin = BaseType.extend({
-    defaults: {
+    defaults: _.extend(BaseType.prototype.defaults, {
       src: "",
       data: {},
       callback: ""
-    },
+    }),
     initialize: function() {
+      BaseType.prototype.initialize.call(this, arguments);
+
       if(this.get('src').match(/\.js/)) {
         var script = document.createElement('script');
         var callback = this.get('callback');
