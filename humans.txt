@@ -6,10 +6,6 @@
     Anon Ray <rayanon004@gmail.com> (@rayanon)
     Arvind Khadri <arvindkhadri@gmail.com> (@arvindkhadri)
 
-# THANKS
-
-    <name>
-
 # TECHNOLOGY COLOPHON
 
     HTML5, CSS3
@@ -17,4 +13,6 @@
     Underscore.js, Backbone.js
     Bootstrap
     
-    Python, Flask
+    Python, Flask, PyMongo
+
+    MongoDB
