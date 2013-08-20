@@ -9,8 +9,8 @@
       'click .pagename .disp': 'showPage',
       'click #addPage': 'addPage',
       'click .pagename .remove': 'removePage',
-      'click #menu-config': 'showMenu',
-      'click #footer-config': 'footerConfig'
+      'click #menu-config': 'showMenu'//,
+      //'click #footer-config': 'footerConfig'
     },
     initialize: function() {
       _.bindAll(this);
@@ -25,7 +25,7 @@
       //console.log(menu);
       this.menuconfig = new M.types.model.menu(menu);
       this.menuconfigview = new MenuConfigView({model: this.menuconfig});
-      this.footerconfigview = new FooterConfigView();
+      //this.footerconfigview = new FooterConfigView();
     },
     render: function() {
       // append the page list
@@ -71,7 +71,7 @@
       this.menuconfigview.render();
     },
     footerConfig: function(event) {
-      this.footerconfigview.render();
+      //this.footerconfigview.render();
     }
   });
 
