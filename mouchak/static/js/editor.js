@@ -9,7 +9,8 @@
       'click .pagename .disp': 'showPage',
       'click #addPage': 'addPage',
       'click .pagename .remove': 'removePage',
-      'click #menu-config': 'showMenu'
+      'click #menu-config': 'showMenu',
+      'click #footer-config': 'footerConfig'
     },
     initialize: function() {
       _.bindAll(this);
@@ -24,6 +25,7 @@
       //console.log(menu);
       this.menuconfig = new M.types.model.menu(menu);
       this.menuconfigview = new MenuConfigView({model: this.menuconfig});
+      this.footerconfigview = new FooterConfigView();
     },
     render: function() {
       // append the page list
@@ -67,6 +69,9 @@
     },
     showMenu: function(event) {
       this.menuconfigview.render();
+    },
+    footerConfig: function(event) {
+      this.footerconfigview.render();
     }
   });
 
@@ -258,8 +263,10 @@
         // init the wysiwig editor
         M.editor.wysiwig('#edit');
       }
-      else if(type === 'image' || type === 'video' || type === 'audio') {
+      else if(type === 'image' || type === 'video' ||
+              type === 'audio' || type === 'plugin') {
         var template = _.template($('#media-template').html());
+
         $('#specific-content').html(template({
           src: this.model.get('src')
         }));
@@ -306,6 +313,30 @@
     done: function() {
       this.update();
       this.cleanUp();
+    }
+  });
+
+  /* view to configure footer */
+  var FooterConfigView = Backbone.View.extend({
+    tagName: 'div',
+    id: 'page',
+    events: {
+      'click #saveFooter': 'saveFooter'
+    },
+    initialize: function() {
+      _.bindAll(this);
+      this.template = _.template($('#footer-config-template').html());
+    },
+    render: function() {
+      $('#page').remove();
+      $('#content-container').append(this.$el);
+      this.$el.html(this.template());
+      M.editor.wysiwig('#footer-input');
+    },
+    saveFooter: function() {
+      tinymce.triggerSave(false, true);
+      var data = $('#footer-input').html();
+      console.log(data);
     }
   });
 
