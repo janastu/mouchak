@@ -96,9 +96,9 @@ var AppRouter = Backbone.Router.extend({
     $('.pageview').hide();
     //news pages are rendered on the fly,
     //as feeds have to be fetched.
-    if(page === 'news') {
+    /*if(page === 'news') {
       M.rss_view.render();
-    }
+    }*/
     var id = nameIdMap[page];
     if(!id) {
       this.render404();
