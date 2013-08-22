@@ -76,9 +76,11 @@
         var callback = this.get('callback');
         script.src = this.get('src');
         document.body.appendChild(script);
-        script.onload = function() {
-          eval(callback);
-        };
+        if(callback) {
+          script.onload = function() {
+            eval(callback);
+          };
+        }
       }
       else if(this.get('src').match(/\.css/)) {
         var link = document.createElement('link');
