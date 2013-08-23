@@ -44,7 +44,7 @@ def getContent():
 @app.route('/', methods=['GET'])
 def index():
     return flask.render_template('index.html', content=getContent(),
-                                 title=conf.SITE_TITLE)
+                                 title=conf.SITE_TITLE, footer=conf.SITE_FOOTER)
 
 
 @app.route('/edit', methods=['GET'])
