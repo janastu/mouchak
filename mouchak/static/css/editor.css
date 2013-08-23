@@ -141,6 +141,11 @@ textarea {
 #addPage {
   margin: 10px 0 0 200px;
 }
+#notifications {
+  width: 300px;
+  z-index: 100;
+  margin: 5px auto;
+}
 
 /* ==========================================================================
    Helper classes

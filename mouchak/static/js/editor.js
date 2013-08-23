@@ -191,6 +191,9 @@
       return false;
     },
     updatePage: function() {
+      var success_template = _.template($('#success-notif').html());
+      var fail_template = _.template($('#fail-notif').html());
+
       var name = $('#name').val();
       var title = $('#title').val();
       var children = $('#children').val();
@@ -210,9 +213,17 @@
           model.set(response.page);
           model.id = response.page.id;
           M.pagelistview.render();
+          $('#notifications').html(success_template({
+            title: 'Saved',
+            msg: ''
+          }));
         },
         error: function(model, xhr) {
           console.log('failed', model, xhr);
+          $('#notifications').html(fail_template({
+            title: 'Error!',
+            msg: 'Something went wrong, and the page could not be updated'
+          }));
         }
       });
       return false;
@@ -363,7 +374,10 @@
       this.showMenuOptions(this.model.get('customMenu'));
     },
     saveMenu: function() {
-      console.log('saving menu..');
+      //console.log('saving menu..');
+      var success_template = _.template($('#success-notif').html());
+      var fail_template = _.template($('#fail-notif').html());
+
       var bool, html = '', menuOrder = [];
       if($('#custom-menu').is(":checked")) {
         bool = true;
@@ -378,8 +392,17 @@
       this.model.save({}, {
         success: function(model, response) {
           console.log(model, response);
+          $('#notifications').html(success_template({
+            title: 'Saved',
+            msg: ''
+          }));
+
         },
         error: function(xhr, response) {
+          $('#notifications').html(fail_template({
+            title: 'Error!',
+            msg: 'Something went wrong, and the page could not be updated'
+          }));
         }
       });
       //alert('end of save menu');

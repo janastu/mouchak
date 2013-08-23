@@ -23,7 +23,7 @@
     <![endif]-->
 
     <div class="container" id="container">
-      <div id="header"> </div>
+      <div id="header"><div id="notifications"></div></div>
       <div id="content-container"></div>
       <div id="footer">
       </div>
@@ -219,5 +219,23 @@
         </textarea>
       </div>
     </script>
+
+    <!-- notification templates -->
+    <script type="text/template" id="success-notif">
+      <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4> <%= title %> </h4>
+        <%= msg %>
+      </div>
+    </script>
+
+    <script type="text/template" id="fail-notif">
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4> <%= title %> </h4>
+        <%= msg %>
+      </div>
+    </script>
+
   </body>
 </html>
