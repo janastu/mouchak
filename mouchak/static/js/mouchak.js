@@ -64,19 +64,24 @@ var NavigationView = Backbone.View.extend({
   },
   populate: function() {
     var item_template = _.template($('#nav-item-template').html());
-    _.each(M.pages.models, function(page) {
-      //console.log('no children?', _.isEmpty(page.get('children')));
+    _.each(this.model.get('menuOrder'), function(page) {
       this.$ul.append(item_template({
+        cls: '',
+        page: page
+      }));
+      //console.log('no children?', _.isEmpty(page.get('children')));
+      /*this.$ul.append(item_template({
         cls: (_.isEmpty(page.get('children'))) ? '' : 'dropdown',
         page: page.get('name')
-      }));
+      }));*/
     }, this);
   },
   navClicked: function(event) {
     this.$links.removeClass('active');
     if(!event) {
       var fragment = location.hash.split('/')[1];
-      var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+      //var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+      var pos = _.indexOf(this.model.get('menuOrder'), fragment);
       if(!fragment) {
         pos = 0;
       }

@@ -9,8 +9,7 @@
       'click .pagename .disp': 'showPage',
       'click #addPage': 'addPage',
       'click .pagename .remove': 'removePage',
-      'click #menu-config': 'showMenu'//,
-      //'click #footer-config': 'footerConfig'
+      'click #menu-config': 'showMenu',
     },
     initialize: function() {
       _.bindAll(this);
@@ -25,7 +24,6 @@
       //console.log(menu);
       this.menuconfig = new M.types.model.menu(menu);
       this.menuconfigview = new MenuConfigView({model: this.menuconfig});
-      //this.footerconfigview = new FooterConfigView();
     },
     render: function() {
       // append the page list
@@ -69,9 +67,6 @@
     },
     showMenu: function(event) {
       this.menuconfigview.render();
-    },
-    footerConfig: function(event) {
-      //this.footerconfigview.render();
     }
   });
 
@@ -243,7 +238,6 @@
     },
     render: function() {
       this.$el.html('');
-      console.log(this.model);
       var type = this.model.get('type');
       this.$el.append(this.template({
         type: this.model.get('type'),
@@ -252,7 +246,6 @@
       }));
 
       this.$select = $('.contentview select');
-      //this.$select.bind('change', this.typeChanged);
       this.$select.val(type);
 
       if(type === 'text') {
@@ -265,13 +258,13 @@
       }
       else if(type === 'image' || type === 'video' ||
               type === 'audio' || type === 'plugin') {
-        var template = _.template($('#media-template').html());
 
+        var template = _.template($('#media-template').html());
         $('#specific-content').html(template({
           src: this.model.get('src')
         }));
 
-        //provide the users a preview
+        //TODO: provide the users a preview
         /*var view = new M.types.view[type]({model: this.model});
          //$('#specific-content.preview').html();
          view.render('.preview');*/
@@ -316,30 +309,6 @@
     }
   });
 
-  /* view to configure footer */
-  var FooterConfigView = Backbone.View.extend({
-    tagName: 'div',
-    id: 'page',
-    events: {
-      'click #saveFooter': 'saveFooter'
-    },
-    initialize: function() {
-      _.bindAll(this);
-      this.template = _.template($('#footer-config-template').html());
-    },
-    render: function() {
-      $('#page').remove();
-      $('#content-container').append(this.$el);
-      this.$el.html(this.template());
-      M.editor.wysiwig('#footer-input');
-    },
-    saveFooter: function() {
-      tinymce.triggerSave(false, true);
-      var data = $('#footer-input').html();
-      console.log(data);
-    }
-  });
-
   /* view to configure custom navigation menu */
   var MenuConfigView = Backbone.View.extend({
     tagName: 'div',
@@ -357,25 +326,29 @@
       $('#content-container').append(this.$el);
       console.log('rendering..', this.$el);
       this.$el.html(this.template({
+        menu_order: this.model.get('menuOrder'),
         pos: this.model.get('pos'),
         menu: this.model.get('html')
       }));
       this.$menuOptions = $('.menu-options');
+      this.$menuOrder = $('#menu-order-wrap');
 
       if(this.model.get('customMenu') === true) {
         $('#custom-menu').attr('checked', true);
         this.$menuOptions.show({complete: function() {
-          M.editor.wysiwig('#menu');
+          //M.editor.wysiwig('#menu');
         }});
       }
     },
     showMenuOptions: function(bool) {
     if(bool === true) {
+      this.$menuOrder.hide();
       this.$menuOptions.show({complete: function() {
           //M.editor.wysiwig('#menu');
         }});
       }
       else {
+        this.$menuOrder.show();
         this.$menuOptions.hide();
       }
     },
@@ -391,18 +364,18 @@
     },
     saveMenu: function() {
       console.log('saving menu..');
-			// var menuHTML = $('#menu').val().trim();
-      //this.model.set({'html': menuHTML});
-      //console.log(this.model.toJSON());
-      //alert('saveMenu called');
-      var bool;
-      if($("custom-menu").is(":checked")) {
+      var bool, html = '', menuOrder = [];
+      if($('#custom-menu').is(":checked")) {
         bool = true;
+        html = $('#menu').val().trim();
       }
       else {
         bool = false;
+        menuOrder = $('#menu-order').val().split(',');
       }
-      this.model.save({customMenu: bool}, {
+      this.model.set({'customMenu': bool, 'html': html, 'menuOrder': menuOrder});
+      console.log(this.model.toJSON());
+      this.model.save({}, {
         success: function(model, response) {
           console.log(model, response);
         },

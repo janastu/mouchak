@@ -17,7 +17,8 @@ db = dbClient[conf.DB]
 siteContent = db['content']
 siteMenu = db['menu']
 if siteMenu.find_one() == None:
-    siteMenu.insert({'customMenu': False})
+    siteMenu.insert({'customMenu': False, 'menuOrder': []})
+
 
 # handy reference to otherwise long name
 bson.ObjId = bson.objectid.ObjectId
@@ -49,7 +50,7 @@ def index():
 @app.route('/edit', methods=['GET'])
 def edit():
     return flask.render_template('editor.html', content=getContent(),
-                                 title=conf)
+                                 title=conf.SITE_TITLE)
 
 
 @app.route('/page', methods=['POST'])
@@ -114,6 +115,7 @@ def updateMenu(_id):
     #    print _id
     #    res = siteMenu.remove({'_id': bson.ObjId(_id)})
     #    return flask.jsonify(status='deleted')
+
 
 
 if __name__ == "__main__":

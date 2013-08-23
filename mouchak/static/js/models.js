@@ -137,4 +137,7 @@
     'Pages': Pages
   };
 
+  //content types to render in content menu
+  M.contentTypes = ['text', 'image', 'video', 'table', 'plugin'];
+
 })(M);

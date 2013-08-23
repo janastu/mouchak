@@ -54,28 +54,33 @@
       <div class="page">
         <div class="menu-config">
           <h4> Menu Config </h4>
-          <!-- <form class="form-horizontal"> -->
+          <div class="control-group">
+            <input id="custom-menu" type="checkbox">
+            <span class=""><strong> Custom Menu </strong></span>
+          </div>
+          <div class="control-group" id="menu-order-wrap">
+            <% if(!$('#custom-menu').is(':checked')) { %>
+              <div class="input-prepend">
+                <span class="add-on"> <strong> Menu Order</strong></span>
+                <input id="menu-order" type="text"
+                placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
+              </div>
+              <% } %>
+          </div>
+          <div class="menu-options" style="display: none;">
             <div class="control-group">
-              <input id="custom-menu" type="checkbox">
-              <span class=""><strong> Custom Menu </strong></span>
-            </div>
-            <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
-            <div class="clearfix"></div>
-            <div class="menu-options" style="display: none;">
-              <div class="control-group">
-                <div class="input-prepend">
-                  <span class="add-on"> <strong> Position </strong></span>
-                  <input id="pos" type="text" placeholder="[left, top]"
-                  value="<%= pos %>">
-                </div>
-              </div>
-              <label><strong> HTML </strong></label>
-              <div id="menu">
-                <%= menu %>
+              <div class="input-prepend">
+                <span class="add-on"> <strong> Position </strong></span>
+                <input id="pos" type="text" placeholder="[left, top]"
+                value="<%= pos %>">
               </div>
             </div>
-          <!-- </form> -->
+            <label><strong> HTML for menu: </strong></label>
+            <textarea cols="25" rows="8" id="menu"><%= menu %></textarea>
+          </div>
         </div>
+        <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
+        <div class="clearfix"></div>
       </div>
     </script>
 
@@ -164,7 +169,7 @@
         <div class="">
           <label><b>Type</b></label>
           <select>
-            <% _.each(_.keys(M.types.model), function(type) { %>
+            <% _.each(M.contentTypes, function(type) { %>
               <option><%= type %></option>
             <%  }); %>
           </select>
