@@ -49,24 +49,43 @@
       M.editor.pageview = newpageview;
     },
     removePage: function(event) {
+      var option = confirm("Are you sure, you want to delete this page?");
+      if(!option) {
+        return false;
+      }
       var id = $(event.target).parent('.remove').attr('for');
-      console.log('remove', id);
+      var success_template = _.template($('#success-notif').html());
+      var fail_template = _.template($('#fail-notif').html());
+      //console.log('remove', id);
       M.pages.get(id).destroy({
         success: function(model, response) {
-          console.log('deleted', model, response);
+          //console.log('deleted', model, response);
           M.pages.remove(id);
           M.pagelistview.render();
           if(M.editor.pageview) {
             M.editor.pageview.remove();
           }
+          $('#notifications').html(success_template({
+            title: 'Deleted',
+            msg: ''
+          }));
         },
         error: function(model, xhr) {
           console.log('failed', model, xhr);
+          $('#notifications').html(fail_template({
+            title: 'Error',
+            msg: 'Failed to delete. Please try again.'
+          }));
         }
       });
     },
     showMenu: function(event) {
       this.menuconfigview.render();
+    },
+    // validate the page list with menu order list
+    validate: function()  {
+      //TODO: validate if the menu order list matches with the list of pages
+      //and provide relevant notifications
     }
   });
 
@@ -89,6 +108,7 @@
     initialize: function() {
       _.bindAll(this);
       _.bind(this.render, this);
+      this.editing = false;
       $('#page').remove();
       $('#content-container').append(this.$el);
       this.template = _.template($('#page-template').html());
@@ -99,16 +119,16 @@
       this.model.bind('change:name', this.nameChanged);
     },
     modelChanged: function(page) {
-      console.log('model changed ', page.id, ' re-rendering...');
+      //console.log('model changed ', page.id, ' re-rendering...');
       this.render();
     },
     contentChanged: function(page) {
-      console.log('content changed', page);
+      //console.log('content changed', page);
       this.render();
     },
     nameChanged: function(page) {
       //M.pagelistview.render();
-      console.log('name changed', page);
+      //console.log('name changed', page);
     },
     render: function() {
       $('#page').html('');
@@ -154,39 +174,39 @@
       return false;
     },
     addContent: function() {
-      console.log('addContent');
+      //console.log('addContent');
       var content = new M.types.model.text({
         type: 'text',
         title: '',
         data: ''
       });
-      this.model.get('content').push(content.toJSON());
-      var idx = this.model.get('content').length;
-      this.edit = {on: true, idx: idx};
+      this.editing = true;
       var contentview = new ContentView({model: content});
       contentview.render();
       M.editor.contentview = contentview;
       return false;
     },
     updateContent: function(json) {
-      if(!this.edit.on && this.edit.idx < 0) {
+      if(!this.editing) {
         return;
       }
+      //console.log('updateContent in Pageview');
       var content = this.model.get('content');
-      content[this.edit.idx] = json;
-      this.edit = {on: false, idx: -1};
+      content.push(json);
+      this.editing = false;
+      //console.log('setting content in page: ', content);
       this.model.set({'content': content});
       this.render();
     },
     removeContent: function(event) {
-      console.log('recvd remove event..about to process..');
+      //console.log('recvd remove event..about to process..');
       var content = this.model.get('content');
       var idx = $(event.target).parent().attr('for');
       idx = Number(idx); //is this a correct way of doing it?
-      console.log('remove content: ', content[idx]);
+      //console.log('remove content: ', content[idx]);
       content.splice(idx, 1);
       this.model.set({'content': content});
-      console.log('after removing: ', this.model.get('content'));
+      //console.log('after removing: ', this.model.get('content'));
       this.render();
       return false;
     },
@@ -209,7 +229,7 @@
 
       this.model.save({}, {
         success: function(model, response) {
-          console.log('saved', model, response);
+          //console.log('saved', model, response);
           model.set(response.page);
           model.id = response.page.id;
           M.pagelistview.render();
@@ -335,7 +355,7 @@
     render: function() {
       $('#page').remove();
       $('#content-container').append(this.$el);
-      console.log('rendering..', this.$el);
+      //console.log('rendering..', this.$el);
       this.$el.html(this.template({
         menu_order: this.model.get('menuOrder'),
         pos: this.model.get('pos'),
@@ -388,10 +408,10 @@
         menuOrder = $('#menu-order').val().split(',');
       }
       this.model.set({'customMenu': bool, 'html': html, 'menuOrder': menuOrder});
-      console.log(this.model.toJSON());
+      //console.log(this.model.toJSON());
       this.model.save({}, {
         success: function(model, response) {
-          console.log(model, response);
+          //console.log(model, response);
           $('#notifications').html(success_template({
             title: 'Saved',
             msg: ''
