@@ -165,9 +165,9 @@
     showContent: function(event) {
       var idx = $(event.target).closest('.content-item').attr('id').
         split('-')[1];
-      this.edit = {on: true, idx: idx};
       var content = this.model.get('content')[idx];
       content = new M.types.model[content.type](content);
+      this.editing = true;
       var contentview = new ContentView({model: content});
       contentview.render();
       M.editor.contentview = contentview;
@@ -365,6 +365,7 @@
       this.$menuOrder = $('#menu-order-wrap');
 
       if(this.model.get('customMenu') === true) {
+        this.$menuOrder.hide();
         $('#custom-menu').attr('checked', true);
         this.$menuOptions.show({complete: function() {
           //M.editor.wysiwig('#menu');
@@ -398,17 +399,15 @@
       var success_template = _.template($('#success-notif').html());
       var fail_template = _.template($('#fail-notif').html());
 
-      var bool, html = '', menuOrder = [];
-      if($('#custom-menu').is(":checked")) {
-        bool = true;
-        html = $('#menu').val().trim();
+      if($('#custom-menu').is(':checked')) {
+        var html = $('#menu').val().trim() || '';
+        this.model.set({'customMenu': true, 'html': html});
       }
       else {
-        bool = false;
-        menuOrder = $('#menu-order').val().split(',');
+        var menuOrder = $('#menu-order').val().split(',') || [];
+        this.model.set({'customMenu': false, 'menuOrder': menuOrder});
       }
-      this.model.set({'customMenu': bool, 'html': html, 'menuOrder': menuOrder});
-      //console.log(this.model.toJSON());
+      //console.log('menu model: ', this.model.toJSON());
       this.model.save({}, {
         success: function(model, response) {
           //console.log(model, response);

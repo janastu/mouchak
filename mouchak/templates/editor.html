@@ -54,19 +54,20 @@
       <div class="page">
         <div class="menu-config">
           <h4> Menu Config </h4>
+
+          <div class="control-group" id="menu-order-wrap">
+            <div class="input-prepend">
+              <span class="add-on"> <strong> Menu Order</strong></span>
+              <input id="menu-order" type="text" class="span4"
+              placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
+            </div>
+          </div>
+
           <div class="control-group">
             <input id="custom-menu" type="checkbox">
             <span class=""><strong> Custom Menu </strong></span>
           </div>
-          <div class="control-group" id="menu-order-wrap">
-            <% if(!$('#custom-menu').is(':checked')) { %>
-              <div class="input-prepend">
-                <span class="add-on"> <strong> Menu Order</strong></span>
-                <input id="menu-order" type="text" class="span4"
-                placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
-              </div>
-              <% } %>
-          </div>
+
           <div class="menu-options" style="display: none;">
             <div class="control-group">
               <div class="input-prepend">
@@ -78,6 +79,7 @@
             <label><strong> HTML for menu: </strong></label>
             <textarea cols="25" rows="8" id="menu"><%= menu %></textarea>
           </div>
+
         </div>
         <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
         <div class="clearfix"></div>
