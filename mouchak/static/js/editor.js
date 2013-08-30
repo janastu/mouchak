@@ -109,6 +109,7 @@
       _.bindAll(this);
       _.bind(this.render, this);
       this.editing = false;
+      this.edit_idx = -1;
       $('#page').remove();
       $('#content-container').append(this.$el);
       this.template = _.template($('#page-template').html());
@@ -168,6 +169,7 @@
       var content = this.model.get('content')[idx];
       content = new M.types.model[content.type](content);
       this.editing = true;
+      this.edit_idx = idx;
       var contentview = new ContentView({model: content});
       contentview.render();
       M.editor.contentview = contentview;
@@ -181,6 +183,7 @@
         data: ''
       });
       this.editing = true;
+      this.edit_idx = -1;
       var contentview = new ContentView({model: content});
       contentview.render();
       M.editor.contentview = contentview;
@@ -192,8 +195,15 @@
       }
       //console.log('updateContent in Pageview');
       var content = this.model.get('content');
-      content.push(json);
+      if(this.edit_idx > -1) {
+        content[this.edit_idx] = json;
+      }
+      else {
+        content.push(json);
+      }
+
       this.editing = false;
+      this.edit_idx = -1;
       //console.log('setting content in page: ', content);
       this.model.set({'content': content});
       this.render();
