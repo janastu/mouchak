@@ -174,8 +174,8 @@ M.init = function() {
   var app_router = new AppRouter();
   Backbone.history.start();
 
-  if(!location.hash) {
-    var startpage = M.pages.models[0].get('name');
+  if(!window.location.hash) {
+    var startpage = M.pages.site_content.menu.menuOrder[0];
     app_router.navigate(startpage, {trigger: true});
   }
 
