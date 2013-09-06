@@ -91,7 +91,7 @@
 
   var Pages = Backbone.Collection.extend({
     model: M.types.model.Page,
-    url: '/page'
+    url: M.PageURL()
   });
 
   /* view to manage each page and their properties - change page properties,

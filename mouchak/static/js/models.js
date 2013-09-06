@@ -117,7 +117,7 @@
       customMenu: false
     },
     url: function() {
-      return '/menu/' + this.id;
+      return M.MenuURL() + this.id;
     },
     initialize: function() {
       this.id = this.get('id');
