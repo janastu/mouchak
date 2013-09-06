@@ -12,7 +12,7 @@
     jQuery, Modernizr
     Underscore.js, Backbone.js
     Bootstrap
-    
+
     Python, Flask, PyMongo
 
     MongoDB
