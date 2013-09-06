@@ -153,6 +153,15 @@ def static_from_root():
 
 app.config.from_object(conf)
 
+import logging,os
+from logging import FileHandler
+
+fil = FileHandler(os.path.join(os.path.dirname(__file__),'logme'),mode='a')
+fil.setLevel(logging.ERROR)
+app.logger.addHandler(fil)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host=conf.HOST, port=conf.PORT)
 
