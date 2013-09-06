@@ -38,7 +38,7 @@
     <script>
       // initialize editor
       window.M = window.M || {};
-      M.MenuURL = function() { return "{{ url_for('updateMenu') }}"};
+      M.MenuURL = function() { return "{{ url_for('insertMenu') }}"};
       M.PageURL = function() { return "{{ url_for('insertPage') }}"};
       M.site_content = {{ content|tojson|safe }};
       window.onload = function() {

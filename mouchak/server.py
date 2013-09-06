@@ -95,14 +95,15 @@ def updatePage(_id):
             return flask.jsonify(error=res['err'], status='error')
 
 
-#@app.route('/menu', methods=['POST'])
-#def insertMenu():
-#    newmenu = flask.request.json
-#    print newmenu
-#    res = siteMenu.insert(newmenu)
-#    print res
-#    return flask.jsonify(status='success')#, content=getContent())
-#
+@app.route('/menu', methods=['POST'])
+def insertMenu():
+    #newmenu = flask.request.json
+    #print newmenu
+    #res = siteMenu.insert(newmenu)
+    #print res
+    #return flask.jsonify(status='success')#, content=getContent())
+    return '200 OK'
+
 
 @app.route('/menu/<_id>', methods=['PUT'])
 def updateMenu(_id):
