@@ -8,7 +8,8 @@ class Field(object):
 
     def __init__(self):
         """@todo: to be defined1 """
-       self.id = object.id
-       self.tags = object.tags
-       self.type = object.type
-       self.body = object.body
+        self.id = object.id
+        self.tags = object.tags
+        self.type = object.type
+        self.body = object.body
+
