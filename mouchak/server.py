@@ -17,7 +17,7 @@ db = dbClient[conf.DB]
 siteContent = db['content']
 siteMenu = db['menu']
 if siteMenu.find_one() == None:
-    siteMenu.insert({'customMenu': False, 'menuOrder': []})
+    siteMenu.insert({'customMenu': False, 'menuOrder': [], html: ''})
 
 
 # handy reference to otherwise long name
