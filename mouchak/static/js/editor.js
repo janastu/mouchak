@@ -310,6 +310,12 @@
          //$('#specific-content.preview').html();
          view.render('.preview');*/
       }
+      else if(type === "map"){
+        var template = _.template($('#map-template').html());
+          $('#specific-content').html(template({
+            tileLayer: this.model.get('tileLayer')
+          }));
+      }
     },
     typeChanged: function(event) {
       var type = this.$select.val();

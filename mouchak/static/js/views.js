@@ -110,6 +110,22 @@
     }
   });
 
+  var MapView = Backbone.View.extend({
+    initialize: function(){
+      _.bindAll(this);
+      _.bind(this.render, this);
+    },
+    render: function(el){
+      var template = _.template($("#map-template").html());
+      $(el).append(template);
+      var southWest = new L.LatLng(47.20, 4.04); //Logic to calculate the bounds for "world view".
+      var northEast = new L.LatLng(55.10, 16.67);
+      var restrictBounds = new L.LatLngBounds(southWest, northEast);
+      M.map = new L.Map('map',{mapBounds: restrictBounds, zoom: 2, worldCopyJump: true, center:[14.604847155053898, 2.8125] });
+      L.tileLayer(this.model.get("tileLayer")).addTo(M.map);
+    }
+  });
+
   var PageView = Backbone.View.extend({
     tagName: 'div',
     className: 'pageview',
@@ -158,6 +174,7 @@
     'rss': RSSView,
     'table': TableView,
     'plugin': PluginView,
+    'map': MapView,
     'PageView': PageView
   };
 })(M);

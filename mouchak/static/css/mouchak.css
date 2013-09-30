@@ -4,3 +4,10 @@
   padding: 3px;
   font-size: 1.5em;
 }
+
+#map{
+width: 1000px;
+height: 500px;
+margin-top: 30px;
+position: relative;
+}
