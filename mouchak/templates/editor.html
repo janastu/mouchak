@@ -204,6 +204,20 @@
       </div>
     </script>
 
+    <script type="text/template" id="map-template">
+      <div class="data">
+        <div class="control-group">
+          <div class="input-prepend">
+            <span class="add-on"><strong>Tile Provider URL</strong></span>
+            <input type="text" placeholder="http://{s}.tile.cloudmade.com/<API_KEY>/997/256/{z}/{x}/{y}.png" value="<%= tileLayer %>"
+            m-data-target="tileLayer">
+          </div>
+        </div>
+        <div class="preview"></div>
+      </div>
+    </script>
+
+
     <script type="text/template" id="media-template">
       <div class="data">
         <div class="control-group">

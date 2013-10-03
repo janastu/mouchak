@@ -17,6 +17,14 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/mouchak.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
     <script src="{{url_for('static', filename='js/lib/modernizr-2.6.2.min.js')}}"></script>
+
+    <!--TODO: make this optional, only when there is a map plugin in the site. There
+    is no need to load this for every site -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+    <![endif]-->
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet-src.js"></script>
   </head>
   <body>
     <!--[if lt IE 7]>
@@ -117,6 +125,14 @@
       </ul>
       </li>
     </script>
+
+    <!-- Template for map-->
+    <script type="text/template" id="map-template">
+      <div id="map">
+      </div>
+    </script>
+
+
 
     <script type="text/template" id="image-view-template">
       <div class="img-wrapper">
