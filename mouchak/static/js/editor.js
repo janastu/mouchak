@@ -144,10 +144,10 @@
       }));
 
       //hover effect
-      $('.content-item').hover(function(event) {
-        $(event.target).closest('.content-item').addClass('alert-error')
+      $('.content-item-wrapper').hover(function(event) {
+        $(event.currentTarget).addClass('alert-info')
       }, function(event) {
-        $(event.target).closest('.content-item').removeClass('alert-error')
+        $(event.currentTarget).removeClass('alert-info')
       });
     },
     listContent: function() {

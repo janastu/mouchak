@@ -1,265 +1,254 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title> Editing.. | {{title}} </title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+{% extends "base.html" %}
 
-    <!-- Place favicon.ico in the root directory -->
+{% block head %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/editor.css')}}">
+  <title> Editing.. | {{ title }} </title>
+{% endblock %}
 
-    <link rel="stylesheet" href="{{url_for('static', filename='css/normalize.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/editor.css')}}">
-    <script src="{{url_for('static', filename='js/lib/modernizr-2.6.1.min.js')}}"></script>
-  </head>
-  <body>
-    <!--[if lt IE 7]>
-    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-    <![endif]-->
-
-    <div class="container" id="container">
-      <div id="header">
-        <div id="hud">
-          <span class="pull-right">Howdy! | <a href="{{ url_for('logout') }}">Logout</a></span>
-        </div>
-        <div id="notifications"></div>
+{% block body %}
+  <div class="container" id="container">
+    <div id="header">
+      <div id="hud">
+        <span class="pull-right">Howdy! | <a href="{{ url_for('logout') }}">Logout</a></span>
       </div>
-      <div id="content-container">
-      </div>
-      <div id="footer">
-      </div>
+      <div id="notifications"></div>
     </div>
+    <div id="content-container">
+    </div>
+    <div id="footer">
+    </div>
+  </div>
 
-    <script>
-      // initialize editor
-      window.M = window.M || {};
-      M.MenuURL = function() { return "{{ url_for('insertMenu') }}"};
-      M.PageURL = function() { return "{{ url_for('insertPage') }}"};
-      M.site_content = {{ content|tojson|safe }};
-      window.onload = function() {
-        M.editor.init();
-      };
-    </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{url_for('static', filename='js/lib/jquery-1.8.0.min.js')}}"><\/script>')</script>
-    <script src="{{url_for('static', filename='js/lib/underscore.js')}}"></script>
-    <script src="{{url_for('static', filename='js/lib/backbone-1.0.0.js')}}"></script>
-    <script src="{{url_for('static', filename='js/lib/bootstrap.js')}}"></script>
-    <script src="{{url_for('static', filename='js/lib/tinymce/tinymce.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/lib/tinymce/jquery.tinymce.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/plugins.js')}}"></script>
-    <script src="{{url_for('static', filename='js/mouchak.js')}}"></script>
-    <script src="{{url_for('static', filename='js/models.js')}}"></script>
-    <script src="{{url_for('static', filename='js/editor.js')}}"></script>
+  <script>
+    // initialize editor
+    window.M = window.M || {};
+    M.MenuURL = function() { return "{{ url_for('insertMenu') }}"};
+    M.PageURL = function() { return "{{ url_for('insertPage') }}"};
+    M.site_content = {{ content|tojson|safe }};
+    window.onload = function() {
+      M.editor.init();
+    };
+  </script>
+{% endblock %}
 
-    <!-- Underscore templates -->
-    <script type="text/template" id="menu-config-template">
-      <div class="page">
-        <div class="menu-config">
-          <h4> Menu Config </h4>
+{% block scripts %}
+  <script src="{{url_for('static', filename='js/lib/tinymce/tinymce.min.js')}}"></script>
+  <script src="{{url_for('static', filename='js/lib/tinymce/jquery.tinymce.min.js')}}"></script>
+  <script src="{{url_for('static', filename='js/mouchak.js')}}"></script>
+  <script src="{{url_for('static', filename='js/models.js')}}"></script>
+  <script src="{{url_for('static', filename='js/views.js')}}"></script>
+  <script src="{{url_for('static', filename='js/editor.js')}}"></script>
+{% endblock %}
 
-          <div class="control-group" id="menu-order-wrap">
-            <div class="input-prepend">
-              <span class="add-on"> <strong> Menu Order</strong></span>
-              <input id="menu-order" type="text" class="span4"
-              placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
-            </div>
+{% block templates %}
+
+  <!-- Underscore templates -->
+  <script type="text/template" id="menu-config-template">
+    <div class="page">
+      <div class="menu-config">
+        <h4> Menu Config </h4>
+
+        <div class="form-group" id="menu-order-wrap">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong> Menu Order</strong></span>
+            <input class="form-control"  id="menu-order" type="text" class="col-md-4"
+            placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
           </div>
-
-          <div class="control-group">
-            <input id="custom-menu" type="checkbox">
-            <span class=""><strong> Custom Menu </strong></span>
-          </div>
-
-          <div class="menu-options" style="display: none;">
-            <div class="control-group">
-              <div class="input-prepend">
-                <span class="add-on"> <strong> Position </strong></span>
-                <input id="pos" type="text" placeholder="[left, top]"
-                value="<%= pos %>">
-              </div>
-            </div>
-            <label><strong> HTML for menu: </strong></label>
-            <textarea cols="25" rows="8" id="menu"><%= menu %></textarea>
-          </div>
-
         </div>
-        <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
-        <div class="clearfix"></div>
-      </div>
-    </script>
 
-    <script type="text/template" id="page-list-template">
-      <div id="pagelistview">
-        <h4> List of Pages </h4>
-        <div id="pagelist"></div>
-        <button class="btn btn-primary" id="addPage">Add Page</button>
-        <hr>
-        <p> <a href="javascript:void(0);" id="menu-config"> Site Menu </a> </p>
-        <p><a href="{{ url_for('index') }}"> Go to site </a></p>
-      </div>
-    </script>
+        <div class="form-group">
+          <input class="form-control"  id="custom-menu" type="checkbox">
+          <span class=""><strong> Custom Menu </strong></span>
+        </div>
 
-    <script type="text/template" id="page-list-item-template">
-      <div class="pagename">
-        <a class="disp" id="<%= id %>" href="javascript:void(0);"><%= name %></a>
-        <span class="pull-right">
-          <a href="javascript:void(0);" class="remove" for="<%= id %>">
-            <i class="icon-trash"></i>
-          </a>
-        </span>
-        <span class="clearfix"></span>
-      </div>
-    </script>
-
-    <script type="text/template" id="page-template">
-      <div class="page">
-        <h4> Page Properties </h4>
-        <form class="form-horizontal">
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"> <strong> Name </strong></span>
-              <input id="name" type="text" placeholder="name of the page" value="<%= name %>">
+        <div class="menu-options" style="display: none;">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"> <strong> Position </strong></span>
+              <input class="form-control"  id="pos" type="text" placeholder="[left, top]"
+              value="<%= pos %>">
             </div>
           </div>
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"> <strong>Title</strong> </span>
-              <input id="title" type="text" placeholder="title of the page"
-               value="<%= title %>">
-            </div>
+          <label><strong> HTML for menu: </strong></label>
+          <textarea cols="25" rows="8" id="menu"><%= menu %></textarea>
+        </div>
+
+      </div>
+      <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
+      <div class="clearfix"></div>
+    </div>
+  </script>
+
+  <script type="text/template" id="page-list-template">
+    <div id="pagelistview">
+      <h4> List of Pages </h4>
+      <div id="pagelist"></div>
+      <button class="btn btn-primary" id="addPage">Add Page</button>
+      <hr>
+      <p> <a href="javascript:void(0);" id="menu-config"> Site Menu </a> </p>
+      <p><a href="{{ url_for('index') }}"> Go to site </a></p>
+    </div>
+  </script>
+
+  <script type="text/template" id="page-list-item-template">
+    <div class="pagename">
+      <a class="disp" id="<%= id %>" href="javascript:void(0);"><%= name %></a>
+      <span class="pull-right">
+        <a href="javascript:void(0);" class="remove" for="<%= id %>">
+          <span class="glyphicon glyphicon-trash"></span>
+        </a>
+      </span>
+      <span class="clearfix"></span>
+    </div>
+  </script>
+
+  <script type="text/template" id="page-template">
+    <div class="page">
+      <h4> Page Details </h4>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong> Name </strong></span>
+            <input class="form-control"  id="name" type="text" placeholder="name of the page" value="<%= name %>">
           </div>
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"> <strong>Children</strong> </span>
-              <input id="children" type="text" placeholder="csv of child pages"
-              value="<%= children %>">
-            </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong>Title</strong> </span>
+            <input class="form-control"  id="title" type="text" placeholder="title of the page"
+             value="<%= title %>">
           </div>
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"><strong> Show Navigation </strong></span>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong>Children</strong> </span>
+            <input class="form-control"  id="children" type="text" placeholder="csv of child pages"
+            value="<%= children %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="checkbox">
+            <label>
               <input id="showNav" type="checkbox" <%=checked%>>
-            </div>
+              <strong> Show Navigation </strong>
+            </label>
           </div>
-          <label><strong> Content </strong></label>
-          <div id="content" class="content well">
-            <%= content %>
-            <p></p>
-            <button class="addContent btn btn-mini btn-primary">Add Content</button>
-          </div>
-          <button id="updatePage" type="submit" class="btn btn-primary pull-right"> Update </button>
-          <div class="clearfix"></div>
-        </form>
-      </div>
-    </script>
+        </div>
+        <label><strong> Content </strong></label>
+        <div id="content" class="content well">
+          <%= content %>
+          <p></p>
+          <button class="addContent btn btn-sm btn-primary">Add Content</button>
+        </div>
+        <button id="updatePage" type="submit" class="btn btn-primary pull-right"> Update </button>
+        <div class="clearfix"></div>
+      </form>
+    </div>
+  </script>
 
-    <script type="text/template" id="content-list-template">
-      <div class="content-item-wrapper">
-        <span class="content-item" id="content-<%= no %>">
-          <span class="label label-info"> <%= type %> </span>
-          <span class="">
-            [ <small> <%= title %>  <%= more %> </small> ]
-          </span>
+  <script type="text/template" id="content-list-template">
+    <div class="content-item-wrapper">
+      <span class="content-item" id="content-<%= no %>">
+        <span class="label label-default"> <%= type %> </span>
+        <span class="content-snippet">
+          [ <small> <%= title %>  <%= more %> </small> ]
         </span>
-        <span class="pull-right">
-          <a href="javascript:void(0);" class="remove" for="<%=no%>"><i class="icon-trash"></i></a>
-        </span>
-        <span class="clearfix"></span>
-      </div>
-    </script>
+      </span>
+      <span class="pull-right">
+        <a href="javascript:void(0);" class="remove" for="<%=no%>">
+          <span class="glyphicon glyphicon-trash"></span>
+        </a>
+      </span>
+      <span class="clearfix"></span>
+    </div>
+  </script>
 
-    <script type="text/template" id="content-template">
-      <div class="contentview">
-        <div class="">
+  <script type="text/template" id="content-template">
+    <div class="contentview">
+      <form class="form-horizontal">
+        <div class="form-group">
           <label><b>Type</b></label>
-          <select>
+          <select class="form-control">
             <% _.each(M.contentTypes, function(type) { %>
               <option><%= type %></option>
             <%  }); %>
           </select>
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"> <b>Title</b> </span>
-              <input type="text" placeholder="title of the content" value="<%=
-              title %>" m-data-target="title">
-            </div>
-          </div>
-          <div class="control-group">
-            <div class="input-prepend">
-              <span class="add-on"> <strong>Tags</strong> </span>
-              <input type="text" placeholder="csv of tags for this content"
-              value="<%= tags %>" m-data-target="tags">
-            </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"> <b>Title</b> </span>
+            <input class="form-control"  type="text" placeholder="title of the content" value="<%=
+            title %>" m-data-target="title">
           </div>
         </div>
-        <div id="specific-content"></div>
-        <button class="btn btn-info" id="done">Done</button>
-        <button class="btn btn-primary" id="updateContent">Update</button>
-      </div>
-    </script>
-
-    <script type="text/template" id="map-template">
-      <div class="data">
-        <div class="control-group">
-          <div class="input-prepend">
-            <span class="add-on"><strong>Tile Provider URL</strong></span>
-            <input type="text" placeholder="http://{s}.tile.cloudmade.com/<API_KEY>/997/256/{z}/{x}/{y}.png" value="<%= tileLayer %>"
-            m-data-target="tileLayer">
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong>Tags</strong> </span>
+            <input class="form-control"  type="text" placeholder="csv of tags for this content"
+            value="<%= tags %>" m-data-target="tags">
           </div>
         </div>
-        <div class="preview"></div>
-      </div>
-    </script>
+      </form>
+      <div id="specific-content"></div>
+      <button class="btn btn-info" id="done">Done</button>
+      <button class="btn btn-primary" id="updateContent">Update</button>
+    </div>
+  </script>
 
-
-    <script type="text/template" id="media-template">
-      <div class="data">
-        <div class="control-group">
-          <div class="input-prepend">
-            <span class="add-on"><strong>path to file</strong></span>
-            <input type="text" placeholder="src" value="<%= src %>"
-            m-data-target="src">
-          </div>
+  <script type="text/template" id="map-template">
+    <div class="data">
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><strong>Tile Provider URL</strong></span>
+          <input class="form-control"  type="text" placeholder="http://{s}.tile.cloudmade.com/<API_KEY>/997/256/{z}/{x}/{y}.png" value="<%= tileLayer %>"
+          m-data-target="tileLayer">
         </div>
-        <div class="preview"></div>
       </div>
-    </script>
+      <div class="preview"></div>
+    </div>
+  </script>
 
-    <script type="text/template" id="text-template">
-      <div class="data">
-        <label><b> Content </b></label>
-        <p>
-        <span class="label label-important">Tip</span>
-        <span><small> You can unleash your HTML power here </small></span>
-        </p>
-        <textarea id="edit" m-data-target="data">
-          <%= data %>
-        </textarea>
+
+  <script type="text/template" id="media-template">
+    <div class="data">
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><strong>path to file</strong></span>
+          <input class="form-control"  type="text" placeholder="src" value="<%= src %>"
+          m-data-target="src">
+        </div>
       </div>
-    </script>
+      <div class="preview"></div>
+    </div>
+  </script>
 
-    <!-- notification templates -->
-    <script type="text/template" id="success-notif">
-      <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <h4> <%= title %> </h4>
-        <%= msg %>
-      </div>
-    </script>
+  <script type="text/template" id="text-template">
+    <div class="data">
+      <label><b> Content </b></label>
+      <p>
+      <span class="label label-info">Tip</span>
+      <span><small> You can unleash your HTML power here </small></span>
+      </p>
+      <textarea id="edit" m-data-target="data">
+        <%= data %>
+      </textarea>
+    </div>
+  </script>
 
-    <script type="text/template" id="fail-notif">
-      <div class="alert alert-error">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <h4> <%= title %> </h4>
-        <%= msg %>
-      </div>
-    </script>
+  <!-- notification templates -->
+  <script type="text/template" id="success-notif">
+    <div class="alert alert-success">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4> <%= title %> </h4>
+      <%= msg %>
+    </div>
+  </script>
 
-  </body>
-</html>
+  <script type="text/template" id="fail-notif">
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4> <%= title %> </h4>
+      <%= msg %>
+    </div>
+  </script>
+{% endblock %}
