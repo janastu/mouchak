@@ -12,7 +12,7 @@
       'click #menu-config': 'showMenu',
     },
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
       this.template = _.template($('#page-list-template').html());
       this.listTemplate = _.template($('#page-list-item-template').html());
@@ -106,7 +106,7 @@
       'click .content .remove': 'removeContent'
     },
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
       this.editing = false;
       this.edit_idx = -1;
@@ -269,7 +269,7 @@
       'change .contentview select': 'typeChanged'
     },
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
 
       $('#pages').hide();
@@ -359,7 +359,7 @@
       'click #updateMenu': 'saveMenu'
     },
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       this.template = _.template($('#menu-config-template').html());
     },
     render: function() {
