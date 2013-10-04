@@ -126,7 +126,7 @@
       L.tileLayer(this.model.get("tileLayer")).addTo(M.map);
       if(this.model.has("shp")){
         $.getJSON(this.model.get("shp"), function(data){
-          L.geoJSON(data);
+          L.geoJson(data).addTo(M.map);
         });
       }
     }
