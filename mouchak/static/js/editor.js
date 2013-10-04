@@ -313,7 +313,8 @@
       else if(type === "map"){
         var template = _.template($('#map-template').html());
           $('#specific-content').html(template({
-            tileLayer: this.model.get('tileLayer')
+            tileLayer: this.model.get('tileLayer'),
+            shp: this.model.get('shp')
           }));
       }
     },

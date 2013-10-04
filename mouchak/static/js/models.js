@@ -61,7 +61,8 @@
   // Map model
   var Map = BaseType.extend({
     defaults: _.extend(BaseType.prototype.defaults, {
-      tileLayer: ""
+      tileLayer:"",
+      shp: ""
     }),
     initialize: function(){
       BaseType.prototype.initialize.call(this, arguments);

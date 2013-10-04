@@ -124,6 +124,11 @@
       var restrictBounds = new L.LatLngBounds(southWest, northEast);
       M.map = new L.Map('map',{mapBounds: restrictBounds, zoom: 2, worldCopyJump: true, center:[14.604847155053898, 2.8125] });
       L.tileLayer(this.model.get("tileLayer")).addTo(M.map);
+      if(this.model.has("shp")){
+        $.getJSON(this.model.get("shp"), function(data){
+          L.geoJSON(data);
+        });
+      }
     }
   });
 
