@@ -112,7 +112,8 @@
 
   var MapView = Backbone.View.extend({
     initialize: function(){
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      //_.bindAll(this);
       _.bind(this.render, this);
     },
     render: function(el){
