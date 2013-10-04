@@ -5,7 +5,7 @@
     tagName: 'div',
     className: '',
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
     },
     render: function(el) {
@@ -22,7 +22,7 @@
     tagName: 'table',
     className: 'table',
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
     },
     render: function(el) {
@@ -56,7 +56,7 @@
     className: '',
 
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
     },
     render: function(el) {
@@ -68,7 +68,7 @@
 
   var VideoView = Backbone.View.extend({
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
       // assuming cross-domain urls will have http in the src,
       // so also assuming they are embedded flash urls,
@@ -92,7 +92,7 @@
   var RSSView = Backbone.View.extend({
     el: '#feeds',
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
     },
     render: function() {
@@ -130,7 +130,7 @@
     tagName: 'div',
     className: 'pageview',
     initialize: function() {
-      _.bindAll(this);
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
       _.bind(this.render, this);
       this.render();
       $(this.el).hide();

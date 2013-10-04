@@ -10,7 +10,7 @@ var AppView = Backbone.View.extend({
   events: {
   },
   initialize: function() {
-    _.bindAll(this);
+    _.bindAll.apply(_, [this].concat(_.functions(this)));
   },
   render: function() {
     var menu = new M.types.model.menu(M.site_content.menu);
@@ -31,7 +31,7 @@ var NavigationView = Backbone.View.extend({
     'navclicked': 'navClicked'
   },
   initialize: function() {
-    _.bindAll(this);
+    _.bindAll.apply(_, [this].concat(_.functions(this)));
     this.template = _.template($('#nav-bar-template').html());
     this.bind('navclicked', this.navClicked);
   },
@@ -40,7 +40,11 @@ var NavigationView = Backbone.View.extend({
     console.log(this.model.toJSON());
     if(this.model.get('customMenu') === false) {
       console.log('generating default menu..');
-      this.$el.append(this.template({}));
+      var startpage = M.site_content.menu.menuOrder[0];
+      this.$el.append(this.template({
+        brand: document.title,//brand name,
+        brand_href: '#/' + startpage //link to the brand page
+      }));
       this.$ul = $('.nav');
       this.populate();
     }
