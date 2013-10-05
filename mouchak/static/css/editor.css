@@ -57,6 +57,9 @@
   width: 500px;
   z-index: 100;
   margin: 5px auto;
+  position: absolute;
+  left: 33%;
+  top: 0px;
 }
 #code-edit {
   position: absolute;
@@ -65,4 +68,12 @@
   bottom: 0 ;
   left: 125px;
   width: 70%;
+}
+#editor-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #FFFFFF;
+  opacity: 0.7;
+  display: none;
 }

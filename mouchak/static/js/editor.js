@@ -59,6 +59,7 @@
       //console.log('remove', id);
       M.pages.get(id).destroy({
         success: function(model, response) {
+          M.editor.hideOverlay();
           //console.log('deleted', model, response);
           M.pages.remove(id);
           M.pagelistview.render();
@@ -71,6 +72,7 @@
           }));
         },
         error: function(model, xhr) {
+          M.editor.hideOverlay();
           console.log('failed', model, xhr);
           $('#notifications').html(fail_template({
             title: 'Error',
@@ -78,6 +80,7 @@
           }));
         }
       });
+      M.editor.showOverlay();
     },
     showMenu: function(event) {
       this.menuconfigview.render();
@@ -240,6 +243,7 @@
       this.model.save({}, {
         success: function(model, response) {
           //console.log('saved', model, response);
+          M.editor.hideOverlay();
           model.set(response.page);
           model.id = response.page.id;
           M.pagelistview.render();
@@ -249,6 +253,8 @@
           }));
         },
         error: function(model, xhr) {
+          M.editor.hideOverlay();
+          model.set(response.page);
           console.log('failed', model, xhr);
           $('#notifications').html(fail_template({
             title: 'Error!',
@@ -256,6 +262,7 @@
           }));
         }
       });
+      M.editor.showOverlay();
       return false;
     }
   });
@@ -455,6 +462,7 @@
       this.model.save({}, {
         success: function(model, response) {
           //console.log(model, response);
+          M.editor.hideOverlay();
           $('#notifications').html(success_template({
             title: 'Saved',
             msg: ''
@@ -462,6 +470,7 @@
 
         },
         error: function(xhr, response) {
+          M.editor.hideOverlay();
           $('#notifications').html(fail_template({
             title: 'Error!',
             msg: 'Something went wrong, and the page could not be updated'
@@ -469,8 +478,10 @@
         }
       });
       //alert('end of save menu');
+      M.editor.showOverlay();
     }
   });
+
 
   M.editor = {
     init: function() {
@@ -529,6 +540,12 @@
       },
       cleanUp: function(id) {
       }
+    },
+    showOverlay: function() {
+      $('#editor-overlay').show();
+    },
+    hideOverlay: function() {
+      $('#editor-overlay').hide();
     }
   };
 
