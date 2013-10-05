@@ -266,6 +266,7 @@
     events: {
       'click #done': 'done',
       'click #updateContent': 'update',
+      'click #edit-type button' : 'editTypeChanged',
       'change .contentview select': 'typeChanged'
     },
     initialize: function() {
@@ -276,6 +277,7 @@
       $('#page').hide();
       $('#content-container').append(this.$el);
       this.template = _.template($('#content-template').html());
+      this.wysiwyg = true;
     },
     render: function() {
       this.$el.html('');
@@ -292,10 +294,18 @@
       if(type === 'text') {
         var template = _.template($('#text-template').html());
         $('#specific-content').html(template({
+          wysiwyg: this.wysiwyg,
           data: this.model.get('data')
         }));
-        // init the wysiwig editor
-        M.editor.wysiwig('#edit');
+        if(this.wysiwyg) {
+          $('#edit-type button[value="wysiwyg"]').addClass('active');
+          // init the wysiwyg editor
+          M.editor.wysiwyg.init('#edit');
+        }
+        else {
+          $('#edit-type button[value="code"]').addClass('active');
+          M.editor.code.init('code-edit', 'html');
+        }
       }
       else if(type === 'image' || type === 'video' ||
               type === 'audio' || type === 'plugin') {
@@ -310,12 +320,12 @@
          //$('#specific-content.preview').html();
          view.render('.preview');*/
       }
-      else if(type === "map"){
+      else if(type === 'map') {
         var template = _.template($('#map-template').html());
-          $('#specific-content').html(template({
-            tileLayer: this.model.get('tileLayer'),
-            shp: this.model.get('shp')
-          }));
+        $('#specific-content').html(template({
+          tileLayer: this.model.get('tileLayer'),
+          shp: this.model.get('shp')
+        }));
       }
     },
     typeChanged: function(event) {
@@ -324,6 +334,19 @@
       //M.types.model
       this.model.set({'type': type});
       this.render();
+    },
+    editTypeChanged: function(event) {
+      var type = $(event.currentTarget).val();
+      if(type === 'wysiwyg') {
+        this.wysiwyg = true;
+        this.render();
+        $('#edit-type button[value="wysiwyg"]').addClass('active');
+      }
+      else {
+        this.wysiwyg = false;
+        this.render();
+        $('#edit-type button[value="code"]').addClass('active');
+      }
     },
     update: function() {
       var prop, val, new_attrs = {};
@@ -338,9 +361,13 @@
         new_attrs[prop] = val;
       });
       new_attrs['type'] = this.$select.val();
-      if($('#edit').length) {
-        tinymce.triggerSave(false, true);
-        new_attrs['data'] = $('#edit').val();
+      if(this.wysiwyg) {
+        var data = M.editor.wysiwyg.save('#edit');
+        new_attrs['data'] = data;
+      }
+      else {
+        var data = M.editor.code.save('code-edit');
+        new_attrs['data'] = data;
       }
       this.model.set(new_attrs);
       M.editor.pageview.updateContent(this.model.toJSON());
@@ -455,22 +482,53 @@
       });
       M.pagelistview = pagelistview;
     },
-    wysiwig: function($selector) {
-      tinymce.init({
+    wysiwyg: {
+      init: function($selector) {
+        tinymce.init({
           selector: $selector,
-          theme: 'modern',
-          height: 300,
-          plugins: ["advlist autolink link image lists charmap print preview hr",
-                    "anchor pagebreak spellchecker searchreplace wordcount",
-                    "visualblocks visualchars code fullscreen insertdatetime",
-                    "media nonbreaking save table contextmenu directionality",
-                    "emoticons template paste textcolor"
-                   ],
-          toolbar: "undo redo | styleselect | bold italic | " +
-              "alignleft aligncenter alignright alignjustify | " +
-              "bullist numlist outdent indent | link image | " +
+        theme: 'modern',
+        height: 300,
+        plugins: ["advlist autolink link image lists charmap print preview hr",
+        "anchor pagebreak spellchecker searchreplace wordcount",
+        "visualblocks visualchars code fullscreen insertdatetime",
+        "media nonbreaking save table contextmenu directionality",
+        "emoticons template paste textcolor"
+          ],
+        toolbar: "undo redo | styleselect | bold italic | " +
+          "alignleft aligncenter alignright alignjustify | " +
+          "bullist numlist outdent indent | link image | " +
           "print preview media fullpage | forecolor backcolor emoticons"
-      });
+        });
+      },
+      save: function($selector) {
+        if($($selector).length) {
+          tinymce.triggerSave(false, true);
+          return $($selector).val();
+        }
+        return false;
+      },
+      cleanUp: function($selector) {
+      }
+    },
+    code: {
+      _editor: false,
+      init: function(id, mode) {
+        var editor = ace.edit(id);
+        editor.setTheme('ace/theme/solarized_dark');
+        editor.getSession().setMode('ace/mode/'+mode);
+        editor.getSession().setTabSize(2);
+        editor.getSession().setUseSoftTabs(true);
+        editor.getSession().setUseWrapMode(true);
+        $('#code-edit').css('fontSize', '13px');
+        this._editor = editor;
+      },
+      save: function(id) {
+        var data = this._editor.getValue();
+        this._editor.destroy();
+        return data;
+      },
+      cleanUp: function(id) {
+      }
     }
   };
 
@@ -486,6 +544,7 @@
     return String(string).replace(/[&<>"'\/]/g, function (s) {
       return entityMap[s];
     });
-  }
+  };
+  M.escapeHtml = escapeHtml;
 
 })(M);

@@ -34,6 +34,7 @@
 {% block scripts %}
   <script src="{{url_for('static', filename='js/lib/tinymce/tinymce.min.js')}}"></script>
   <script src="{{url_for('static', filename='js/lib/tinymce/jquery.tinymce.min.js')}}"></script>
+  <script src="{{url_for('static', filename='js/lib/ace/ace.js')}}"></script>
   <script src="{{url_for('static', filename='js/mouchak.js')}}"></script>
   <script src="{{url_for('static', filename='js/models.js')}}"></script>
   <script src="{{url_for('static', filename='js/views.js')}}"></script>
@@ -48,21 +49,21 @@
       <div class="menu-config">
         <h4> Menu Config </h4>
 
-        <div class="form-group" id="menu-order-wrap">
+        <div class="form-group col-lg-6" id="menu-order-wrap">
           <div class="input-group">
             <span class="input-group-addon"> <strong> Menu Order</strong></span>
-            <input class="form-control"  id="menu-order" type="text" class="col-md-4"
+            <input class="form-control" id="menu-order" type="text"
             placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group col-lg-6">
           <input class="form-control"  id="custom-menu" type="checkbox">
           <span class=""><strong> Custom Menu </strong></span>
         </div>
 
         <div class="menu-options" style="display: none;">
-          <div class="form-group">
+          <div class="form-group col-lg-6">
             <div class="input-group">
               <span class="input-group-addon"> <strong> Position </strong></span>
               <input class="form-control"  id="pos" type="text" placeholder="[left, top]"
@@ -127,11 +128,12 @@
           </div>
         </div>
         <div class="form-group">
-          <div class="checkbox">
-            <label>
-              <input id="showNav" type="checkbox" <%=checked%>>
-              <strong> Show Navigation </strong>
-            </label>
+          <div class="input-group">
+              <span class="input-group-addon">
+                <input id="showNav" type="checkbox" <%= checked %> >
+              </span>
+              <input class="form-control" type="text" value="Show Navigation"
+              disabled>
           </div>
         </div>
         <label><strong> Content </strong></label>
@@ -166,49 +168,63 @@
   <script type="text/template" id="content-template">
     <div class="contentview">
       <form class="form-horizontal">
-        <div class="form-group">
-          <label><b>Type</b></label>
-          <select class="form-control">
-            <% _.each(M.contentTypes, function(type) { %>
-              <option><%= type %></option>
-            <%  }); %>
-          </select>
-        </div>
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon"> <b>Title</b> </span>
-            <input class="form-control"  type="text" placeholder="title of the content" value="<%=
-            title %>" m-data-target="title">
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <label><b>Type</b></label>
+            <select class="form-control">
+              <% _.each(M.contentTypes, function(type) { %>
+                <option><%= type %></option>
+                <%  }); %>
+            </select>
           </div>
         </div>
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon"> <strong>Tags</strong> </span>
-            <input class="form-control"  type="text" placeholder="csv of tags for this content"
-            value="<%= tags %>" m-data-target="tags">
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <div class="input-group">
+              <span class="input-group-addon"> <b>Title</b> </span>
+              <input class="form-control"  type="text" placeholder="title of the content" value="<%=
+              title %>" m-data-target="title">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <div class="input-group">
+              <span class="input-group-addon"> <strong>Tags</strong> </span>
+              <input class="form-control"  type="text" placeholder="csv of tags for this content"
+              value="<%= tags %>" m-data-target="tags">
+            </div>
           </div>
         </div>
       </form>
-      <div id="specific-content"></div>
-      <button class="btn btn-info" id="done">Done</button>
-      <button class="btn btn-primary" id="updateContent">Update</button>
+      <div class="row">
+        <div id="specific-content"></div>
+      </div>
+      <div class="row">
+        <button class="btn btn-info" id="done">Done</button>
+        <button class="btn btn-primary" id="updateContent">Update</button>
+      </div>
     </div>
   </script>
 
   <script type="text/template" id="map-template">
     <div class="data">
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon"><strong>Tile Provider URL</strong></span>
-          <input class="form-control"  type="text" placeholder="http://{s}.tile.cloudmade.com/<API_KEY>/997/256/{z}/{x}/{y}.png" value="<%= tileLayer %>"
-          m-data-target="tileLayer">
+      <div class="row">
+        <div class="form-group col-lg-6">
+          <div class="input-group">
+            <span class="input-group-addon"><strong>Tile Provider URL</strong></span>
+            <input class="form-control" type="text" placeholder="http://{s}.tile.cloudmade.com/<API_KEY>/997/256/{z}/{x}/{y}.png" value="<%= tileLayer %>"
+            m-data-target="tileLayer">
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon"><strong>Shapefile</strong></span>
-          <input class="form-control"  type="text" placeholder="" value="<%= shp %>"
-          m-data-target="shp">
+      <div class="row">
+        <div class="form-group col-lg-6">
+          <div class="input-group">
+            <span class="input-group-addon"><strong>Shapefile</strong></span>
+            <input class="form-control" type="text" placeholder="" value="<%= shp %>"
+            m-data-target="shp">
+          </div>
         </div>
       </div>
       <div class="preview"></div>
@@ -218,10 +234,10 @@
 
   <script type="text/template" id="media-template">
     <div class="data">
-      <div class="form-group">
+      <div class="form-group col-lg-6">
         <div class="input-group">
           <span class="input-group-addon"><strong>path to file</strong></span>
-          <input class="form-control"  type="text" placeholder="src" value="<%= src %>"
+          <input class="form-control" type="text" placeholder="src" value="<%= src %>"
           m-data-target="src">
         </div>
       </div>
@@ -231,14 +247,35 @@
 
   <script type="text/template" id="text-template">
     <div class="data">
-      <label><b> Content </b></label>
-      <p>
-      <span class="label label-info">Tip</span>
-      <span><small> You can unleash your HTML power here </small></span>
-      </p>
-      <textarea id="edit" m-data-target="data">
-        <%= data %>
-      </textarea>
+      <div class="edit-type-wrap">
+        <div class="row">
+          <b> Content </b>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <!-- code vs wysiwyg switch -->
+            <div class="btn-group" id="edit-type">
+              <button type="button" class="btn btn-default" value="wysiwyg">WYSIWYG</button>
+              <button type="button" class="btn btn-default" value="code">Code</button>
+            </div>
+            <p class="help-block">
+              <span class="label label-info">Heads Up!</span> 
+              <span><small><b> Switch editing mode </b></small></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <% if(wysiwyg === true) { %>
+        <textarea id="edit" m-data-target="data">
+          <%= data %>
+        </textarea>
+        <% } else { %>
+        <div id="code-edit" m-data-target="data">
+          <%= M.escapeHtml(data) %>
+        </div>
+        <% } %>
+      </div>
     </div>
   </script>
 
