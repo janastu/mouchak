@@ -1,65 +1,45 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title> Mouchak | Login</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+{% extends "base.html" %}
+{% block head %}
+<style type="text/css">
+  .form-wrapper {
+    width: 500px;
+    margin: 100px auto;
+    padding: 30px;
+  }
+</style>
+{% endblock %}
 
-    <!-- Place favicon.ico in the root directory -->
-
-    <link rel="stylesheet" href="{{url_for('static', filename='css/normalize.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
-    <style type="text/css">
-      .form-wrapper {
-        height: 300px;
-        width: 500px;
-        margin: 100px auto;
-        padding: 30px;
-      }
-    </style>
-  </head>
-  <body>
-    <!--[if lt IE 7]>
-    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-    <![endif]-->
-
-    <div class="container" id="container">
-      <div class="form-wrapper well">
-        {% if error %}
-        <div class="alert alert-error"><b>Error:</b> {{ error }} </div>
-        {% endif %}
-        <h3> Mouchak Login </h3>
-        <p class="lead"> Please enter admin credentials to login</p>
-        <form class="form-horizontal" action="{{ url_for('login') }}" method="POST">
-          <div class="control-group">
-            <label class="control-label" for="inputUsername">Username</label>
-            <div class="controls">
-              <input type="text" id="inputUsername" name="username" placeholder="Username">
-            </div>
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="inputPassword">Password</label>
-            <div class="controls">
-              <input type="password" id="inputPassword" name="password" placeholder="Password">
-            </div>
-          </div>
-          <div class="control-group">
-            <div class="controls">
-              <!--label class="checkbox">
-                <input type="checkbox"> Remember me
-              </label-->
-              <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-          </div>
-          <div class="clearfix"></div>
-        </form>
+{% block body %}
+<div class="container" id="container">
+  <div class="form-wrapper well">
+    {% if error %}
+    <div class="alert alert-danger"><b>Error:</b> {{ error }} </div>
+    {% endif %}
+    <h3> Mouchak Login </h3>
+    <p class="lead"> Please enter admin credentials to login</p>
+    <form class="form-horizontal" action="{{ url_for('login') }}" method="POST">
+      <div class="form-group">
+        <label class="form-label" for="inputUsername">Username</label>
+        <div class="controls">
+          <input type="text" class="form-control" id="inputUsername" name="username" placeholder="Username">
+        </div>
       </div>
-    </div>
-  </body>
-</html>
-
+      <div class="form-group">
+        <label class="form-label" for="inputPassword">Password</label>
+        <div class="controls">
+          <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="controls">
+          <!--label class="checkbox">
+          <input type="checkbox"> Remember me
+          </label-->
+          <button type="submit" class="btn btn-primary btn-lg">Login</button>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
