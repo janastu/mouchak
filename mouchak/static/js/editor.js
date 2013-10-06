@@ -3,7 +3,7 @@
   /* view to manage list of pages - add, remove and show them */
   var PageListView = Backbone.View.extend({
     tagName: 'div',
-    className: '',
+    className: 'prettybox-side',
     id: 'pages',
     events: {
       'click .pagename .disp': 'showPage',
@@ -101,6 +101,7 @@
    * add content, remove and show content, and update the page */
   var PageView = Backbone.View.extend({
     tagName: 'div',
+    className: 'prettybox-lg',
     id: 'page',
     events: {
       'click #updatePage': 'updatePage',
@@ -270,9 +271,11 @@
   /* view to manage, render and update each content */
   var ContentView = Backbone.View.extend({
     id: 'contentview',
+    className: 'prettybox-lg',
     events: {
       'click #done': 'done',
       'click #updateContent': 'update',
+      'click #back' : 'back',
       'click #edit-type button' : 'editTypeChanged',
       'change .contentview select': 'typeChanged'
     },
@@ -388,12 +391,16 @@
     done: function() {
       this.update();
       this.cleanUp();
+    },
+    back: function() {
+      this.cleanUp();
     }
   });
 
   /* view to configure custom navigation menu */
   var MenuConfigView = Backbone.View.extend({
     tagName: 'div',
+    className: 'prettybox-lg',
     id: 'page',
     events: {
       'change #custom-menu': 'customMenuChange',

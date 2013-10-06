@@ -40,6 +40,10 @@ def getContent():
     return {'content': content, 'menu': menu}
 
 
+@app.errorhandler(404)
+def pageNotFound(e):
+    return flask.render_template('404.html'), 404
+
 
 @app.route('/', methods=['GET'])
 def index():
