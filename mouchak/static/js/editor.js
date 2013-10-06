@@ -326,7 +326,7 @@
         }
       }
       else if(type === 'image' || type === 'video' ||
-              type === 'audio' || type === 'plugin') {
+              type === 'audio') {
 
         var template = _.template($('#media-template').html());
         $('#specific-content').html(template({
@@ -337,6 +337,13 @@
         /*var view = new M.types.view[type]({model: this.model});
          //$('#specific-content.preview').html();
          view.render('.preview');*/
+      }
+      else if(type === 'plugin') {
+        var template = _.template($('#plugin-template').html());
+        $('#specific-content').html(template({
+          src: this.model.get('src'),
+          callback: this.model.get('callback')
+        }));
       }
       else if(type === 'map') {
         var template = _.template($('#map-template').html());

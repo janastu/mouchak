@@ -288,6 +288,31 @@
     </div>
   </script>
 
+  <script type="text/template" id="plugin-template">
+    <div class="data">
+      <div class="row">
+        <div class="form-group col-lg-6">
+          <div class="input-group">
+            <span class="input-group-addon"><strong>path to file</strong></span>
+            <input class="form-control" type="text" placeholder="src" value="<%= src %>"
+            m-data-target="src">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-lg-6">
+          <div class="input-group">
+            <span class="input-group-addon"><strong>callback</strong></span>
+            <input class="form-control" type="text" placeholder=
+            "callback function for js plugin" value="<%= callback %>"
+            m-data-target="callback">
+          </div>
+        </div>
+      </div>
+      <div class="preview"></div>
+    </div>
+  </script>
+
   <script type="text/template" id="text-template">
     <div class="data">
       <div class="edit-type-wrap">
