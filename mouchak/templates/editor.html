@@ -48,33 +48,59 @@
       <div class="menu-config">
         <h4> Menu Config </h4>
 
-        <div class="form-group col-lg-6" id="menu-order-wrap">
-          <div class="input-group">
-            <span class="input-group-addon"> <strong> Menu Order</strong></span>
-            <input class="form-control" id="menu-order" type="text"
-            placeholder="list,page,names,for,menu,order" value="<%= menu_order %>">
+        <div class="row">
+          <div class="form-group col-lg-12" id="menu-order-wrap">
+            <div class="input-group">
+              <span class="input-group-addon"> <strong> Menu Order</strong></span>
+              <input class="form-control" id="menu-order" type="text"
+              placeholder="list,page,slugs,for,menu,order" value="<%= menu_order %>">
+            </div>
+            <span class="help-block">
+              <small>csv list of page slugs to come up in the navigation menu
+                in that order
+              </small>
+            </span>
           </div>
         </div>
 
-        <div class="form-group col-lg-6">
-          <input class="form-control"  id="custom-menu" type="checkbox">
-          <span class=""><strong> Custom Menu </strong></span>
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input id="custom-menu" type="checkbox">
+              </span>
+              <span class="input-group-addon"><strong>Custom Menu
+              </strong></span>
+            </div>
+            <span class="help-block">
+              <small>
+                activate to write your own custom menu
+              </small>
+            </span>
+          </div>
         </div>
 
         <div class="menu-options" style="display: none;">
-          <div class="form-group col-lg-6">
-            <div class="input-group">
-              <span class="input-group-addon"> <strong> Position </strong></span>
-              <input class="form-control"  id="pos" type="text" placeholder="[left, top]"
-              value="<%= pos %>">
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <div class="input-group">
+                <span class="input-group-addon"> <strong> Position </strong></span>
+                <input class="form-control"  id="pos" type="text" placeholder="[left, top]"
+                value="<%= pos %>">
+              </div>
             </div>
           </div>
-          <label><strong> HTML for menu: </strong></label>
-          <textarea cols="25" rows="8" id="menu"><%= menu %></textarea>
+          <div class="row">
+            <label><strong> HTML for menu: </strong></label>
+            <textarea class="form-control" cols="25" rows="8" id="menu"><%= menu %></textarea>
+          </div>
         </div>
 
       </div>
-      <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
+      <div class="clearfix"></div>
+      <div class="row">
+        <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
+      </div>
       <div class="clearfix"></div>
     </div>
   </script>
@@ -104,13 +130,17 @@
 
   <script type="text/template" id="page-template">
     <div class="page">
-      <h4> Page Details </h4>
+      <h4> <%= name %> : Page Details </h4>
       <form class="form-horizontal">
         <div class="form-group">
           <div class="input-group">
-            <span class="input-group-addon"> <strong> Name </strong></span>
-            <input class="form-control"  id="name" type="text" placeholder="name of the page" value="<%= name %>">
+            <span class="input-group-addon"> <strong> Slug </strong></span>
+            <input class="form-control"  id="name" type="text"
+            placeholder="slug of the page" value="<%= name %>">
           </div>
+          <span class="help-block">
+            <small>The URL part of the page, as it will appear in the URL</small>
+          </span>
         </div>
         <div class="form-group">
           <div class="input-group">
@@ -118,6 +148,9 @@
             <input class="form-control"  id="title" type="text" placeholder="title of the page"
              value="<%= title %>">
           </div>
+          <span class="help-block">
+            <small>title of the page</small>
+          </span>
         </div>
         <div class="form-group">
           <div class="input-group">
@@ -125,17 +158,25 @@
             <input class="form-control"  id="children" type="text" placeholder="csv of child pages"
             value="<%= children %>">
           </div>
+          <span class="help-block">
+            <small> leave this blank for now</small>
+          </span>
         </div>
         <div class="form-group">
           <div class="input-group">
               <span class="input-group-addon">
                 <input id="showNav" type="checkbox" <%= checked %> >
               </span>
-              <input class="form-control" type="text" value="Show Navigation"
-              disabled>
+              <input class="form-control" type="text" value="Show Navigation" disabled>
           </div>
+          <span class="help-block">
+            <small>Show navigation menu in this page? </small>
+          </span>
         </div>
         <label><strong> Content </strong></label>
+        <span class="help-block">
+          <small>content of this page</small>
+        </span>
         <div id="content" class="content well">
           <%= content %>
           <p></p>
