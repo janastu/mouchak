@@ -30,7 +30,7 @@
       this.$pagelist.html('');
       _.each(M.pages.models, function(page) {
         this.$pagelist.append(this.listTemplate({
-          name: page.get('name') || 'newpage',
+          name: page.get('name'),
           id: page.id
         }));
       }, this);
@@ -42,11 +42,17 @@
       M.editor.pageview = pageview;
     },
     addPage: function() {
-      var newpage = new M.types.model.Page();
+      var newpage = new M.types.model.Page({name: 'newpage'});
       M.pages.add(newpage);
-      var newpageview = new PageView({model: newpage});
-      newpageview.render();
-      M.editor.pageview = newpageview;
+      var self = this;
+      M.editor.showOverlay();
+      newpage.save({}, {success: function(model, response) {
+        M.editor.hideOverlay();
+        self.render();
+        var newpageview = new PageView({model: newpage});
+        newpageview.render();
+        M.editor.pageview = newpageview;
+      }});
     },
     removePage: function(event) {
       var option = confirm("Are you sure, you want to delete this page?");
@@ -208,7 +214,6 @@
 
       this.editing = false;
       this.edit_idx = -1;
-      //console.log('setting content in page: ', content);
       this.model.set({'content': content});
       this.render();
     },
@@ -241,12 +246,15 @@
         this.model.set({'showNav': false});
       }
 
+      //console.log('mode before save', this.model.toJSON());
+
       this.model.save({}, {
         success: function(model, response) {
           //console.log('saved', model, response);
           M.editor.hideOverlay();
-          model.set(response.page);
-          model.id = response.page.id;
+          //model.set(response.page);
+          //model.id = response.page.id;
+          //console.log(model);
           M.pagelistview.render();
           $('#notifications').html(success_template({
             title: 'Saved',
@@ -495,9 +503,9 @@
       M.pages = new Pages(M.site_content.content);
       var pagelistview = new PageListView();
       pagelistview.render();
-      M.pages.on('add', function(page) {
+      /*M.pages.on('add', function(page) {
         pagelistview.render();
-      });
+      });*/
       M.pagelistview = pagelistview;
     },
     wysiwyg: {

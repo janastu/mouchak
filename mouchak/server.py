@@ -71,7 +71,8 @@ def insertPage():
     del(newpage['_id'])
     print newpage
     # FIXME: handle errors
-    return flask.jsonify(status='ok', page=newpage)
+    #return flask.jsonify(status='ok', page=newpage)
+    return flask.jsonify(newpage)
 
 
 @app.route('/page/<_id>', methods=['PUT', 'DELETE'])
@@ -85,7 +86,8 @@ def updatePage(_id):
         print res
         if res['err'] == None:
             print changedPage
-            return flask.jsonify(status='ok', page=changedPage)
+            #return flask.jsonify(status='ok', page=changedPage)
+            return flask.jsonify(changedPage)
 
     elif flask.request.method == 'DELETE':
         delPage = flask.request.url
@@ -117,7 +119,8 @@ def updateMenu(_id):
         print changedMenu
         res = siteMenu.update({'_id': bson.ObjId(_id)}, changedMenu)
         print res
-        return flask.jsonify(status='ok', menu=changedMenu)
+        #return flask.jsonify(status='ok', menu=changedMenu)
+        return flask.jsonify(changedMenu)
 
     #elif flask.request.method == 'DELETE':
     #    delMenu = flask.request.url
