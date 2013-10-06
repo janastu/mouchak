@@ -11,48 +11,48 @@
   });
 
   var Text = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       data: "",
-    }),
+    }, BaseType.prototype.defaults),
     initialize: function() {
       BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Table = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       data : {
         th: [],
         tr:[]
       }
-    }),
+    }, BaseType.prototype.defaults),
     initialize: function() {
       BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Image = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       src: ""
-    }),
+    }, BaseType.prototype.defaults),
     initialize:function() {
       BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var Video = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       src: ""
-    }),
+    }, BaseType.prototype.defaults),
     initialize:function() {
       BaseType.prototype.initialize.call(this, arguments);
     }
   });
 
   var RSS = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       src: ""
-    }),
+    }, BaseType.prototype.defaults),
     initialize:function() {
       BaseType.prototype.initialize.call(this, arguments);
     }
@@ -60,10 +60,10 @@
 
   // Map model
   var Map = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       tileLayer:"",
       shp: ""
-    }),
+    }, BaseType.prototype.defaults),
     initialize: function(){
       BaseType.prototype.initialize.call(this, arguments);
     }
@@ -74,11 +74,11 @@
   // Also the website can be styled by using external CSS files,
   // which can also be loaded via this plugin model.
   var Plugin = BaseType.extend({
-    defaults: _.extend(BaseType.prototype.defaults, {
+    defaults: _.extend({
       src: "",
       data: {},
       callback: ""
-    }),
+    }, BaseType.prototype.defaults),
     initialize: function() {
       BaseType.prototype.initialize.call(this, arguments);
 
