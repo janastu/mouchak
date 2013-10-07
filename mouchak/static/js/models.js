@@ -4,7 +4,8 @@
     defaults: {
       tags: [],
       title: "",
-      attr: {}
+      attr: {},
+      type: ''
     },
     initialize: function() {
     }
@@ -61,7 +62,7 @@
   // Map model
   var Map = BaseType.extend({
     defaults: _.extend({
-      tileLayer:"",
+      tileLayer: "",
       shp: ""
     }, BaseType.prototype.defaults),
     initialize: function(){
@@ -138,6 +139,7 @@
   //export types to the typemap
   M.types = M.types || {};
   M.types.model = {
+    'base': BaseType,
     'text': Text,
     'image': Image,
     'video': Video,

@@ -162,12 +162,20 @@
     },
     listContent: function() {
       var content = '';
+      var base_props = _.keys(new M.types.model.base().defaults);
       _.each(this.model.get('content'), function(element, idx) {
+        //prepare the more field
+        var moar = '';
+        _.each(element, function(v, k) {
+          //check if not one of the base properties..add it to more..
+          if(_.indexOf(base_props, k) < 0) {
+            moar += (v) ? v + ', ' : '';
+          }
+        });
         content += this.contentListTemplate({
           no: idx,
           type: element.type,
-          more: element.src ||
-            escapeHtml(element.data.substring(0, 30) + '..'),
+          more: escapeHtml(moar.substring(0, 30) + '..'),
           title: (element.title) ? element.title + ',' : ''
         });
       }, this);
@@ -386,13 +394,15 @@
         new_attrs[prop] = val;
       });
       new_attrs['type'] = this.$select.val();
-      if(this.wysiwyg) {
-        var data = M.editor.wysiwyg.save('#edit');
-        new_attrs['data'] = data;
-      }
-      else {
-        var data = M.editor.code.save('code-edit');
-        new_attrs['data'] = data;
+      if(this.$select.val() === 'text') {
+        if(this.wysiwyg) {
+          var data = M.editor.wysiwyg.save('#edit');
+          new_attrs['data'] = data;
+        }
+        else {
+          var data = M.editor.code.save('code-edit');
+          new_attrs['data'] = data;
+        }
       }
       this.model.set(new_attrs);
       M.editor.pageview.updateContent(this.model.toJSON());
