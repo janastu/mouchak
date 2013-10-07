@@ -254,7 +254,13 @@
         this.model.set({'showNav': false});
       }
 
-      //console.log('mode before save', this.model.toJSON());
+      //code to remove nested page and status fields..a previous commit should
+      //fix the issue. the following code is for update data older than the
+      //commit. This should update old nested. Can remove after sometime?
+      if(this.model.get('page') || this.model.get('status')) {
+        this.model.unset('page');
+        this.model.unset('status');
+      }
 
       this.model.save({}, {
         success: function(model, response) {
