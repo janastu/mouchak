@@ -186,6 +186,7 @@
         split('-')[1];
       var content = this.model.get('content')[idx];
       content = new M.types.model[content.type](content);
+      console.log('model inited ', content);
       this.editing = true;
       this.edit_idx = idx;
       var contentview = new ContentView({model: content});
@@ -299,7 +300,9 @@
       'click #updateContent': 'update',
       'click #back' : 'back',
       'click #edit-type button' : 'editTypeChanged',
-      'change .contentview select': 'typeChanged'
+      'change .contentview select': 'typeChanged',
+      /* plugin events */
+      'click #upload-plugin': 'uploadPlugin'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
@@ -358,6 +361,14 @@
           src: this.model.get('src'),
           callback: this.model.get('callback')
         }));
+        if(this.model.get('src')) {
+          var plugin_type = this.model.get('plugin_type');
+          plugin_type = (plugin_type === 'js') ? 'javascript': 'css';
+          this.model.getCode(function(data) {
+            $('#plugin-edit').html(escapeHtml(data));
+            M.editor.code.init('plugin-edit', plugin_type);
+          });
+        }
       }
       else if(type === 'map') {
         var template = _.template($('#map-template').html());
@@ -371,6 +382,10 @@
       var type = this.$select.val();
       //TODO: do validation on type - a list of valid models is in
       //M.types.model
+      var base_props = _.keys(new M.types.model.base().defaults);
+      var props = _.omit(this.model.toJSON(), base_props);
+      var new_model = new M.types.model[type](props);
+      this.model = new_model;
       this.model.set({'type': type});
       this.render();
     },
@@ -410,6 +425,12 @@
           new_attrs['data'] = data;
         }
       }
+      else if(this.$select.val() === 'plugin') {
+        var data = M.editor.code.save('plugin-edit');
+        this.model.saveCode(data, function(resp) {
+          console.log('plugin saved..');
+        });
+      }
       this.model.set(new_attrs);
       M.editor.pageview.updateContent(this.model.toJSON());
     },
@@ -425,6 +446,28 @@
     },
     back: function() {
       this.cleanUp();
+    },
+    //upload inputed plugin file to server
+    uploadPlugin: function(event) {
+      var self = this;
+      M.editor.showOverlay();
+      var $form = $('#plugin-upload-form')[0];
+      console.log($form);
+      var formdata = new FormData($form);
+      console.log(formdata);
+      $.ajax({
+        type: 'POST',
+        url: M.PluginUploadURL(),
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          self.model.set({'src': response.path})
+          self.render();
+          M.editor.hideOverlay();
+          console.log(self.model.toJSON());
+        }
+      });
     }
   });
 

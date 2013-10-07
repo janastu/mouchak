@@ -73,7 +73,7 @@ body {
   left: 33%;
   top: 0px;
 }
-#code-edit {
+.ace-mouchak {
   position: relative;
   top: 0;
   left: 0;

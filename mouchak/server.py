@@ -7,6 +7,15 @@ import flask
 import pymongo
 import bson
 import conf
+import os
+from werkzeug import secure_filename
+
+PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
+                                    + '/static/user_plugins')
+PLUGIN_ALLOWED_EXTENSIONS = set(['js', 'css'])
+
+FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
+                                  '/static/uploads')
 
 app = flask.Flask(__name__)
 
@@ -38,6 +47,11 @@ def getContent():
     menu['id'] = str(objId)
 
     return {'content': content, 'menu': menu}
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+            filename.rsplit('.', 1)[1] in PLUGIN_ALLOWED_EXTENSIONS
 
 
 @app.errorhandler(404)
@@ -153,6 +167,37 @@ def logout():
     flask.flash('You were logged out')
     return flask.redirect(flask.url_for('login'))
 
+
+#TODO: refactor these code to classes
+#TODO: find out if this is a good method for saving plugins..
+@app.route('/static/user_plugins/<filename>', methods=['POST'])
+def savePlugin(filename):
+    if flask.request.method == 'POST':
+        if filename and allowed_file(filename):
+            data = flask.request.form['code']
+            filename = secure_filename(filename)
+            fh = open(os.path.join(PLUGIN_UPLOAD_FOLDER + '/' + filename), 'w')
+            fh.write(data)
+            fh.close()
+            return flask.jsonify(saved = True)
+
+#TODO: find out if this is a good method for uploading plugins..
+@app.route('/upload/plugin', methods=['POST'])
+def uploadPlugin():
+    if flask.request.method == 'POST':
+        print flask.request.files
+        file = flask.request.files['plugin-file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['PLUGIN_UPLOAD_FOLDER'],
+                                   filename))
+
+            #return flask.redirect(flask.url_for('uploaded_file',
+            #            filename=filename))
+            return flask.jsonify(uploaded = True,
+                                 path=flask.url_for('static', filename =
+                                                    'user_plugins/'+ filename))
+
 @app.route('/robots.txt')
 @app.route('/crossdomain.xml')
 def static_from_root():
@@ -160,6 +205,7 @@ def static_from_root():
 
 
 app.config.from_object(conf)
+app.config['PLUGIN_UPLOAD_FOLDER'] = PLUGIN_UPLOAD_FOLDER
 
 import logging,os
 from logging import FileHandler

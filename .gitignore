@@ -6,3 +6,7 @@ conf.py
 /lib/
 /local/
 /include/
+
+#uploads directory
+mouchak/static/uploads/*
+mouchak/static/user_plugins/*

@@ -21,8 +21,9 @@
   <script>
     // initialize editor
     window.M = window.M || {};
-    M.MenuURL = function() { return "{{ url_for('insertMenu') }}"};
-    M.PageURL = function() { return "{{ url_for('insertPage') }}"};
+    M.MenuURL = function() { return "{{ url_for('insertMenu') }}"; };
+    M.PageURL = function() { return "{{ url_for('insertPage') }}"; };
+    M.PluginUploadURL = function() { return "{{ url_for('uploadPlugin') }}"; };
     M.site_content = {{ content|tojson|safe }};
     window.onload = function() {
       M.editor.init();
@@ -290,7 +291,7 @@
 
   <script type="text/template" id="plugin-template">
     <div class="data">
-      <div class="row">
+      <!--div class="row">
         <div class="form-group col-lg-6">
           <div class="input-group">
             <span class="input-group-addon"><strong>path to file</strong></span>
@@ -298,7 +299,22 @@
             m-data-target="src">
           </div>
         </div>
-      </div>
+      </div-->
+      <% if(!src) { %>
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <form id="plugin-upload-form" action="" method="post" enctype="multipart/form-data">
+              <input type="file" name="plugin-file" id="select-plugin"> 
+              <input type="button" id="upload-plugin" class="btn btn-info" value="Upload Plugin">
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-lg-6">
+            <button type="button" class="btn btn-info" id="create-plugin">Create a new plugin</button>
+          </div>
+        </div>
+      <% } %>
       <div class="row">
         <div class="form-group col-lg-6">
           <div class="input-group">
@@ -309,6 +325,9 @@
           </div>
         </div>
       </div>
+      <% if(src) { %>
+        <div class="ace-mouchak" id="plugin-edit"></div>
+      <% } %>
       <div class="preview"></div>
     </div>
   </script>
@@ -339,7 +358,7 @@
           <%= data %>
         </textarea>
         <% } else { %>
-        <div id="code-edit" m-data-target="data">
+        <div id="code-edit" class="ace-mouchak" m-data-target="data">
           <%= M.escapeHtml(data) %>
         </div>
         <% } %>

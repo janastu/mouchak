@@ -106,7 +106,7 @@
       return;
     },
     render: function(el) {
-      return;
+      this.model.exec();
     }
   });
 

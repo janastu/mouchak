@@ -80,9 +80,18 @@
       data: {},
       callback: ""
     }, BaseType.prototype.defaults),
+
     initialize: function() {
       BaseType.prototype.initialize.call(this, arguments);
-
+      if(this.get('src').match(/\.js/)) {
+        this.set({'plugin_type': 'js'});
+      }
+      else if(this.get('src').match(/\.css/)) {
+        this.set({'plugin_type': 'css'});
+      }
+    },
+    exec: function() {
+      console.log('exec called');
       if(this.get('src').match(/\.js/)) {
         var script = document.createElement('script');
         var callback = this.get('callback');
@@ -102,6 +111,30 @@
         link.type = 'text/css';
         document.body.appendChild(link);
       }
+    },
+    // get the source code of the plugin from the src path
+    getCode: function(cb) {
+      var self = this;
+      $.ajax({
+        type: 'GET',
+        url: self.get('src'),
+        cache: false,
+        success: function(data) {
+          cb(data);
+        }
+      });
+    },
+    // save the source code of the plugin to the src path
+    saveCode: function(data, cb) {
+      var self = this;
+      $.ajax({
+        type: 'POST',
+        url: this.get('src'),
+        data: {code: data},
+        success: function(data) {
+          cb(data);
+        }
+      });
     }
   });
 
