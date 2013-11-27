@@ -367,19 +367,12 @@
   </script>
 
   <!-- notification templates -->
-  <script type="text/template" id="success-notif">
-    <div class="alert alert-success">
+  <script type="text/template" id="notif-template">
+    <div class="alert alert-<%= type %>">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <h4> <%= title %> </h4>
       <%= msg %>
     </div>
   </script>
 
-  <script type="text/template" id="fail-notif">
-    <div class="alert alert-danger">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <h4> <%= title %> </h4>
-      <%= msg %>
-    </div>
-  </script>
 {% endblock %}

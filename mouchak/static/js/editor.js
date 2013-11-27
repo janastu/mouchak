@@ -60,8 +60,6 @@
         return false;
       }
       var id = $(event.target).parent('.remove').attr('for');
-      var success_template = _.template($('#success-notif').html());
-      var fail_template = _.template($('#fail-notif').html());
       //console.log('remove', id);
       M.pages.get(id).destroy({
         success: function(model, response) {
@@ -72,18 +70,13 @@
           if(M.editor.pageview) {
             M.editor.pageview.remove();
           }
-          $('#notifications').html(success_template({
-            title: 'Deleted',
-            msg: ''
-          }));
+          M.editor.notifs.show('success', 'Deleted', '');
         },
         error: function(model, xhr) {
           M.editor.hideOverlay();
           console.log('failed', model, xhr);
-          $('#notifications').html(fail_template({
-            title: 'Error',
-            msg: 'Failed to delete. Please try again.'
-          }));
+          var msg = 'Failed to delete. Please try again.';
+          M.editor.notifs.show('fail', 'Error!', msg);
         }
       });
       M.editor.showOverlay();
@@ -239,9 +232,6 @@
       return false;
     },
     updatePage: function() {
-      var success_template = _.template($('#success-notif').html());
-      var fail_template = _.template($('#fail-notif').html());
-
       var name = $('#name').val();
       var title = $('#title').val();
       var children = $('#children').val();
@@ -271,19 +261,14 @@
           //model.id = response.page.id;
           //console.log(model);
           M.pagelistview.render();
-          $('#notifications').html(success_template({
-            title: 'Saved',
-            msg: ''
-          }));
+          M.editor.notifs.show('success', 'Saved', '');
         },
         error: function(model, xhr) {
           M.editor.hideOverlay();
           model.set(response.page);
           console.log('failed', model, xhr);
-          $('#notifications').html(fail_template({
-            title: 'Error!',
-            msg: 'Something went wrong, and the page could not be updated'
-          }));
+          var msg = 'Something went wrong, and the page could not be updated';
+          M.editor.notifs.show('fail', 'Error!', msg);
         }
       });
       M.editor.showOverlay();
@@ -363,7 +348,7 @@
         }));
         if(this.model.get('src')) {
           var plugin_type = this.model.get('plugin_type');
-          plugin_type = (plugin_type === 'js') ? 'javascript': 'css';
+          plugin_type = (plugin_type === 'js') ? 'javascript' : 'css';
           this.model.getCode(function(data) {
             $('#plugin-edit').html(escapeHtml(data));
             M.editor.code.init('plugin-edit', plugin_type);
@@ -528,9 +513,6 @@
     },
     saveMenu: function() {
       //console.log('saving menu..');
-      var success_template = _.template($('#success-notif').html());
-      var fail_template = _.template($('#fail-notif').html());
-
       if($('#custom-menu').is(':checked')) {
         var html = $('#menu').val().trim() || '';
         this.model.set({'customMenu': true, 'html': html});
@@ -544,18 +526,13 @@
         success: function(model, response) {
           //console.log(model, response);
           M.editor.hideOverlay();
-          $('#notifications').html(success_template({
-            title: 'Saved',
-            msg: ''
-          }));
+          M.editor.notifs.show('success', 'Saved', '');
 
         },
         error: function(xhr, response) {
           M.editor.hideOverlay();
-          $('#notifications').html(fail_template({
-            title: 'Error!',
-            msg: 'Something went wrong, and the page could not be updated'
-          }));
+          var msg = 'Something went wrong, and the page could not be updated';
+          M.editor.notifs.show('fail', 'Error!', msg);
         }
       });
       //alert('end of save menu');
@@ -563,17 +540,51 @@
     }
   });
 
+  /* Notification view */
+  var NotificationView = Backbone.View.extend({
+    initialize: function(opts) {
+      try {
+        this.el = opts.el;
+      }
+      catch(e) {
+        throw new Error(this.usage());
+        return;
+      }
+      this.template = _.template($('#notif-template').html());
+      this.el = opts.el;
+      this.delayTime = opts.delay || 3000; // a default delay value
+    },
+    render: function(type, title, msg) {
+      $(this.el).html(this.template({
+        type: (type === 'fail') ? 'danger' : 'success',
+        title: title,
+        msg: msg
+      //autohide the notif after a delay
+      })).show(200).delay(this.delayTime).hide(500);
+    },
+    usage: function() {
+      return 'Missing or invalid parameters.\n Valid Params: '+
+             '\n@el: (required) a JQuery HTML element, inside which the notifaction'+
+             ' will be rendered'+
+             '\n@delay: (optional) a delay time, after which the notification'+
+             ' will be hidden';
+    }
+  });
 
+  /* The global editor object.
+   * All high-level editor operations are defined here.
+   */
   M.editor = {
     init: function() {
       M.pages = new Pages(M.site_content.content);
-      var pagelistview = new PageListView();
-      pagelistview.render();
-      /*M.pages.on('add', function(page) {
-        pagelistview.render();
-      });*/
-      M.pagelistview = pagelistview;
+      M.pagelistview = new PageListView();
+      M.pagelistview.render();
+      // initialize the notfications for the editor
+      this.notifs.notifview = new NotificationView({
+        el: $('#notifications'),
+      });
     },
+    // the wysiwig editor sub-object
     wysiwyg: {
       init: function($selector) {
         tinymce.init({
@@ -602,6 +613,7 @@
       cleanUp: function($selector) {
       }
     },
+    // the code editor
     code: {
       _editor: false,
       init: function(id, mode) {
@@ -620,6 +632,14 @@
         return data;
       },
       cleanUp: function(id) {
+      }
+    },
+    //editor notifications
+    notifs: {
+      // init the notif view when the DOM is ready, in editor.init
+      notifview: null,
+      show: function(type, title, msg) {
+        this.notifview.render(type, title, msg);
       }
     },
     showOverlay: function() {
