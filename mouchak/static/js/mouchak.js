@@ -5,6 +5,7 @@
 var types;
 M.types = types = {};
 
+/* The master view of the entire app */
 var AppView = Backbone.View.extend({
   el: 'body',
   events: {

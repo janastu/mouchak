@@ -3,11 +3,33 @@
 # Mouchak Server -
 # A Flask Application (http://flask.pocoo.org/)
 
+###############################################################################
+# TODO: While moving rendering, routing and controlling to server side, the API
+# has to change and improve. The API should be as follows:-
+# --
+# For Pages
+#
+# [GET] /mouchak/api/v1a/pages/ - Retrieve list of all the pages
+# [GET] /mouchak/api/v1a/pages/<id> - Retrieve specfic page
+# [POST] /mouchak/api/v1a/pages - Create a new page, with data in payload
+# [PUT] /mouchak/api/v1a/pages/<id> - Update a specific page, with data in
+# payload
+# [DELETE] /mouchak/api/v1a/pages/<id> - Delete a specific page
+# --
+#
+# For Sitemap (There is only one instance of sitemap in a given website, hence
+# the API is quite simple.
+#
+# [GET] /mouchak/api/v1a/sitemap - Retrieve the sitemap
+# [PUT] /mouchak/api/v1a/sitemap - Update the sitemap
+###############################################################################
+
 import flask
 import pymongo
 import bson
 import conf
 import os
+import json
 from werkzeug import secure_filename
 
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
@@ -73,6 +95,39 @@ def edit():
                                      title=conf.SITE_TITLE)
     else:
         return flask.redirect(flask.url_for('login'))
+
+
+@app.route('/pages', methods=['GET'])
+def listPages():
+    # if limit and offset are given as query string params,
+    # send pages with that limit starting from the offset
+    if flask.request.args.get('limit'):
+        content = []
+        limit = int(flask.request.args.get('limit'))
+        if flask.request.args.get('offset'):
+            offset = int(flask.request.args.get('offset'))
+        else:
+            offset = 0
+        for page in siteContent.find().sort('_id', 1)[offset:offset+limit]:
+            del(page['_id'])
+            content.append(page)
+        print len(content)
+        return flask.make_response(json.dumps(content), '200 OK',
+                                   {'Content-Type': 'application/json'})
+    else:
+        content = getContent()['content']
+        return flask.make_response(json.dumps(content), '200 OK',
+                               {'Content-Type': 'application/json'})
+
+@app.route('/pages/<_id>', methods=['GET'])
+def listPage(_id):
+    try:
+        page = siteContent.find_one({'_id': bson.ObjId(_id)})
+        del(page['_id'])
+        print page
+        return flask.jsonify(page)
+    except:
+        return flask.abort(404)
 
 
 @app.route('/page', methods=['POST'])
