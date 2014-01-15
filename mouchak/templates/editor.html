@@ -93,7 +93,7 @@
           </div>
           <div class="row">
             <label><strong> HTML for menu: </strong></label>
-            <textarea class="form-control" cols="25" rows="8" id="menu"><%= menu %></textarea>
+            <div class="ace-mouchak" id="menu"><%= M.escapeHtml(menu) %></div>
           </div>
         </div>
 
@@ -112,7 +112,8 @@
       <div id="pagelist"></div>
       <button class="btn btn-primary" id="addPage">Add Page</button>
       <hr>
-      <p> <a href="javascript:void(0);" id="menu-config"> Site Menu </a> </p>
+      <p> <a href="#" id="menu-config"> Site Menu </a> </p>
+      <p> <a href="#" id="footer-config"> Footer Config </a> </p>
       <p><a href="{{ url_for('index') }}"> Go to site </a></p>
     </div>
   </script>

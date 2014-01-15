@@ -10,6 +10,7 @@
       'click #addPage': 'addPage',
       'click .pagename .remove': 'removePage',
       'click #menu-config': 'showMenu',
+      'click #footer-config': 'showFooterConfig'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
@@ -82,7 +83,14 @@
       M.editor.showOverlay();
     },
     showMenu: function(event) {
+      event.preventDefault();
       this.menuconfigview.render();
+      return false;
+    },
+    showFooterConfig: function(event) {
+      event.preventDefault();
+      //this.footerconfigview.render();
+      return false;
     },
     // validate the page list with menu order list
     validate: function()  {
@@ -485,7 +493,7 @@
         this.$menuOrder.hide();
         $('#custom-menu').attr('checked', true);
         this.$menuOptions.show({complete: function() {
-          //M.editor.wysiwig('#menu');
+          M.editor.code.init('menu', 'html');
         }});
       }
     },
@@ -493,7 +501,7 @@
     if(bool === true) {
       this.$menuOrder.hide();
       this.$menuOptions.show({complete: function() {
-          //M.editor.wysiwig('#menu');
+          M.editor.code.init('menu', 'html');
         }});
       }
       else {
@@ -514,7 +522,8 @@
     saveMenu: function() {
       //console.log('saving menu..');
       if($('#custom-menu').is(':checked')) {
-        var html = $('#menu').val().trim() || '';
+        //var html = $('#menu').val().trim() || '';
+        var html = M.editor.code.save('menu');
         this.model.set({'customMenu': true, 'html': html});
       }
       else {
@@ -538,6 +547,10 @@
       //alert('end of save menu');
       M.editor.showOverlay();
     }
+  });
+
+  /* Footer Config View */
+  var FooterConfigView = Backbone.View.extend({
   });
 
   /* Notification view */

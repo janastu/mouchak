@@ -33,6 +33,8 @@ body {
 }
 #pagelist {
   padding: 10px;
+  height: 300px;
+  overflow-y: auto;
 }
 #content {
   padding: 10px;
@@ -79,7 +81,10 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 500px;
+  height: 300px;
+}
+#updateMenu {
+  margin-top: 10px;
 }
 #editor-overlay {
   position: absolute;
