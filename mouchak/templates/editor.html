@@ -22,6 +22,8 @@
     // initialize editor
     window.M = window.M || {};
     M.MenuURL = function() { return "{{ url_for('insertMenu') }}"; };
+    M.FooterURL = function() { return "{{ url_for('insertFooter') }}"; };
+    M.HeaderURL = function() { return "{{ url_for('insertHeader') }}"; };
     M.PageURL = function() { return "{{ url_for('insertPage') }}"; };
     M.PluginUploadURL = function() { return "{{ url_for('uploadPlugin') }}"; };
     M.site_content = {{ content|tojson|safe }};
@@ -100,7 +102,33 @@
       </div>
       <div class="clearfix"></div>
       <div class="row">
-        <button id="updateMenu" class="btn btn-primary pull-right"> Update </button>
+        <button id="updateMenu" class="btn btn-primary pull-right update-btn"> Update </button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </script>
+
+  <script type="text/template" id="header-config-template">
+    <div class="page">
+      <h4> Configure your header here </h4>
+      <div id="header-input" class="ace-mouchak">
+        <%= M.escapeHtml(header) %>
+      </div>
+      <div class="row">
+        <button id="updateHeader" class="btn btn-primary pull-right update-btn"> Update </button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </script>
+
+  <script type="text/template" id="footer-config-template">
+    <div class="page">
+      <h4> Configure your footer here </h4>
+      <div id="footer-input" class="ace-mouchak">
+        <%= M.escapeHtml(footer) %>
+      </div>
+      <div class="row">
+        <button id="updateFooter" class="btn btn-primary pull-right update-btn"> Update </button>
       </div>
       <div class="clearfix"></div>
     </div>
@@ -113,6 +141,7 @@
       <button class="btn btn-primary" id="addPage">Add Page</button>
       <hr>
       <p> <a href="#" id="menu-config"> Site Menu </a> </p>
+      <p> <a href="#" id="header-config"> Header Config </a> </p>
       <p> <a href="#" id="footer-config"> Footer Config </a> </p>
       <p><a href="{{ url_for('index') }}"> Go to site </a></p>
     </div>

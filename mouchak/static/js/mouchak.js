@@ -38,9 +38,9 @@ var NavigationView = Backbone.View.extend({
   },
   render: function() {
     // if custom menu is not defined, render a default menu
-    console.log(this.model.toJSON());
+    //console.log(this.model.toJSON());
     if(this.model.get('customMenu') === false) {
-      console.log('generating default menu..');
+      //console.log('generating default menu..');
       var startpage = M.site_content.menu.menuOrder[0];
       this.$el.append(this.template({
         brand: document.title,//brand name,
@@ -51,7 +51,7 @@ var NavigationView = Backbone.View.extend({
     }
     // else render the custom menu
     else {
-      console.log('rendering custom menu..');
+      //console.log('rendering custom menu..');
       this.$el.append(this.model.get('html'));
     }
     this.$links = $('.nav li');
@@ -86,13 +86,16 @@ var NavigationView = Backbone.View.extend({
     if(!event) {
       var fragment = location.hash.split('/')[1];
       //var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+      //console.log(fragment);
       var pos = _.indexOf(this.model.get('menuOrder'), fragment);
+      //console.log(pos);
       if(!fragment) {
         pos = 0;
       }
       $(this.$links[pos]).addClass('active');
     }
     else {
+      //console.log();
       $(event.currentTarget).parent().addClass('active');
     }
   }
@@ -122,7 +125,8 @@ var AppRouter = Backbone.Router.extend({
     else {
       $('#navigation').show();
     }
-    M.appView.navView.trigger('navclicked'); 
+    //console.log('navclicked');
+    M.appView.navView.trigger('navclicked');
   },
   render404: function() {
     $('.pageview').hide();
@@ -180,9 +184,11 @@ M.init = function() {
   Backbone.history.start();
 
   if(!window.location.hash) {
-    var startpage = M.site_content.menu.menuOrder[0];
+    var startpage = '#/' + M.site_content.menu.menuOrder[0];
+    //console.log(startpage);
     app_router.navigate(startpage, {trigger: true});
   }
+  M.app_router = app_router;
 
   //M.simHeir();
 };

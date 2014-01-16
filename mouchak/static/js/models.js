@@ -169,6 +169,30 @@
     },
   });
 
+  var Footer = Backbone.Model.extend({
+    defaults: {
+      html: ''
+    },
+    url: function() {
+      return M.FooterURL() + '/' + this.id;
+    },
+    initialize: function() {
+      this.id = this.get('id');
+    }
+  });
+
+  var Header = Backbone.Model.extend({
+    defaults: {
+      html: ''
+    },
+    url: function() {
+      return M.HeaderURL() + '/' + this.id;
+    },
+    initialize: function() {
+      this.id = this.get('id');
+    }
+  });
+
   //export types to the typemap
   M.types = M.types || {};
   M.types.model = {
@@ -177,6 +201,8 @@
     'image': Image,
     'video': Video,
     'menu': Menu,
+    'footer': Footer,
+    'header': Header,
     'rss': RSS,
     'table': Table,
     'plugin': Plugin,

@@ -7,10 +7,13 @@
 {% block body %}
   <div class="container" id="container">
     <div id="header">
+      <div id="header-banner">
+        {{ content['header']['html']|safe }}
+      </div>
       <div id="navigation"></div>
     </div>
     <div id="content-container"></div>
-    <div id="footer"> {{ footer|safe }} </div>
+    <div id="footer"> {{ content['footer']['html']|safe }} </div>
   </div>
 
   <script>

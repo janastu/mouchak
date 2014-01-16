@@ -10,7 +10,8 @@
       'click #addPage': 'addPage',
       'click .pagename .remove': 'removePage',
       'click #menu-config': 'showMenu',
-      'click #footer-config': 'showFooterConfig'
+      'click #footer-config': 'showFooterConfig',
+      'click #header-config': 'showHeaderConfig'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
@@ -25,6 +26,10 @@
       //console.log(menu);
       this.menuconfig = new M.types.model.menu(menu);
       this.menuconfigview = new MenuConfigView({model: this.menuconfig});
+      this.footerconfig = new M.types.model.footer(M.site_content.footer);
+      this.footerconfigview = new FooterConfigView({model: this.footerconfig});
+      this.headerconfig = new M.types.model.header(M.site_content.header);
+      this.headerconfigview = new HeaderConfigView({model: this.headerconfig});
     },
     render: function() {
       // append the page list
@@ -89,7 +94,12 @@
     },
     showFooterConfig: function(event) {
       event.preventDefault();
-      //this.footerconfigview.render();
+      this.footerconfigview.render();
+      return false;
+    },
+    showHeaderConfig: function(event) {
+      event.preventDefault();
+      this.headerconfigview.render();
       return false;
     },
     // validate the page list with menu order list
@@ -551,6 +561,84 @@
 
   /* Footer Config View */
   var FooterConfigView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'prettybox-lg',
+    id: 'page',
+    events: {
+      'click #updateFooter': 'saveFooter'
+    },
+    initialize: function() {
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      this.template = _.template($('#footer-config-template').html());
+    },
+    render: function() {
+      $('#page').remove();
+      $('#content-container').append(this.$el);
+      //console.log('rendering..', this.$el);
+      this.$el.html(this.template({
+        footer: this.model.get('html')
+      }));
+      M.editor.code.init('footer-input', 'html');
+    },
+    saveFooter: function() {
+      var html = M.editor.code.save('footer-input');
+      this.model.set({html: html});
+      this.model.save({}, {
+        success: function(model, response) {
+          //console.log(model, response);
+          M.editor.hideOverlay();
+          M.editor.notifs.show('success', 'Saved', '');
+
+        },
+        error: function(xhr, response) {
+          M.editor.hideOverlay();
+          var msg = 'Something went wrong, and the page could not be updated';
+          M.editor.notifs.show('fail', 'Error!', msg);
+        }
+      });
+      M.editor.showOverlay();
+    }
+  });
+
+  /* Header Config View */
+  var HeaderConfigView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'prettybox-lg',
+    id: 'page',
+    events: {
+      'click #updateHeader': 'saveHeader'
+    },
+    initialize: function() {
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      this.template = _.template($('#header-config-template').html());
+    },
+    render: function() {
+      $('#page').remove();
+      $('#content-container').append(this.$el);
+      //console.log('rendering..', this.$el);
+      this.$el.html(this.template({
+        header: this.model.get('html')
+      }));
+      M.editor.code.init('header-input', 'html');
+    },
+    saveHeader: function() {
+      var html = M.editor.code.save('header-input');
+      this.model.set({html: html});
+      this.model.save({}, {
+        success: function(model, response) {
+          //console.log(model, response);
+          M.editor.hideOverlay();
+          M.editor.notifs.show('success', 'Saved', '');
+
+        },
+        error: function(xhr, response) {
+          M.editor.hideOverlay();
+          var msg = 'Something went wrong, and the page could not be updated';
+          M.editor.notifs.show('fail', 'Error!', msg);
+        }
+      });
+      M.editor.showOverlay();
+    }
   });
 
   /* Notification view */

@@ -10,7 +10,7 @@ requires = [
     'pymongo'
     ]
 
-setup(name='mouchak',
+setup(name='Mouchak',
       version='0.1',
       description='Web framework',
       license='BSD',
@@ -23,11 +23,11 @@ setup(name='mouchak',
         "Programming Language :: JavaScript",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: JavaScript",
         "Topic :: Internet",
         "Topic :: Internet :: WWW/HTTP :: Site Management",
         ],
       author='Anon Ray, Arvind',
+      author_email='rayanon@riseup.net',
       url='https://git.pantoto.org/mouchak/mouchak.git',
       keywords='',
       packages=find_packages(),

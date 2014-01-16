@@ -50,6 +50,14 @@ siteMenu = db['menu']
 if siteMenu.find_one() == None:
     siteMenu.insert({'customMenu': False, 'menuOrder': [], 'html': ''})
 
+siteFooter = db['footer']
+if siteFooter.find_one() == None:
+    siteFooter.insert({'html': ''})
+
+siteHeader = db['header']
+if siteHeader.find_one() == None:
+    siteHeader.insert({'html': ''})
+
 
 # handy reference to otherwise long name
 bson.ObjId = bson.objectid.ObjectId
@@ -68,7 +76,18 @@ def getContent():
     del(menu['_id'])
     menu['id'] = str(objId)
 
-    return {'content': content, 'menu': menu}
+    footer = siteFooter.find_one()
+    objId = bson.ObjId(footer['_id'])
+    del(footer['_id'])
+    footer['id'] = str(objId)
+
+    header = siteHeader.find_one()
+    objId = bson.ObjId(header['_id'])
+    del(header['_id'])
+    header['id'] = str(objId)
+
+    return {'content': content, 'menu': menu, 'footer': footer, 'header':
+            header}
 
 
 def allowed_file(filename):
@@ -84,13 +103,14 @@ def pageNotFound(e):
 @app.route('/', methods=['GET'])
 def index():
     return flask.render_template('index.html', content=getContent(),
-                                 title=conf.SITE_TITLE, footer=conf.SITE_FOOTER)
+                                 title=conf.SITE_TITLE)
 
 
 @app.route('/edit', methods=['GET'])
 def edit():
     if "logged_in" in flask.session:
         flask.session['key'] = conf.SECRET_KEY
+        #print getContent()
         return flask.render_template('editor.html', content=getContent(),
                                      title=conf.SITE_TITLE)
     else:
@@ -111,7 +131,7 @@ def listPages():
         for page in siteContent.find().sort('_id', 1)[offset:offset+limit]:
             del(page['_id'])
             content.append(page)
-        print len(content)
+        #print len(content)
         return flask.make_response(json.dumps(content), '200 OK',
                                    {'Content-Type': 'application/json'})
     else:
@@ -124,7 +144,7 @@ def listPage(_id):
     try:
         page = siteContent.find_one({'_id': bson.ObjId(_id)})
         del(page['_id'])
-        print page
+        #print page
         return flask.jsonify(page)
     except:
         return flask.abort(404)
@@ -133,12 +153,12 @@ def listPage(_id):
 @app.route('/page', methods=['POST'])
 def insertPage():
     newpage = flask.request.json
-    print newpage
+    #print newpage
     res = siteContent.insert(newpage)
     _id = bson.ObjId(res)
     newpage['id'] = str(_id)
     del(newpage['_id'])
-    print newpage
+    #print newpage
     # FIXME: handle errors
     #return flask.jsonify(status='ok', page=newpage)
     return flask.jsonify(newpage)
@@ -168,6 +188,35 @@ def updatePage(_id):
             return flask.jsonify(status='ok')
         else:
             return flask.jsonify(error=res['err'], status='error')
+
+
+@app.route('/footer', methods=['POST'])
+def insertFooter():
+    return '200 OK'
+
+@app.route('/footer/<_id>', methods=['PUT'])
+def updateFooter(_id):
+    if flask.request.method == 'PUT':
+        changedFooter = flask.request.json
+        print "changed footer:"
+        print changedFooter
+        res = siteFooter.update({'_id': bson.ObjId(_id)}, changedFooter)
+        print res
+        return flask.jsonify(changedFooter)
+
+@app.route('/header', methods=['POST'])
+def insertHeader():
+    return '200 OK'
+
+@app.route('/header/<_id>', methods=['PUT'])
+def updateHeader(_id):
+    if flask.request.method == 'PUT':
+        changedHeader = flask.request.json
+        print "changed header:"
+        print changedHeader
+        res = siteHeader.update({'_id': bson.ObjId(_id)}, changedHeader)
+        print res
+        return flask.jsonify(changedHeader)
 
 
 @app.route('/menu', methods=['POST'])
