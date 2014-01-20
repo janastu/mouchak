@@ -54,7 +54,7 @@ var NavigationView = Backbone.View.extend({
       //console.log('rendering custom menu..');
       this.$el.append(this.model.get('html'));
     }
-    this.$links = $('.nav li');
+    this.$links = $('.nav > li');
     if(!this.$links) {
       throw new Error('Ill-formed menu! Please check you have <ul> element' +
           'inside your menu with class nav and <li> elements inside it');
@@ -81,22 +81,33 @@ var NavigationView = Backbone.View.extend({
       }));*/
     }, this);
   },
+  //FIXIT: sometimes clicking on nav link, this function does not handle the
+  //event directly. it is passed to showPage function of router, which calls
+  //this function. so this function is without an event object is some cases.
+  //Fix it always receive the click event.
   navClicked: function(event) {
     this.$links.removeClass('active');
-    if(!event) {
-      var fragment = location.hash.split('/')[1];
-      //var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
-      //console.log(fragment);
-      var pos = _.indexOf(this.model.get('menuOrder'), fragment);
-      //console.log(pos);
-      if(!fragment) {
-        pos = 0;
+    if(this.model.get('customMenu') === false) {
+      if(!event) {
+        var fragment = location.hash.split('/')[1];
+        //var pos = _.indexOf(M.pages.models, M.pages.where({'name': fragment})[0]);
+        var pos = _.indexOf(this.model.get('menuOrder'), fragment);
+        if(!fragment) {
+          pos = 0;
+        }
+        $(this.$links[pos]).addClass('active');
       }
-      $(this.$links[pos]).addClass('active');
+      else {
+        $(event.currentTarget).parent().addClass('active');
+      }
     }
-    else {
-      //console.log();
-      $(event.currentTarget).parent().addClass('active');
+    else if(this.model.get('customMenu') === true) {
+      // get the URL fragment
+      var fragment = location.hash.split('/')[1];
+      // find out where it is in the nav menu
+      var link = $('.nav').find('a[href="#/'+ fragment +'"]')[0];
+      // find its <li> parent all the way up in the main ul.nav
+      $(link).closest('ul.nav > li').addClass('active');
     }
   }
 });

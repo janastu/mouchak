@@ -49,22 +49,7 @@
   <script type="text/template" id="menu-config-template">
     <div class="page">
       <div class="menu-config">
-        <h4> Menu Config </h4>
-
-        <div class="row">
-          <div class="form-group col-lg-12" id="menu-order-wrap">
-            <div class="input-group">
-              <span class="input-group-addon"> <strong> Menu Order</strong></span>
-              <input class="form-control" id="menu-order" type="text"
-              placeholder="list,page,slugs,for,menu,order" value="<%= menu_order %>">
-            </div>
-            <span class="help-block">
-              <small>csv list of page slugs to come up in the navigation menu
-                in that order
-              </small>
-            </span>
-          </div>
-        </div>
+        <h4> Configure Navigation Menu </h4>
 
         <div class="row">
           <div class="form-group col-lg-6">
@@ -78,6 +63,21 @@
             <span class="help-block">
               <small>
                 activate to write your own custom menu
+              </small>
+            </span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-lg-12" id="menu-order-wrap">
+            <div class="input-group">
+              <span class="input-group-addon"> <strong> Menu Order</strong></span>
+              <input class="form-control" id="menu-order" type="text"
+              placeholder="list,page,slugs,for,menu,order" value="<%= menu_order %>">
+            </div>
+            <span class="help-block">
+              <small>csv list of page slugs to come up in the navigation menu
+                in that order
               </small>
             </span>
           </div>
@@ -110,7 +110,7 @@
 
   <script type="text/template" id="header-config-template">
     <div class="page">
-      <h4> Configure your header here </h4>
+      <div><h4> Write HTML for your header here </h4></div>
       <div id="header-input" class="ace-mouchak">
         <%= M.escapeHtml(header) %>
       </div>
@@ -123,7 +123,7 @@
 
   <script type="text/template" id="footer-config-template">
     <div class="page">
-      <h4> Configure your footer here </h4>
+      <div><h4> Write HTML for your footer here </h4></div>
       <div id="footer-input" class="ace-mouchak">
         <%= M.escapeHtml(footer) %>
       </div>
@@ -140,9 +140,9 @@
       <div id="pagelist"></div>
       <button class="btn btn-primary" id="addPage">Add Page</button>
       <hr>
-      <p> <a href="#" id="menu-config"> Site Menu </a> </p>
-      <p> <a href="#" id="header-config"> Header Config </a> </p>
-      <p> <a href="#" id="footer-config"> Footer Config </a> </p>
+      <p> <a href="#" id="header-config"> Header </a> </p>
+      <p> <a href="#" id="footer-config"> Footer </a> </p>
+      <p> <a href="#" id="menu-config"> Navigation Menu </a> </p>
       <p><a href="{{ url_for('index') }}"> Go to site </a></p>
     </div>
   </script>
