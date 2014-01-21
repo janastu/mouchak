@@ -34,7 +34,10 @@ from werkzeug import secure_filename
 
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
                                     + '/static/user_plugins')
-PLUGIN_ALLOWED_EXTENSIONS = set(['js', 'css'])
+
+ALLOWED_EXTENSIONS = set(['js', 'css', 'jpg', 'JPG', 'png', 'gif', 'PNG',
+                          'svg', 'pdf'])
+#ALLOWED_EXTENSIONS = set(['js', 'css'])
 
 FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
                                   '/static/uploads')
@@ -92,7 +95,7 @@ def getContent():
 
 def allowed_file(filename):
     return '.' in filename and \
-            filename.rsplit('.', 1)[1] in PLUGIN_ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.errorhandler(404)
@@ -299,8 +302,42 @@ def uploadPlugin():
             #return flask.redirect(flask.url_for('uploaded_file',
             #            filename=filename))
             return flask.jsonify(uploaded = True,
-                                 path=flask.url_for('static', filename =
+                                 path=flask.url_for('static', filename =\
                                                     'user_plugins/'+ filename))
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if flask.request.method == 'POST':
+        print flask.request.files
+        file = flask.request.files['upload-file']
+        if file and allowed_file(file.filename):
+            print 'file ok'
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename))
+
+            return flask.jsonify(uploaded = True, path =\
+                                 flask.url_for('static', filename =\
+                                               'uploads/' + filename))
+
+        else:
+            resp = flask.make_response()
+            print 'file not ok'
+            resp.status_code = 400
+            return resp
+
+    if flask.request.method == 'GET':
+        uploaded_files = os.listdir(app.config['FILE_UPLOAD_FOLDER'])
+        print uploaded_files
+        return flask.jsonify({'uploaded_files': uploaded_files})
+
+@app.route('/upload/<filename>', methods=['DELETE'])
+def removeFile(filename):
+    filepath = os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename)
+    print filepath
+    res = os.remove(filepath)
+    print res
+    return '200 OK'
+
 
 @app.route('/robots.txt')
 @app.route('/crossdomain.xml')
@@ -310,6 +347,7 @@ def static_from_root():
 
 app.config.from_object(conf)
 app.config['PLUGIN_UPLOAD_FOLDER'] = PLUGIN_UPLOAD_FOLDER
+app.config['FILE_UPLOAD_FOLDER'] = FILE_UPLOAD_FOLDER
 
 import logging,os
 from logging import FileHandler

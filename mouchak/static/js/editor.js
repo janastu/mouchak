@@ -11,7 +11,8 @@
       'click .pagename .remove': 'removePage',
       'click #menu-config': 'showMenu',
       'click #footer-config': 'showFooterConfig',
-      'click #header-config': 'showHeaderConfig'
+      'click #header-config': 'showHeaderConfig',
+      'click #uploads': 'uploads'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
@@ -30,6 +31,7 @@
       this.footerconfigview = new FooterConfigView({model: this.footerconfig});
       this.headerconfig = new M.types.model.header(M.site_content.header);
       this.headerconfigview = new HeaderConfigView({model: this.headerconfig});
+      this.uploadview = new UploadView();
     },
     render: function() {
       // append the page list
@@ -100,6 +102,11 @@
     showHeaderConfig: function(event) {
       event.preventDefault();
       this.headerconfigview.render();
+      return false;
+    },
+    uploads: function(event) {
+      event.preventDefault();
+      this.uploadview.render();
       return false;
     },
     // validate the page list with menu order list
@@ -669,6 +676,97 @@
              ' will be rendered'+
              '\n@delay: (optional) a delay time, after which the notification'+
              ' will be hidden';
+    }
+  });
+
+  /* Upload View */
+  var UploadView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'prettybox-lg',
+    id: 'page',
+    events: {
+      'click #upload-new-file': 'uploadFile',
+      'click .uploaded-item .remove': 'removeFile'
+    },
+    initialize: function() {
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      this.template = _.template($('#uploads-template').html());
+    },
+    render: function() {
+      $('#page').remove();
+      $('#content-container').append(this.$el);
+      //console.log('rendering..', this.$el);
+      var uploaded_files, self = this;
+      M.editor.showOverlay();
+      $.ajax({
+        url: '/upload',
+        type: 'GET',
+        success: function(data) {
+          M.editor.hideOverlay();
+          self.$el.html(self.template({
+          }));
+          self.appendFileListTemplate(data.uploaded_files);
+          self.delegateEvents();
+        }
+      });
+    },
+    appendFileListTemplate: function(files) {
+      var template = _.template($('#uploaded-item-template').html());
+      if(files.length) {
+        _.each(files, function(file) {
+          $('#uploads-list').append(template({
+            filename: file
+          }));
+        });
+      }
+      else {
+        $('#uploads-list').html('<b> No files uploaded yet </b>');
+      }
+    },
+    uploadFile: function() {
+      //console.log('upload file');
+      var self = this;
+      M.editor.showOverlay();
+      var $form = $('#file-upload-form')[0];
+      var formdata = new FormData($form);
+      $.ajax({
+        type: 'POST',
+        url: '/upload',
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          M.editor.hideOverlay();
+          M.editor.notifs.show('success', 'Success', 'File uploaded');
+          self.render();
+        },
+        error: function(jqxhr, status, error) {
+          M.editor.hideOverlay();
+          if(error === 'BAD REQUEST') {
+            var msg = 'File format not allowed. Please contact your administrator to allow this kind of file.'
+          } else {
+            var msg = 'Something went wrong. Please try again!';
+          }
+          M.editor.notifs.show('fail', 'Error!', msg);
+        }
+      });
+    },
+    removeFile: function(event) {
+      M.editor.showOverlay();
+      //console.log('remove file');
+      var self = this;
+      var filename = $(event.currentTarget).attr('for');
+      $.ajax({
+        type: 'DELETE',
+        url: '/upload/' + filename,
+        success: function(data) {
+          M.editor.hideOverlay();
+          self.render();
+        },
+        error: function(jqxhr, status, error) {
+          console.log(arguments);
+        }
+      });
     }
   });
 

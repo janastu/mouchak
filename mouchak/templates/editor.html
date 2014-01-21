@@ -26,6 +26,7 @@
     M.HeaderURL = function() { return "{{ url_for('insertHeader') }}"; };
     M.PageURL = function() { return "{{ url_for('insertPage') }}"; };
     M.PluginUploadURL = function() { return "{{ url_for('uploadPlugin') }}"; };
+    M.UploadsURL = function() { return "{{ url_for('static', filename='uploads/') }}"; };
     M.site_content = {{ content|tojson|safe }};
     window.onload = function() {
       M.editor.init();
@@ -143,6 +144,7 @@
       <p> <a href="#" id="header-config"> Header </a> </p>
       <p> <a href="#" id="footer-config"> Footer </a> </p>
       <p> <a href="#" id="menu-config"> Navigation Menu </a> </p>
+      <p> <a href="#" id="uploads"> Uploads </a> </p>
       <p><a href="{{ url_for('index') }}"> Go to site </a></p>
     </div>
   </script>
@@ -194,7 +196,7 @@
             <small>title of the page</small>
           </span>
         </div>
-        <div class="form-group">
+        <!--div class="form-group">
           <div class="input-group">
             <span class="input-group-addon"> <strong>Children</strong> </span>
             <input class="form-control"  id="children" type="text" placeholder="csv of child pages"
@@ -203,7 +205,7 @@
           <span class="help-block">
             <small> leave this blank for now</small>
           </span>
-        </div>
+        </div-->
         <div class="form-group">
           <div class="input-group">
               <span class="input-group-addon">
@@ -334,7 +336,7 @@
         <div class="row">
           <div class="form-group col-lg-6">
             <form id="plugin-upload-form" action="" method="post" enctype="multipart/form-data">
-              <input type="file" name="plugin-file" id="select-plugin"> 
+              <input type="file" name="plugin-file" id="select-plugin">
               <input type="button" id="upload-plugin" class="btn btn-info" value="Upload Plugin">
             </form>
           </div>
@@ -402,6 +404,41 @@
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <h4> <%= title %> </h4>
       <%= msg %>
+    </div>
+  </script>
+
+  <script type="text/template" id="uploads-template">
+    <div class="page">
+      <div><h4> All your uploads </h4></div>
+      <div id="uploads-list" class="well">
+      </div>
+      <hr>
+      <div class="row">
+        <div> <h4> New Upload </h4> </div>
+        <form id="file-upload-form" action="" method="post" enctype="multipart/form-data">
+          <input type="file" name="upload-file" id="select-file">
+          <input type="button" id="upload-new-file" class="btn btn-sm btn-primary update-btn" value="Upload File">
+        </form>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </script>
+
+  <script type="text/template" id="uploaded-item-template">
+    <div class="uploaded-item row">
+      <span> &lt;icon here&gt; </span>
+      <!--span class="uploaded-item-name"> <%= filename %> </span-->
+      <span class="uploaded-item-path">
+        <a href="<%= M.UploadsURL() + filename %>">
+          <%= M.UploadsURL() + filename %>
+        </a>
+      </span>
+      <span class="pull-right">
+        <a href="javascript:void(0);" class="remove" for="<%= filename %>">
+          <span class="glyphicon glyphicon-trash"></span>
+        </a>
+      </span>
+      <span class="clearfix"></span>
     </div>
   </script>
 
