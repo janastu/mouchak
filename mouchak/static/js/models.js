@@ -115,12 +115,27 @@
     // get the source code of the plugin from the src path
     getCode: function(cb) {
       var self = this;
+      //NOTE: jQuery executes the code(css or js) as soon as it is returned by
+      //the server. Apparently, there is no way to tell jQuery not to execute
+      //the piece of code retrieved.
+      //Hecnce, right now its a HACK to workaround this problem.
+      // We use dataFilter which is called by jQuery to process the raw xhr
+      // response sent, and jQuery expects back a filtered/sanitized data so
+      // that it can call the success callback with that data. We use
+      // dataFilter to do our processing there, and return an empty string;
+      // this apparently prevents jQuery from executing the code.
+      // TODO: find a better way to workaround this.
+      // TODO: find out how cloud-based IDEs load up code files for editing.
       $.ajax({
         type: 'GET',
         url: self.get('src'),
+        dataFilter: function(data, type) {
+          cb(data);
+          return '';
+        },
         cache: false,
         success: function(data) {
-          cb(data);
+          //cb(data);
         }
       });
     },

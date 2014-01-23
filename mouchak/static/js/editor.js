@@ -204,7 +204,7 @@
         split('-')[1];
       var content = this.model.get('content')[idx];
       content = new M.types.model[content.type](content);
-      console.log('model inited ', content);
+      //console.log('model inited ', content);
       this.editing = true;
       this.edit_idx = idx;
       var contentview = new ContentView({model: content});
@@ -256,11 +256,13 @@
       this.render();
       return false;
     },
-    updatePage: function() {
+    updatePage: function(event) {
+      event.preventDefault();
       var name = $('#name').val();
       var title = $('#title').val();
-      var children = $('#children').val();
-      children = (children === '') ? [] : children.split(',');
+      var children = [];
+      //var children = $('#children').val();
+      //children = (children === '') ? [] : children.split(',');
       this.model.set({'name': name, 'title': title, 'children': children});
 
       if($('#showNav').is(':checked')) {
@@ -374,7 +376,9 @@
         if(this.model.get('src')) {
           var plugin_type = this.model.get('plugin_type');
           plugin_type = (plugin_type === 'js') ? 'javascript' : 'css';
+          //console.log('getting code..');
           this.model.getCode(function(data) {
+            //console.log('got code..');
             $('#plugin-edit').html(escapeHtml(data));
             M.editor.code.init('plugin-edit', plugin_type);
           });
@@ -417,7 +421,7 @@
       $('#contentview [m-data-target]').each(function(idx, elem) {
         prop = $(elem).attr('m-data-target');
         if(prop === 'tags') {
-          val = $(elem).val().split(',');
+          val = ($(elem).val()) ? $(elem).val().split(',') : [];
         }
         else {
           val = $(elem).val();
@@ -438,10 +442,11 @@
       else if(this.$select.val() === 'plugin') {
         var data = M.editor.code.save('plugin-edit');
         this.model.saveCode(data, function(resp) {
-          console.log('plugin saved..');
+          //console.log('plugin saved..');
         });
       }
       this.model.set(new_attrs);
+      //console.log('content updated');
       M.editor.pageview.updateContent(this.model.toJSON());
     },
     cleanUp: function() {
@@ -462,9 +467,9 @@
       var self = this;
       M.editor.showOverlay();
       var $form = $('#plugin-upload-form')[0];
-      console.log($form);
+      //console.log($form);
       var formdata = new FormData($form);
-      console.log(formdata);
+      //console.log(formdata);
       $.ajax({
         type: 'POST',
         url: M.PluginUploadURL(),
@@ -475,7 +480,7 @@
           self.model.set({'src': response.path})
           self.render();
           M.editor.hideOverlay();
-          console.log(self.model.toJSON());
+          //console.log(self.model.toJSON());
         }
       });
     }

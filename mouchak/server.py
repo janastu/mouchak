@@ -113,7 +113,6 @@ def index():
 def edit():
     if "logged_in" in flask.session:
         flask.session['key'] = conf.SECRET_KEY
-        #print getContent()
         return flask.render_template('editor.html', content=getContent(),
                                      title=conf.SITE_TITLE)
     else:
@@ -141,6 +140,7 @@ def listPages():
         content = getContent()['content']
         return flask.make_response(json.dumps(content), '200 OK',
                                {'Content-Type': 'application/json'})
+
 
 @app.route('/pages/<_id>', methods=['GET'])
 def listPage(_id):
