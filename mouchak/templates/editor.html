@@ -307,6 +307,37 @@
     </div>
   </script>
 
+<script type="text/template" id="feeds-view-template">
+  <div class="data">
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <div class="input-group">
+          <span class="input-group-addon"><strong>URL</strong></span>
+          <input class="form-control" type="text" placeholder="" value="<%= dataSrc %>"
+                 m-data-target="dataSrc">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <div class="input-group">
+          <span class="input-group-addon"><strong>Container ID</strong></span>
+          <input class="form-control" type="text" placeholder="" value="<%= containerElement %>"
+                 m-data-target="containerElement">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <div class="input-group">
+          <span class="input-group-addon"><strong>Template ID</strong></span>
+          <input class="form-control" type="text" placeholder="" value="<%= templateElement %>"
+                 m-data-target="templateElement">
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
 
   <script type="text/template" id="media-template">
     <div class="data">
@@ -378,7 +409,7 @@
               <button type="button" class="btn btn-default" value="code">Code</button>
             </div>
             <p class="help-block">
-              <span class="label label-info">Heads Up!</span> 
+              <span class="label label-info">Heads Up!</span>
               <span><small><b> Switch editing mode </b></small></span>
             </p>
           </div>

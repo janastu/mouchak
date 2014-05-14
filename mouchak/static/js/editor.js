@@ -173,9 +173,9 @@
 
       //hover effect
       $('.content-item-wrapper').hover(function(event) {
-        $(event.currentTarget).addClass('alert-info')
+        $(event.currentTarget).addClass('alert-info');
       }, function(event) {
-        $(event.currentTarget).removeClass('alert-info')
+        $(event.currentTarget).removeClass('alert-info');
       });
     },
     listContent: function() {
@@ -390,6 +390,15 @@
           tileLayer: this.model.get('tileLayer'),
           shp: this.model.get('shp')
         }));
+      }
+
+      else if(type === 'FeedView') {
+        var template = _.template($('#feeds-view-template').html());
+        $('#specific-content').html(template({
+          dataSrc: this.model.get('dataSrc'),
+        containerElement: this.model.get('containerElement'),
+        templateElement: this.model.get('templateElement')
+          }));
       }
     },
     typeChanged: function(event) {

@@ -30,6 +30,10 @@ import bson
 import conf
 import os
 import json
+import requests
+import logging
+from logging import FileHandler
+
 from werkzeug import secure_filename
 
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
@@ -43,22 +47,19 @@ FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
                                   '/static/uploads')
 
 app = flask.Flask(__name__)
-
-
-
 dbClient = pymongo.MongoClient()
 db = dbClient[conf.DB]
 siteContent = db['content']
 siteMenu = db['menu']
-if siteMenu.find_one() == None:
+if siteMenu.find_one() is None:
     siteMenu.insert({'customMenu': False, 'menuOrder': [], 'html': ''})
 
 siteFooter = db['footer']
-if siteFooter.find_one() == None:
+if siteFooter.find_one() is None:
     siteFooter.insert({'html': ''})
 
 siteHeader = db['header']
-if siteHeader.find_one() == None:
+if siteHeader.find_one() is None:
     siteHeader.insert({'html': ''})
 
 
@@ -94,8 +95,8 @@ def getContent():
 
 
 def allowed_file(filename):
-    return '.' in filename and \
-            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit(
+        '.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.errorhandler(404)
@@ -139,7 +140,7 @@ def listPages():
     else:
         content = getContent()['content']
         return flask.make_response(json.dumps(content), '200 OK',
-                               {'Content-Type': 'application/json'})
+                                   {'Content-Type': 'application/json'})
 
 
 @app.route('/pages/<_id>', methods=['GET'])
@@ -174,9 +175,9 @@ def updatePage(_id):
         print changedPage
         print '======='
         res = siteContent.update({'_id': bson.ObjId(_id)},
-                                changedPage)
+                                 changedPage)
         print res
-        if res['err'] == None:
+        if res['err'] is None:
             print changedPage
             #return flask.jsonify(status='ok', page=changedPage)
             return flask.jsonify(changedPage)
@@ -187,7 +188,7 @@ def updatePage(_id):
         print _id
         res = siteContent.remove({'_id': bson.ObjId(_id)})
         print res
-        if res['err'] == None:
+        if res['err'] is None:
             return flask.jsonify(status='ok')
         else:
             return flask.jsonify(error=res['err'], status='error')
@@ -196,6 +197,7 @@ def updatePage(_id):
 @app.route('/footer', methods=['POST'])
 def insertFooter():
     return '200 OK'
+
 
 @app.route('/footer/<_id>', methods=['PUT'])
 def updateFooter(_id):
@@ -207,9 +209,11 @@ def updateFooter(_id):
         print res
         return flask.jsonify(changedFooter)
 
+
 @app.route('/header', methods=['POST'])
 def insertHeader():
     return '200 OK'
+
 
 @app.route('/header/<_id>', methods=['PUT'])
 def updateHeader(_id):
@@ -268,6 +272,7 @@ def login():
             return flask.redirect(flask.url_for('edit'))
     return flask.render_template('login.html', error=error)
 
+
 @app.route('/logout')
 def logout():
     flask.session.pop('logged_in', None)
@@ -286,7 +291,8 @@ def savePlugin(filename):
             fh = open(os.path.join(PLUGIN_UPLOAD_FOLDER + '/' + filename), 'w')
             fh.write(data)
             fh.close()
-            return flask.jsonify(saved = True)
+            return flask.jsonify(saved=True)
+
 
 #TODO: find out if this is a good method for uploading plugins..
 @app.route('/upload/plugin', methods=['POST'])
@@ -301,9 +307,11 @@ def uploadPlugin():
 
             #return flask.redirect(flask.url_for('uploaded_file',
             #            filename=filename))
-            return flask.jsonify(uploaded = True,
-                                 path=flask.url_for('static', filename =\
-                                                    'user_plugins/'+ filename))
+            return flask.jsonify(uploaded=True,
+                                 path=flask.url_for('static',
+                                                    filename='user_plugins/' +
+                                                    filename))
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -315,8 +323,8 @@ def upload():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename))
 
-            return flask.jsonify(uploaded = True, path =\
-                                 flask.url_for('static', filename =\
+            return flask.jsonify(uploaded=True, path=
+                                 flask.url_for('static', filename=
                                                'uploads/' + filename))
 
         else:
@@ -330,6 +338,7 @@ def upload():
         print uploaded_files
         return flask.jsonify({'uploaded_files': uploaded_files})
 
+
 @app.route('/upload/<filename>', methods=['DELETE'])
 def removeFile(filename):
     filepath = os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename)
@@ -342,22 +351,27 @@ def removeFile(filename):
 @app.route('/robots.txt')
 @app.route('/crossdomain.xml')
 def static_from_root():
-    return flask.send_from_directory(app.static_folder, request.path[1:])
+    return flask.send_from_directory(app.static_folder, flask.request.path[1:])
 
+
+@app.route('/getDB')
+def getDB():
+    if flask.request.args['dbvar'] == '':
+        request = requests.api.get(flask.request.args['url'])
+        response = flask.make_response()
+        response.data = json.dumps(request.json())
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 app.config.from_object(conf)
 app.config['PLUGIN_UPLOAD_FOLDER'] = PLUGIN_UPLOAD_FOLDER
 app.config['FILE_UPLOAD_FOLDER'] = FILE_UPLOAD_FOLDER
 
-import logging,os
-from logging import FileHandler
 
-fil = FileHandler(os.path.join(os.path.dirname(__file__),'logme'),mode='a')
+fil = FileHandler(os.path.join(os.path.dirname(__file__), 'logme'), mode='a')
 fil.setLevel(logging.ERROR)
 app.logger.addHandler(fil)
 
 
-
 if __name__ == "__main__":
     app.run(debug=True, host=conf.HOST, port=conf.PORT)
-

@@ -132,6 +132,42 @@
     }
   });
 
+  var FeedsView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'list-view',
+    initialize: function() {
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      _.bind(this.render, this);
+      _.bind(this.load, this);
+      this.load();
+      },
+    load: function() {
+      this.list = new Backbone.Collection();
+      this.list.url = 'getDB';
+      this.list.fetch({data:{url: this.model.get("dataSrc"),
+                             dbvar: ''},
+                             success: this.render});
+    },
+      render: function() {
+       new FeedContainerView({
+        collection: this.list,
+        el: $(this.model.get("containerElement")),
+        template: _.template($(this.model.get("templateElement")).html())
+      });
+      }
+  });
+
+  var FeedContainerView = Backbone.View.extend({
+    initialize: function(options) {
+      _.bindAll.apply(_, [this].concat(_.functions(this)));
+      _.bind(this.render, this);
+      this.template = options.template || '';
+      _.each(this.collection.models, this.render, this);
+    },
+    render: function(model) {
+      $(this.el).append(this.template(model.toJSON()));
+    }
+  });
   var PageView = Backbone.View.extend({
     tagName: 'div',
     className: 'pageview',
@@ -181,6 +217,7 @@
     'table': TableView,
     'plugin': PluginView,
     'map': MapView,
+    'FeedView': FeedsView,
     'PageView': PageView
   };
 })(M);

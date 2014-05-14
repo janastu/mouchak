@@ -116,13 +116,14 @@ var AppRouter = Backbone.Router.extend({
   routes : {
     ':page' : 'showPage'
   },
-  showPage: function(page) {
+  showPage: function(page, params) {
     $('.pageview').hide();
     //news pages are rendered on the fly,
     //as feeds have to be fetched.
     /*if(page === 'news') {
       M.rss_view.render();
-    }*/
+     }*/
+    M.params = params;
     var id = nameIdMap[page];
     if(!id) {
       this.render404();
@@ -147,7 +148,7 @@ var AppRouter = Backbone.Router.extend({
   }
 });
 
-// hashmap to maintain one-to-one lookup among page ids and 
+// hashmap to maintain one-to-one lookup among page ids and
 // their names
 var nameIdMap = {};
 
@@ -223,7 +224,7 @@ M.appendAttrs = function(model, el) {
   _.each(model.get('attr'), function(val, key) {
     $(el).attr(key, val);
   });
-}
+};
 
 // create the list of tags and associate the objects with related tags
 M.createTagList = function(content, model) {

@@ -70,6 +70,18 @@
     }
   });
 
+  //Create a model, which will accept an url for data-src,
+  //the data-src is used to create models further and assign view to it.
+  var FeedType = BaseType.extend({
+    defaults: _.extend({
+      dataSrc: "",
+      containerElement: "",
+      templateElement: ""
+    }, BaseType.prototype.defaults),
+    initialize: function() {
+      BaseType.prototype.initialize.call(this, arguments);
+    }
+  });
   // Plugin model can be used to load dynamic components
   // to the website by loading external JS files.
   // Also the website can be styled by using external CSS files,
@@ -181,7 +193,7 @@
     },
     initialize: function() {
       this.id = this.get('id');
-    },
+    }
   });
 
   var Footer = Backbone.Model.extend({
@@ -223,10 +235,11 @@
     'plugin': Plugin,
     'map': Map,
     'Page': Page,
-    'Pages': Pages
+    'Pages': Pages,
+    'FeedView': FeedType
   };
 
   //content types to render in content menu
-  M.contentTypes = ['text', 'image', 'video', 'table', 'plugin', 'map'];
+  M.contentTypes = ['text', 'image', 'video', 'table', 'plugin', 'map', 'FeedView'];
 
 })(M);
