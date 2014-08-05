@@ -510,6 +510,7 @@
     },
     render: function() {
       $('#page').remove();
+      this.delegateEvents();
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
@@ -594,6 +595,7 @@
     },
     render: function() {
       $('#page').remove();
+      this.delegateEvents();
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
@@ -635,6 +637,7 @@
     },
     render: function() {
       $('#page').remove();
+      this.delegateEvents();
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
