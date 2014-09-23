@@ -32,8 +32,8 @@ import os
 import json
 import requests
 import logging
+import cache
 from logging import FileHandler
-
 from werkzeug import secure_filename
 
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +47,8 @@ FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
                                   '/static/uploads')
 
 app = flask.Flask(__name__)
+print cache.cache
+app.register_module(cache.cache, url_prefix='/cache')
 dbClient = pymongo.MongoClient()
 db = dbClient[conf.DB]
 siteContent = db['content']
