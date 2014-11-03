@@ -129,6 +129,7 @@
     id: 'page',
     events: {
       'click #updatePage': 'updatePage',
+      'click #copyPage': 'duplicatePage',
       'click .addContent' : 'addContent',
       'click .content-item': 'showContent',
       'click .content .remove': 'removeContent'
@@ -177,6 +178,8 @@
       }, function(event) {
         $(event.currentTarget).removeClass('alert-info');
       });
+      // init tooltip on this page view..
+      $('#page').tooltip();
     },
     listContent: function() {
       var content = '';
@@ -300,6 +303,28 @@
       });
       M.editor.showOverlay();
       return false;
+    },
+    duplicatePage: function(event) {
+      event.preventDefault();
+      console.log('duplicate page');
+      console.log(this.model.toJSON());
+      var newpage = new M.types.model.Page({
+        name: 'copy-of-' + this.model.get('name'),
+        children: this.model.get('children'),
+        content: this.model.get('content'),
+        showNav: this.model.get('showNav'),
+        title: this.model.get('title')
+      });
+      M.pages.add(newpage);
+      //var self = this;
+      M.editor.showOverlay();
+      newpage.save({}, {success: function(model, response) {
+        M.editor.hideOverlay();
+        M.pagelistview.render();
+        var newpageview = new PageView({model: newpage});
+        newpageview.render();
+        M.editor.pageview = newpageview;
+      }});
     }
   });
 
