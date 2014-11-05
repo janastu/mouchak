@@ -134,6 +134,7 @@ def listPages():
         else:
             offset = 0
         for page in siteContent.find().sort('_id', 1)[offset:offset+limit]:
+            page['id'] = str(page['_id'])
             del(page['_id'])
             content.append(page)
         #print len(content)
