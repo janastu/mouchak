@@ -7,7 +7,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 requires = [
     'Flask',
-    'pymongo'
+    'pymongo',
+    'requests',
+    'epeg-cffi'
     ]
 
 setup(name='Mouchak',
