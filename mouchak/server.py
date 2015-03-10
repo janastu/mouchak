@@ -47,8 +47,9 @@ FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
                                   '/static/uploads')
 
 app = flask.Flask(__name__)
-print cache.cache
+
 app.register_module(cache.cache, url_prefix='/cache')
+
 dbClient = pymongo.MongoClient()
 db = dbClient[conf.DB]
 siteContent = db['content']
@@ -179,8 +180,7 @@ def updatePage(_id):
         print '======='
         res = siteContent.update({'_id': bson.ObjId(_id)},
                                  changedPage)
-        print res
-        if res['err'] is None:
+        if 'ok' in res and res['ok'] == 1:
             print changedPage
             #return flask.jsonify(status='ok', page=changedPage)
             return flask.jsonify(changedPage)

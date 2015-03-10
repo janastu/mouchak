@@ -1,7 +1,7 @@
-from flask import Module
+from flask import Module, make_response
 from urlparse import urlparse
+from jpegtran import JPEGImage
 import os
-import epeg
 import requests
 import flask
 
@@ -43,16 +43,26 @@ def create_cache():
         """Create a directory with the hostname"""
         os.makedirs(dirn)
         image = create_thumbnail(flask.request.args['url'], fp, width, height)
-    return image
+
+    response = make_response()
+    response.data = image
+    return response
 
 
 def create_thumbnail(url, fp, width, height):
-    image = requests.get(url)
-    with open(fp, 'w') as f:
-        f.write(image.content)
-    thumbnail = epeg.scale_image(fp.encode('unicode-escape'),
-                                 width, height, 70)
-    os.remove(fp)  # Remove the file and write the thumbnail data
-    with open(fp, 'w') as f:
-        f.write(thumbnail)
+    blob = requests.get(url).content
+    image = JPEGImage(blob=blob)
+    """Check if downscaling image is possible with requested width and
+    height.
+
+    """
+    if image.width < width:
+        width = width/2
+
+    if image.height < height:
+        height = height/2
+
+    image.downscale(width, height, 90).save(fp)
+    with open(fp, 'r') as f:
+        thumbnail = f.read()
     return thumbnail
