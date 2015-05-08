@@ -511,7 +511,7 @@
         processData: false,
         contentType: false,
         success: function(response) {
-          self.model.set({'src': response.path})
+          self.model.set({'src': response.path});
           self.render();
           M.editor.hideOverlay();
           //console.log(self.model.toJSON());
