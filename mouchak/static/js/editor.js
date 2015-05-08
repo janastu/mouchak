@@ -169,6 +169,8 @@
         title: this.model.get('title'),
         children: this.model.get('children'),
         content: this.listContent(),
+        categories: this.model.get('categories'),
+        tags: this.model.get('tags'),
         checked: this.model.get('showNav') ? 'checked="checked"' : ''
       }));
 
@@ -263,10 +265,14 @@
       event.preventDefault();
       var name = $('#name').val();
       var title = $('#title').val();
+      var categories = $("#categories").val().split(',');
+      var tags = $("#tags").val().split(',');
       var children = [];
       //var children = $('#children').val();
       //children = (children === '') ? [] : children.split(',');
-      this.model.set({'name': name, 'title': title, 'children': children});
+      this.model.set({'name': name, 'title': title,
+                      'children': children, 'categories':categories,
+                      'tags': tags});
 
       if($('#showNav').is(':checked')) {
         this.model.set({'showNav': true});
@@ -421,8 +427,8 @@
         var template = _.template($('#feeds-view-template').html());
         $('#specific-content').html(template({
           dataSrc: this.model.get('dataSrc'),
-        containerElement: this.model.get('containerElement'),
-        templateElement: this.model.get('templateElement')
+          containerElement: this.model.get('containerElement'),
+          templateElement: this.model.get('templateElement')
           }));
       }
     },

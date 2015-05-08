@@ -172,6 +172,9 @@
       title: "",
       children: [],
       content: [],
+      categories: [],
+      tags: [],
+      published: false,
       showNav: true
     },
     initialize: function() {
