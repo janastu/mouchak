@@ -38,7 +38,10 @@
       this.$pagelist.html('');
       _.each(M.pages.models, function(page) {
         this.$pagelist.append(this.listTemplate({
-          name: page.get('name'),
+          title: page.get('title'),
+          published: page.get('published'), 
+          categories: page.get('categories'),
+          tags: page.get('tags'),
           id: page.id
         }));
       }, this);
