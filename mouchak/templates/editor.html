@@ -164,20 +164,25 @@
   <script type="text/template" id="page-template">
     <div class="page">
       <div class="row">
-        <h4> <strong><%= name %></strong> : Page Details </h4>
+        <h4> <strong><%= title %></strong> : Page Details </h4>
+        <% if (published) { %>
+        <input id="publish-status" type="checkbox" class="pull-left" name="" checked='' />Publish
+        <% } else { %>
+        <input id="publish-status" type="checkbox" class="pull-left" name=""/>Publish
+        <% } %>
       </div>
       <hr/>
       <form class="form-horizontal">
         <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon"> <strong> Slug </strong></span>
-            <input class="form-control"  id="name" type="text"
-            placeholder="slug of the page" value="<%= name %>">
-          </div>
-          <span class="help-block">
-            <small>The URL part of the page, as it will appear in the URL</small>
-          </span>
-        </div>
+        <!--   <div class="input-group"> -->
+        <!--     <span class="input-group-addon"> <strong> Slug </strong></span> -->
+        <!--     <input class="form-control"  id="name" type="text" -->
+        <!--     placeholder="slug of the page" value="<%= name %>"> -->
+        <!--   </div> -->
+        <!--   <span class="help-block"> -->
+        <!--     <small>The URL part of the page, as it will appear in the URL</small> -->
+        <!--   </span> -->
+        <!-- </div> -->
         <div class="input-group">
           <span class="input-group-addon"> <strong>Title</strong> </span>
           <input class="form-control"  id="title" type="text" placeholder="title of the page"

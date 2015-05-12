@@ -13,7 +13,7 @@
 
   var Text = BaseType.extend({
     defaults: _.extend({
-      data: "",
+      data: ""
     }, BaseType.prototype.defaults),
     initialize: function() {
       BaseType.prototype.initialize.call(this, arguments);

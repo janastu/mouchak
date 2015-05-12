@@ -9,7 +9,8 @@ requires = [
     'Flask',
     'pymongo',
     'requests',
-    'jpegtran-cffi'
+    'jpegtran-cffi',
+    'cffi'
     ]
 
 setup(name='Mouchak',
