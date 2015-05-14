@@ -36,14 +36,14 @@ import cache
 from logging import FileHandler
 from werkzeug import secure_filename
 
-PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__))
-                                    + '/static/user_plugins')
+PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    '/static/user_plugins')
 
 ALLOWED_EXTENSIONS = set(['js', 'css', 'jpg', 'JPG', 'png', 'gif', 'PNG',
                           'svg', 'pdf'])
-#ALLOWED_EXTENSIONS = set(['js', 'css'])
+# ALLOWED_EXTENSIONS = set(['js', 'css'])
 
-FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)) +
+FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   '/static/uploads')
 
 app = flask.Flask(__name__)
@@ -138,7 +138,7 @@ def listPages():
             page['id'] = str(page['_id'])
             del(page['_id'])
             content.append(page)
-        #print len(content)
+        # print len(content)
         return flask.make_response(json.dumps(content), '200 OK',
                                    {'Content-Type': 'application/json'})
     else:
@@ -152,7 +152,7 @@ def listPage(_id):
     try:
         page = siteContent.find_one({'_id': bson.ObjId(_id)})
         del(page['_id'])
-        #print page
+        # print page
         return flask.jsonify(page)
     except:
         return flask.abort(404)
@@ -161,14 +161,14 @@ def listPage(_id):
 @app.route('/page', methods=['POST'])
 def insertPage():
     newpage = flask.request.json
-    #print newpage
+    # print newpage
     res = siteContent.insert(newpage)
     _id = bson.ObjId(res)
     newpage['id'] = str(_id)
     del(newpage['_id'])
-    #print newpage
-    # FIXME: handle errors
-    #return flask.jsonify(status='ok', page=newpage)
+    # print newpage
+    #  FIXME: handle errors
+    # return flask.jsonify(status='ok', page=newpage)
     return flask.jsonify(newpage)
 
 
@@ -182,7 +182,7 @@ def updatePage(_id):
                                  changedPage)
         if 'ok' in res and res['ok'] == 1:
             print changedPage
-            #return flask.jsonify(status='ok', page=changedPage)
+            # return flask.jsonify(status='ok', page=changedPage)
             return flask.jsonify(changedPage)
 
     elif flask.request.method == 'DELETE':
@@ -231,11 +231,11 @@ def updateHeader(_id):
 
 @app.route('/menu', methods=['POST'])
 def insertMenu():
-    #newmenu = flask.request.json
-    #print newmenu
-    #res = siteMenu.insert(newmenu)
-    #print res
-    #return flask.jsonify(status='success')#, content=getContent())
+    # newmenu = flask.request.json
+    # print newmenu
+    # res = siteMenu.insert(newmenu)
+    # print res
+    # return flask.jsonify(status='success')# , content=getContent())
     return '200 OK'
 
 
@@ -247,18 +247,18 @@ def updateMenu(_id):
         print changedMenu
         res = siteMenu.update({'_id': bson.ObjId(_id)}, changedMenu)
         print res
-        #return flask.jsonify(status='ok', menu=changedMenu)
+        # return flask.jsonify(status='ok', menu=changedMenu)
         return flask.jsonify(changedMenu)
 
-    #elif flask.request.method == 'DELETE':
-    #    delMenu = flask.request.url
-    #    print delMenu
-    #    print _id
-    #    res = siteMenu.remove({'_id': bson.ObjId(_id)})
-    #    return flask.jsonify(status='deleted')
+    # elif flask.request.method == 'DELETE':
+    #     delMenu = flask.request.url
+    #     print delMenu
+    #     print _id
+    #     res = siteMenu.remove({'_id': bson.ObjId(_id)})
+    #     return flask.jsonify(status='deleted')
 
 
-# Basic login for one single admin user whose credentials are in conf.py
+#  Basic login for one single admin user whose credentials are in conf.py
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -283,8 +283,8 @@ def logout():
     return flask.redirect(flask.url_for('login'))
 
 
-#TODO: refactor these code to classes
-#TODO: find out if this is a good method for saving plugins..
+# TODO: refactor these code to classes
+# TODO: find out if this is a good method for saving plugins..
 @app.route('/static/user_plugins/<filename>', methods=['POST'])
 def savePlugin(filename):
     if flask.request.method == 'POST':
@@ -297,7 +297,7 @@ def savePlugin(filename):
             return flask.jsonify(saved=True)
 
 
-#TODO: find out if this is a good method for uploading plugins..
+# TODO: find out if this is a good method for uploading plugins..
 @app.route('/upload/plugin', methods=['POST'])
 def uploadPlugin():
     if flask.request.method == 'POST':
@@ -308,8 +308,8 @@ def uploadPlugin():
             file.save(os.path.join(app.config['PLUGIN_UPLOAD_FOLDER'],
                                    filename))
 
-            #return flask.redirect(flask.url_for('uploaded_file',
-            #            filename=filename))
+            # return flask.redirect(flask.url_for('uploaded_file',
+            #             filename=filename))
             return flask.jsonify(uploaded=True,
                                  path=flask.url_for('static',
                                                     filename='user_plugins/' +
@@ -326,9 +326,10 @@ def upload():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename))
 
-            return flask.jsonify(uploaded=True, path=
-                                 flask.url_for('static', filename=
-                                               'uploads/' + filename))
+            return flask.jsonify(uploaded=True,
+                                 path=flask.url_for('static',
+                                                    filename='uploads/' +
+                                                    filename))
 
         else:
             resp = flask.make_response()

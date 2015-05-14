@@ -164,12 +164,14 @@
   <script type="text/template" id="page-template">
     <div class="page">
       <div class="row">
-        <h4> <strong><%= title %></strong> : Page Details </h4>
+        <h4 class="col-md-8"> <strong><%= title %></strong> : Page Details </h4>
+        <h4>
         <% if (published) { %>
-        <input id="publish-status" type="checkbox" class="pull-left" name="" checked='' />Publish
+        <input id="publish-status" type="checkbox"  name="" checked='' />Publish
         <% } else { %>
-        <input id="publish-status" type="checkbox" class="pull-left" name=""/>Publish
+        <input id="publish-status" type="checkbox"  name=""/>Publish
         <% } %>
+        </h4>
       </div>
       <hr/>
       <form class="form-horizontal">
