@@ -175,6 +175,8 @@
         categories: this.model.get('categories'),
         tags: this.model.get('tags'),
         published: this.model.get('published'),
+        seoimagesrc: this.model.get('seoimagesrc'),
+        seotext: this.model.get('seotext'),
         checked: this.model.get('showNav') ? 'checked="checked"' : ''
       }));
 
@@ -271,13 +273,15 @@
       var title = $('#title').val();
       var categories = $("#categories").val().split(',');
       var tags = $("#tags").val().split(',');
+      var seoimagesrc = $("#seoimageurl").val();
+      var seotext = $("#seotext").val();
       var published = $("#publish-status").is(':checked');
       var children = [];
       //var children = $('#children').val();
       //children = (children === '') ? [] : children.split(',');
       this.model.set({'name': name, 'title': title,
                       'children': children, 'categories':categories,
-                      'tags': tags, 'published': published});
+                      'tags': tags, 'seoimagesrc': seoimagesrc, 'seotext': seotext, 'published': published});
 
       if($('#showNav').is(':checked')) {
         this.model.set({'showNav': true});

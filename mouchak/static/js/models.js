@@ -175,6 +175,8 @@
       categories: [],
       tags: [],
       published: false,
+      seoimagesrc:"",
+      seotext:"",
       showNav: true
     },
     initialize: function() {
