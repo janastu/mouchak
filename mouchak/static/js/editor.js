@@ -20,6 +20,7 @@
       this.template = _.template($('#page-list-template').html());
       this.listTemplate = _.template($('#page-list-item-template').html());
       // append this.el to container #pages
+      this.$el.addClass('container');
       $('#content-container').append(this.$el);
       this.$el.append(this.template());
       this.$pagelist = $('#pagelist');
@@ -42,9 +43,11 @@
           published: page.get('published'), 
           categories: page.get('categories'),
           tags: page.get('tags'),
+          name: page.get('name'),
           id: page.id
         }));
       }, this);
+
     },
     showPage: function(event) {
       var id = $(event.target).attr('id');
@@ -132,6 +135,7 @@
     id: 'page',
     events: {
       'click #updatePage': 'updatePage',
+      'click #closePage' : 'closePage',
       'click #copyPage': 'duplicatePage',
       'click .addContent' : 'addContent',
       'click .content-item': 'showContent',
@@ -336,7 +340,13 @@
         newpageview.render();
         M.editor.pageview = newpageview;
       }});
+    },
+    closePage: function(event) {
+      event.preventDefault();
+      M.editor.pageview.remove();
     }
+
+
   });
 
   /* view to manage, render and update each content */

@@ -163,6 +163,7 @@
       <table class="table table-bordered table-condensed table-hover">
         <tbody>
           <tr class="active"> <th><h4> Page Title </h4></th>
+            <th><h4> Slug </h4> </th>
             <th> <h4> Published </h4> </th>
             <th> <h4> Categories </h4> </th>
             <th> <h4> Tags </h4> </th>
@@ -180,6 +181,7 @@
     <tr class="pagename">
       <td><a class="disp" id="<%= id %>" href="javascript:void(0);"><%= title
           %></a></td>
+      <td><%= name %></td> 
       <td><%= published %> </td>
       <td><%= categories %> </td>
       <td><%= tags %> </td>
@@ -194,6 +196,9 @@
 
   <script type="text/template" id="page-template">
     <div class="page">
+        <div id="closePage" class="pull-right">
+          <span class="glyphicon glyphicon-remove"></span>
+        </div>
       <div class="row">
         <h4> <strong><%= title %></strong> : Page Details </h4>
         <% if (published) { %>

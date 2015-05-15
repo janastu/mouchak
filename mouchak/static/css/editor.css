@@ -20,8 +20,7 @@ body {
   width: 600px;
 }
 #pages {
-  position: absolute;
-  left: 20px;
+  position: relative;
   top: 20px;
   padding: 10px;
   width: auto;
