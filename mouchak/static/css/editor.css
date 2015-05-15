@@ -6,6 +6,7 @@ body {
   border: 1px solid #999;
   border-radius: 6px;
   box-shadow: 1px 1px 9px #333;
+  width:630px
 }
 .prettybox-side {
   border: 1px solid #999;
@@ -26,9 +27,8 @@ body {
   width: auto;
 }
 #page {
-  position: absolute;
-  left: 513px;
-  top: 20px;
+  position: relative;
+  top: 25px;
 }
 #pagelist {
   padding: 10px;
