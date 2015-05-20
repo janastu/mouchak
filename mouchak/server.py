@@ -24,77 +24,57 @@
 # [PUT] /mouchak/api/v1a/sitemap - Update the sitemap
 ###############################################################################
 
-import flask
-import pymongo
 import bson
-import conf
 import os
 import json
 import requests
 import logging
 import cache
+from flask import (Flask, make_response, request, jsonify, session,
+                   render_template, redirect, url_for, send_from_directory,
+                   flash)
+# from flask.ext import pymongo
+from flask.ext.pymongo import PyMongo
 from logging import FileHandler
 from werkzeug import secure_filename
+from utilities import ObjectIdCleaner
 
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     '/static/user_plugins')
 
 ALLOWED_EXTENSIONS = set(['js', 'css', 'jpg', 'JPG', 'png', 'gif', 'PNG',
                           'svg', 'pdf'])
-# ALLOWED_EXTENSIONS = set(['js', 'css'])
 
 FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   '/static/uploads')
 
-app = flask.Flask(__name__)
-
+app = Flask(__name__)
+app.config.from_pyfile('conf.py')
+mongo = PyMongo(app)
 app.register_module(cache.cache, url_prefix='/cache')
 
-dbClient = pymongo.MongoClient()
-db = dbClient[conf.DB]
-siteContent = db['content']
-siteMenu = db['menu']
-if siteMenu.find_one() is None:
-    siteMenu.insert({'customMenu': False, 'menuOrder': [], 'html': ''})
 
-siteFooter = db['footer']
-if siteFooter.find_one() is None:
-    siteFooter.insert({'html': ''})
-
-siteHeader = db['header']
-if siteHeader.find_one() is None:
-    siteHeader.insert({'html': ''})
+bson.ObjId = bson.objectid.ObjectId  # handy reference to otherwise long name
 
 
-# handy reference to otherwise long name
-bson.ObjId = bson.objectid.ObjectId
+def getContent(key=None):
+    """Return a dictionary which contains the content from the particular
+    collection.
+    If key is None then return all collections.
+    """
+    content = [i for i in mongo.db.content.find()]
+    menu = mongo.db.menu.find_one()
+    footer = mongo.db.footer.find_one()
+    header = mongo.db.header.find_one()
 
-
-def getContent():
-    content = []
-    for i in siteContent.find():
-        objId = bson.ObjId(i['_id'])
-        del(i['_id'])
-        i['id'] = str(objId)
-        content.append(i)
-
-    menu = siteMenu.find_one()
-    objId = bson.ObjId(menu['_id'])
-    del(menu['_id'])
-    menu['id'] = str(objId)
-
-    footer = siteFooter.find_one()
-    objId = bson.ObjId(footer['_id'])
-    del(footer['_id'])
-    footer['id'] = str(objId)
-
-    header = siteHeader.find_one()
-    objId = bson.ObjId(header['_id'])
-    del(header['_id'])
-    header['id'] = str(objId)
-
-    return {'content': content, 'menu': menu, 'footer': footer, 'header':
-            header}
+    if key is not None:
+        # FIXME: code might raise exception, but it is left uncaught.  The code
+        # will raise exception when 'key' is not in the object being sent.
+        return {'content': content, 'menu': menu, 'footer': footer, 'header':
+                header}[key]
+    else:
+        return {'content': content, 'menu': menu, 'footer': footer, 'header':
+                header}
 
 
 def allowed_file(filename):
@@ -102,99 +82,97 @@ def allowed_file(filename):
         '.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+@app.before_first_request
+def setBeforeRequestHandlers():
+    mongo.db.add_son_manipulator(ObjectIdCleaner())
+    if mongo.db.menu.find_one() is None:
+        mongo.db.menu.insert({'customMenu': False,
+                              'menuOrder': [], 'html': ''})
+
+    if mongo.db.footer.find_one() is None:
+        mongo.db.footer.insert({'html': ''})
+
+    if mongo.db.header.find_one() is None:
+        mongo.db.header.insert({'html': ''})
+
+
 @app.errorhandler(404)
 def pageNotFound(e):
-    return flask.render_template('404.html'), 404
+    return render_template('404.html'), 404
 
 
 @app.route('/', methods=['GET'])
 def index():
-    return flask.render_template('index.html', content=getContent(),
-                                 title=conf.SITE_TITLE)
+    return render_template('index.html', content=getContent(),
+                           title=app.config.get('SITE_TITLE'))
 
 
 @app.route('/edit', methods=['GET'])
 def edit():
-    if "logged_in" in flask.session:
-        flask.session['key'] = conf.SECRET_KEY
-        return flask.render_template('editor.html', content=getContent(),
-                                     title=conf.SITE_TITLE)
+    if "logged_in" in session:
+        return render_template('editor.html', content=getContent(),
+                               title=app.config.get('SITE_TITLE'))
     else:
-        return flask.redirect(flask.url_for('login'))
+        return redirect(url_for('login'))
 
 
 @app.route('/pages', methods=['GET'])
 def listPages():
-    # if limit and offset are given as query string params,
-    # send pages with that limit starting from the offset
-    if flask.request.args.get('limit'):
+    # if limit and offset are given as query string params, send pages with
+    # that limit starting from the offset.
+    # FIXME: this code has CSRF vulnerability.
+    # http://pocoo.org/docs/0.10/security/#json-security
+    # use jsonify
+    if request.args.get('limit'):
         content = []
-        limit = int(flask.request.args.get('limit'))
-        if flask.request.args.get('offset'):
-            offset = int(flask.request.args.get('offset'))
+        limit = int(request.args.get('limit'))
+        if request.args.get('offset'):
+            offset = int(request.args.get('offset'))
         else:
             offset = 0
-        for page in siteContent.find().sort('_id', 1)[offset:offset+limit]:
-            page['id'] = str(page['_id'])
-            del(page['_id'])
-            content.append(page)
-        # print len(content)
-        return flask.make_response(json.dumps(content), '200 OK',
-                                   {'Content-Type': 'application/json'})
+            content = [page for page in mongo.db.
+                       content.find().sort('id', 1)[offset:offset+limit]]
+        return make_response(json.dumps(content), '200 OK',
+                             {'Content-Type': 'application/json'})
     else:
-        content = getContent()['content']
-        return flask.make_response(json.dumps(content), '200 OK',
-                                   {'Content-Type': 'application/json'})
+        content = getContent('content')
+        return make_response(json.dumps(content), '200 OK',
+                             {'Content-Type': 'application/json'})
 
 
 @app.route('/pages/<_id>', methods=['GET'])
 def listPage(_id):
-    try:
-        page = siteContent.find_one({'_id': bson.ObjId(_id)})
-        del(page['_id'])
-        # print page
-        return flask.jsonify(page)
-    except:
-        return flask.abort(404)
+    page = mongo.db.content.find_one_or_404({'_id': bson.ObjId(_id)})
+    return jsonify(page)
 
 
 @app.route('/page', methods=['POST'])
 def insertPage():
-    newpage = flask.request.json
-    # print newpage
-    res = siteContent.insert(newpage)
-    _id = bson.ObjId(res)
-    newpage['id'] = str(_id)
+    newpage = request.json
+    mongo.db.content.insert(newpage)  # returns objectID of the
+    # inserted document.
+    newpage['id'] = str(newpage['_id'])
     del(newpage['_id'])
-    # print newpage
-    #  FIXME: handle errors
-    # return flask.jsonify(status='ok', page=newpage)
-    return flask.jsonify(newpage)
+    return jsonify(newpage)
 
 
 @app.route('/page/<_id>', methods=['PUT', 'DELETE'])
 def updatePage(_id):
-    if flask.request.method == 'PUT':
-        changedPage = flask.request.json
-        print changedPage
-        print '======='
-        res = siteContent.update({'_id': bson.ObjId(_id)},
-                                 changedPage)
+    if request.method == 'PUT':
+        changedPage = request.json
+        res = mongo.db.content.update({'_id': bson.ObjId(_id)},
+                                      changedPage)
         if 'ok' in res and res['ok'] == 1:
-            print changedPage
-            # return flask.jsonify(status='ok', page=changedPage)
-            return flask.jsonify(changedPage)
+            # return jsonify(status='ok', page=changedPage)
+            return jsonify(changedPage)
 
-    elif flask.request.method == 'DELETE':
-        delPage = flask.request.url
-        print delPage
-        print _id
-        res = siteContent.remove({'_id': bson.ObjId(_id)})
-        print res
-        if res['err'] is None:
-            return flask.jsonify(status='ok')
+    elif request.method == 'DELETE':
+        #        delPage = request.url
+        res = mongo.db.content.remove({'_id': bson.ObjId(_id)})
+        if 'err' not in res:
+            return jsonify(status='ok')
         else:
-            return flask.jsonify(error=res['err'], status='error')
+            return jsonify(error=res['err'], status='error')
 
 
 @app.route('/footer', methods=['POST'])
@@ -204,13 +182,13 @@ def insertFooter():
 
 @app.route('/footer/<_id>', methods=['PUT'])
 def updateFooter(_id):
-    if flask.request.method == 'PUT':
-        changedFooter = flask.request.json
+    if request.method == 'PUT':
+        changedFooter = request.json
         print "changed footer:"
         print changedFooter
-        res = siteFooter.update({'_id': bson.ObjId(_id)}, changedFooter)
+        res = mongo.db.footer.update({'_id': bson.ObjId(_id)}, changedFooter)
         print res
-        return flask.jsonify(changedFooter)
+        return jsonify(changedFooter)
 
 
 @app.route('/header', methods=['POST'])
@@ -220,131 +198,131 @@ def insertHeader():
 
 @app.route('/header/<_id>', methods=['PUT'])
 def updateHeader(_id):
-    if flask.request.method == 'PUT':
-        changedHeader = flask.request.json
+    if request.method == 'PUT':
+        changedHeader = request.json
         print "changed header:"
         print changedHeader
-        res = siteHeader.update({'_id': bson.ObjId(_id)}, changedHeader)
+        res = mongo.db.header.update({'_id': bson.ObjId(_id)}, changedHeader)
         print res
-        return flask.jsonify(changedHeader)
+        return jsonify(changedHeader)
 
 
 @app.route('/menu', methods=['POST'])
 def insertMenu():
-    # newmenu = flask.request.json
+    # newmenu = request.json
     # print newmenu
     # res = siteMenu.insert(newmenu)
     # print res
-    # return flask.jsonify(status='success')# , content=getContent())
+    # return jsonify(status='success')# , content=getContent())
     return '200 OK'
 
 
 @app.route('/menu/<_id>', methods=['PUT'])
 def updateMenu(_id):
-    if flask.request.method == 'PUT':
-        changedMenu = flask.request.json
+    if request.method == 'PUT':
+        changedMenu = request.json
         print "changed menu:"
         print changedMenu
-        res = siteMenu.update({'_id': bson.ObjId(_id)}, changedMenu)
+        res = mongo.db.menu.update({'_id': bson.ObjId(_id)}, changedMenu)
         print res
-        # return flask.jsonify(status='ok', menu=changedMenu)
-        return flask.jsonify(changedMenu)
+        # return jsonify(status='ok', menu=changedMenu)
+        return jsonify(changedMenu)
 
-    # elif flask.request.method == 'DELETE':
-    #     delMenu = flask.request.url
+    # elif request.method == 'DELETE':
+    #     delMenu = request.url
     #     print delMenu
     #     print _id
     #     res = siteMenu.remove({'_id': bson.ObjId(_id)})
-    #     return flask.jsonify(status='deleted')
+    #     return jsonify(status='deleted')
 
 
 #  Basic login for one single admin user whose credentials are in conf.py
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    if flask.request.method == 'POST':
-        print flask.request.form
-        if flask.request.form['username'] != conf.ADMIN_USERNAME:
+    if request.method == 'POST':
+        print request.form
+        if request.form['username'] != app.config.get('ADMIN_USERNAME'):
             error = 'Invalid username'
-        elif flask.request.form['password'] != conf.ADMIN_PASSWORD:
+        elif request.form['password'] != app.config.get('ADMIN_PASSWORD'):
             error = 'Invaid password'
         else:
-            flask.session['logged_in'] = True
-            flask.session['key'] = conf.SECRET_KEY
-            flask.flash('You were logged in')
-            return flask.redirect(flask.url_for('edit'))
-    return flask.render_template('login.html', error=error)
+            session['logged_in'] = True
+            flash('You were logged in')
+            return redirect(url_for('edit'))
+    return render_template('login.html', error=error)
 
 
 @app.route('/logout')
 def logout():
-    flask.session.pop('logged_in', None)
-    flask.flash('You were logged out')
-    return flask.redirect(flask.url_for('login'))
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('login'))
 
 
 # TODO: refactor these code to classes
 # TODO: find out if this is a good method for saving plugins..
 @app.route('/static/user_plugins/<filename>', methods=['POST'])
 def savePlugin(filename):
-    if flask.request.method == 'POST':
+    if request.method == 'POST':
         if filename and allowed_file(filename):
-            data = flask.request.form['code']
+            data = request.form['code']
             filename = secure_filename(filename)
-            fh = open(os.path.join(PLUGIN_UPLOAD_FOLDER + '/' + filename), 'w')
-            fh.write(data)
-            fh.close()
-            return flask.jsonify(saved=True)
+            with open(os.path.join(PLUGIN_UPLOAD_FOLDER, filename), 'w') as fh:
+                fh.write(data)
+            return jsonify(saved=True)
 
 
 # TODO: find out if this is a good method for uploading plugins..
 @app.route('/upload/plugin', methods=['POST'])
 def uploadPlugin():
-    if flask.request.method == 'POST':
-        print flask.request.files
-        file = flask.request.files['plugin-file']
+    if request.method == 'POST':
+        print request.files
+        file = request.files['plugin-file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['PLUGIN_UPLOAD_FOLDER'],
+            file.save(os.path.join(app.config.get('PLUGIN_UPLOAD_FOLDER'),
                                    filename))
 
-            # return flask.redirect(flask.url_for('uploaded_file',
+            # return redirect(url_for('uploaded_file',
             #             filename=filename))
-            return flask.jsonify(uploaded=True,
-                                 path=flask.url_for('static',
-                                                    filename='user_plugins/' +
-                                                    filename))
+            return jsonify(uploaded=True,
+                           path=url_for('static',
+                                        filename='user_plugins/' +
+                                        filename))
 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if flask.request.method == 'POST':
-        print flask.request.files
-        file = flask.request.files['upload-file']
+    if request.method == 'POST':
+        print request.files
+        file = request.files['upload-file']
         if file and allowed_file(file.filename):
             print 'file ok'
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config.get('FILE_UPLOAD_FOLDER'),
+                                   filename))
 
-            return flask.jsonify(uploaded=True,
-                                 path=flask.url_for('static',
-                                                    filename='uploads/' +
-                                                    filename))
+            return jsonify(uploaded=True,
+                           path=url_for('static',
+                                        filename='uploads/' +
+                                        filename))
 
         else:
-            resp = flask.make_response()
+            resp = make_response()
             print 'file not ok'
             resp.status_code = 400
             return resp
 
-    if flask.request.method == 'GET':
+    if request.method == 'GET':
         uploaded_files = os.listdir(app.config['FILE_UPLOAD_FOLDER'])
         print uploaded_files
-        return flask.jsonify({'uploaded_files': uploaded_files})
+        return jsonify({'uploaded_files': uploaded_files})
 
 
 @app.route('/upload/<filename>', methods=['DELETE'])
 def removeFile(filename):
+    # FIXME: code does not check if the file does not exist.
     filepath = os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename)
     print filepath
     res = os.remove(filepath)
@@ -355,19 +333,19 @@ def removeFile(filename):
 @app.route('/robots.txt')
 @app.route('/crossdomain.xml')
 def static_from_root():
-    return flask.send_from_directory(app.static_folder, flask.request.path[1:])
+    return send_from_directory(app.static_folder, request.path[1:])
 
 
 @app.route('/getDB')
 def getDB():
-    if flask.request.args['dbvar'] == '':
-        request = requests.api.get(flask.request.args['url'])
-        response = flask.make_response()
-        response.data = json.dumps(request.json())
+    if request.args['dbvar'] == '':
+        data = requests.api.get(request.args['url'])
+        response = make_response()
+        response.data = json.dumps(data.json())
         response.headers['Content-Type'] = 'application/json'
         return response
 
-app.config.from_object(conf)
+
 app.config['PLUGIN_UPLOAD_FOLDER'] = PLUGIN_UPLOAD_FOLDER
 app.config['FILE_UPLOAD_FOLDER'] = FILE_UPLOAD_FOLDER
 
@@ -378,4 +356,4 @@ app.logger.addHandler(fil)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=conf.HOST, port=conf.PORT)
+    app.run()
