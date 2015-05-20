@@ -33,24 +33,33 @@ import cache
 from flask import (Flask, make_response, request, jsonify, session,
                    render_template, redirect, url_for, send_from_directory,
                    flash)
-# from flask.ext import pymongo
 from flask.ext.pymongo import PyMongo
+from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
+                              DATA, DOCUMENTS, UploadConfiguration)
 from logging import FileHandler
 from werkzeug import secure_filename
 from utilities import ObjectIdCleaner
 
-PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    '/static/user_plugins')
+PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                    'static/user_plugins')
+FILE_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                  'static/uploads')
 
-ALLOWED_EXTENSIONS = set(['js', 'css', 'jpg', 'JPG', 'png', 'gif', 'PNG',
-                          'svg', 'pdf'])
+plugin_upload = UploadSet('plugins', ('js', 'css'),
+                          default_dest=lambda app: app.instance_path)
+plugin_upload._config = UploadConfiguration(PLUGIN_UPLOAD_FOLDER)
 
-FILE_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                  '/static/uploads')
+
+files_upload = UploadSet('files', IMAGES + DOCUMENTS + DATA + ('pdf',),
+                         default_dest=lambda app: app.instance_path)
+files_upload._config = UploadConfiguration(FILE_UPLOAD_FOLDER)
+
 
 app = Flask(__name__)
 app.config.from_pyfile('conf.py')
 mongo = PyMongo(app)
+configure_uploads(app, plugin_upload)
+configure_uploads(app, files_upload)
 app.register_module(cache.cache, url_prefix='/cache')
 
 
@@ -75,11 +84,6 @@ def getContent(key=None):
     else:
         return {'content': content, 'menu': menu, 'footer': footer, 'header':
                 header}
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit(
-        '.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.before_first_request
@@ -264,70 +268,69 @@ def logout():
 # TODO: find out if this is a good method for saving plugins..
 @app.route('/static/user_plugins/<filename>', methods=['POST'])
 def savePlugin(filename):
-    if request.method == 'POST':
-        if filename and allowed_file(filename):
-            data = request.form['code']
-            filename = secure_filename(filename)
-            with open(os.path.join(PLUGIN_UPLOAD_FOLDER, filename), 'w') as fh:
-                fh.write(data)
-            return jsonify(saved=True)
+    try:
+        plugin_upload.save(request.form.get('code'),
+                           name=secure_filename(filename))
+        return jsonify(saved=True)
+
+    except:
+        resp = make_response()
+        resp.status_code = 400
+        return resp
 
 
 # TODO: find out if this is a good method for uploading plugins..
 @app.route('/upload/plugin', methods=['POST'])
 def uploadPlugin():
-    if request.method == 'POST':
-        print request.files
-        file = request.files['plugin-file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config.get('PLUGIN_UPLOAD_FOLDER'),
-                                   filename))
-
-            # return redirect(url_for('uploaded_file',
-            #             filename=filename))
-            return jsonify(uploaded=True,
-                           path=url_for('static',
-                                        filename='user_plugins/' +
-                                        filename))
+    try:
+        filename = plugin_upload.save(request.files.get('plugin-file'),
+                                      name=secure_filename(request.files.get(
+                                          'plugin-file').filename))
+        return jsonify(uploaded=True,
+                       path=url_for('static',
+                                    filename='user_plugins/' +
+                                    filename))
+    except:
+        resp = make_response()
+        resp.status_code = 400
+        return resp
 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        print request.files
-        file = request.files['upload-file']
-        if file and allowed_file(file.filename):
-            print 'file ok'
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config.get('FILE_UPLOAD_FOLDER'),
-                                   filename))
-
+        try:
+            filename = files_upload.save(request.files.get('upload-file'),
+                                         name=secure_filename(
+                                             request.files.get(
+                                                 'upload-file').filename))
             return jsonify(uploaded=True,
                            path=url_for('static',
                                         filename='uploads/' +
                                         filename))
-
-        else:
+        except:
             resp = make_response()
-            print 'file not ok'
             resp.status_code = 400
             return resp
 
     if request.method == 'GET':
-        uploaded_files = os.listdir(app.config['FILE_UPLOAD_FOLDER'])
-        print uploaded_files
+        uploaded_files = os.listdir(app.config.get('FILE_UPLOAD_FOLDER'))
         return jsonify({'uploaded_files': uploaded_files})
 
 
 @app.route('/upload/<filename>', methods=['DELETE'])
 def removeFile(filename):
-    # FIXME: code does not check if the file does not exist.
-    filepath = os.path.join(app.config['FILE_UPLOAD_FOLDER'], filename)
-    print filepath
-    res = os.remove(filepath)
-    print res
-    return '200 OK'
+    if os.path.isfile(os.path.join(app.config.get('FILE_UPLOAD_FOLDER'),
+                                   filename)):
+        filepath = os.path.join(app.config.get('FILE_UPLOAD_FOLDER'), filename)
+        print filepath
+        res = os.remove(filepath)
+        print res
+        return '200 OK'
+    else:
+        resp = make_response()
+        resp.status_code = 400
+        return resp
 
 
 @app.route('/robots.txt')
@@ -344,10 +347,6 @@ def getDB():
         response.data = json.dumps(data.json())
         response.headers['Content-Type'] = 'application/json'
         return response
-
-
-app.config['PLUGIN_UPLOAD_FOLDER'] = PLUGIN_UPLOAD_FOLDER
-app.config['FILE_UPLOAD_FOLDER'] = FILE_UPLOAD_FOLDER
 
 
 fil = FileHandler(os.path.join(os.path.dirname(__file__), 'logme'), mode='a')

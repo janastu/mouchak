@@ -10,7 +10,9 @@ requires = [
     'pymongo',
     'requests',
     'jpegtran-cffi',
-    'cffi'
+    'cffi',
+    'flask-pymongo',
+    'flask-uploads'
     ]
 
 setup(name='Mouchak',
