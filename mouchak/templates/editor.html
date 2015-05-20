@@ -166,11 +166,12 @@
       <table id="pageTable" class="table table-bordered table-condensed table-hover">
         <thead>
           <tr class="active">
-            <th><h4> Page Title </h4></th>
-            <th><h4> Slug </h4> </th>
-            <th> <h4> Published </h4> </th>
+            <th><h4> Slug </h4></th>
+            <th><h4> Page Title </h4> </th>
+            <th> <h4> Author </h4> </th>
             <th> <h4> Categories </h4> </th>
             <th> <h4> Tags </h4> </th>
+            <th> <h4> Published </h4> </th>
             <th> <h4> Delete </h4> </th>
           </tr>
         </thead>
@@ -183,12 +184,13 @@
 
   <script type="text/template" id="page-list-item-template">
     <tr class="pagename">
-      <td><a class="disp" id="<%= id %>" href="javascript:void(0);"><%= title
+      <td><a class="disp" id="<%= id %>" href="javascript:void(0);"><%=name 
           %></a></td>
-      <td><%= name %></td> 
-      <td><%= published %> </td>
+      <td><%= title %></td> 
+      <td><%= author %> </td>
       <td><%= categories %> </td>
       <td><%= tags %> </td>
+      <td><%= published %>  </td>
       <td><span class="pull-right">
         <a href="javascript:void(0);" class="remove" for="<%= id %>">
           <span class="glyphicon glyphicon-trash"></span>
@@ -200,18 +202,63 @@
 
   <script type="text/template" id="page-template">
     <div class="page">
-        <div id="closePage" class="pull-right">
-          <span class="glyphicon glyphicon-remove"></span>
-        </div>
       <div class="row">
-        <h4 class="col-md-8"> <strong><%= title %></strong> : Page Details </h4>
-        <h4>
-        <% if (published) { %>
-        <input id="publish-status" type="checkbox"  name="" checked='' />Publish
-        <% } else { %>
-        <input id="publish-status" type="checkbox"  name=""/>Publish
-        <% } %>
-        </h4>
+        <div class="col-md-6 col-lg-6">
+          <h4>Page Details: <strong><%= title %></strong> </h4>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6"> 
+          <div class="input-group">
+            <span class="input-group-addon"> <strong>Posted on</strong> </span>
+            <input class="form-control"  id="publishDate" type="date"
+            placeholder="Date of Publish" format="dd/mm/yyyy"
+            value="<%= date %>">
+          </div>
+          <span class="help-block">
+            <small>Date of publishing</small>
+          </span>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <% if (published) { %>
+                  <input id="publish-status" type="checkbox" class="pull-left" name="" checked='' />
+                  <% } else { %>
+                  <input id="publish-status" type="checkbox" class="pull-left" name=""/>
+                  <% } %>
+              </span>
+              <input class="form-control" type="text" value="publish" disabled>
+            </div>
+            <span class="help-block">
+              <small>Publish this page? </small>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-5 col-lg-5 col-sm-5">
+          <div class="form-group" id="navChoice">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input id="showNav" type="checkbox" <%= checked %> >
+              </span>
+              <input class="form-control" type="text" value="Navigation menu" disabled>
+            </div>
+            <span class="help-block">
+              <small>Show navigation menu in this page? </small>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-4 col-lg-4 col-sm-4" id="pageActionBar">
+          <button id="copyPage" type="submit" class="btn btn-default" data-toggle="tooltip"
+            data-placement="bottom" title="Make a copy of this page to use it as template for another page">
+            <span class="glyphicon glyphicon-share"></span>Copy
+          </button>
+          <button id="updatePage" type="submit" class="btn btn-default " data-toggle="tooltip"
+            data-placement="bottom" title="Save Page">  <span class="glyphicon
+              glyphicon-save"></span>Save </button>
+          <button type="button" id="closePage" class="close" aria-label="Close" data-toggle="tooltip"
+            data-placement="bottom" title="Close page"><span
+              aria-hidden="true">&times;</span></button>
+        </div>
       </div>
       <hr/>
       <form class="form-horizontal">
@@ -252,21 +299,29 @@
         </span>
         <div class="input-group">
           <span class="input-group-addon"> <strong>SEO Text</strong> </span>
-          <input class="form-control"  id="seotext" type="text" placeholder="Add
-          SEO text for the page"
+          <input class="form-control"  id="seotext" type="text" 
+          placeholder="SEO text for the page"
                  value="<%= seotext %>">
         </div>
         <span class="help-block">
-          <small>Add SEO text</small>
+          <small>Add SEO text for page snippets</small>
         </span>
         <div class="input-group">
           <span class="input-group-addon"> <strong>SEO Image URL</strong> </span>
-          <input class="form-control"  id="seoimageurl" type="text" placeholder="Enter
-          Image URL"
+          <input class="form-control"  id="seoimageurl" type="text" 
+          placeholder="SEO Image URL for the page"
                  value="<%= seoimagesrc %>">
         </div>
         <span class="help-block">
-          <small>Add a Image URL within Mouchak</small>
+          <small>Add a Image URL for snippets</small>
+        </span>
+        <div class="input-group">
+          <span class="input-group-addon"> <strong>Author</strong> </span>
+          <input class="form-control"  id="author" type="text" 
+          placeholder="Author" value="<%=author%>">
+        </div>
+        <span class="help-block">
+          <small>Author of the page</small>
         </span>
 
 
@@ -290,22 +345,6 @@
             <small> leave this blank for now</small>
           </span>
         </div-->
-        <div class="form-group">
-          <div class="input-group">
-              <span class="input-group-addon">
-                <input id="showNav" type="checkbox" <%= checked %> >
-              </span>
-              <input class="form-control" type="text" value="Show Navigation" disabled>
-          </div>
-          <span class="help-block">
-            <small>Show navigation menu in this page? </small>
-          </span>
-        </div>
-        <button id="updatePage" type="submit" class="btn btn-primary pull-right"> Update </button>
-        <button id="copyPage" type="submit" class="btn btn-default" data-toggle="tooltip"
-          data-placement="bottom" title="Make a copy of this page to use it as template for another page">
-            <span class="glyphicon glyphicon-share"></span> Copy page
-        </button>
         <div class="clearfix"></div>
       </form>
     </div>

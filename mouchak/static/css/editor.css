@@ -21,19 +21,30 @@ body {
   width: 600px;
 }
 #pages {
-  position: relative;
-  top: 20px;
+  position: absolute;
   padding: 10px;
-  width: auto;
+  width: 710px;
 }
 #page {
-  position: relative;
-  top: 25px;
+  position: absolute;
+  left:53%;
 }
+#updatePage {
+  position: absolute;
+  right:30px;
+}
+
 #pagelist {
   padding: 10px;
   height: 300px;
   overflow-y: auto;
+}
+#pageActionBar{
+  padding-right:0px;
+  padding-left:0px;
+}
+#navChoice{
+  margin-left:-15px;
 }
 #content {
   padding: 10px;
