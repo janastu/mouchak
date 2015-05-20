@@ -44,6 +44,8 @@
           categories: page.get('categories'),
           tags: page.get('tags'),
           name: page.get('name'),
+          author: page.get('author'),
+          date: page.get('date'),
           id: page.id
         }));
       }, this);
@@ -129,6 +131,7 @@
     model: M.types.model.Page,
     url: M.PageURL()
   });
+  Window.pages = M.PageListView;
 
   /* view to manage each page and their properties - change page properties,
    * add content, remove and show content, and update the page */
@@ -183,8 +186,10 @@
         categories: this.model.get('categories'),
         tags: this.model.get('tags'),
         published: this.model.get('published'),
+        date: this.model.get('date'),
         seoimagesrc: this.model.get('seoimagesrc'),
         seotext: this.model.get('seotext'),
+        author: this.model.get('author'),
         checked: this.model.get('showNav') ? 'checked="checked"' : ''
       }));
 
@@ -194,8 +199,12 @@
       }, function(event) {
         $(event.currentTarget).removeClass('alert-info');
       });
-      // init tooltip on this page view..
-      $('#page').tooltip();
+      // init bootstrap js tooltip component  on this page view..
+      $("#copyPage").tooltip();
+      $("#closePage").tooltip();
+      $("#updatePage").tooltip();
+      //$('#page').tooltip(); tooltip init needs data-toggle and other
+      //attributes - and can init on DOM elements with the required attributes
     },
     listContent: function() {
       var content = '';
@@ -281,15 +290,17 @@
       var title = $('#title').val();
       var categories = $("#categories").val().split(',');
       var tags = $("#tags").val().split(',');
+      var author = $("#author").val();
       var seoimagesrc = $("#seoimageurl").val();
       var seotext = $("#seotext").val();
       var published = $("#publish-status").is(':checked');
+      var date = $("#publishDate").val();
       var children = [];
       //var children = $('#children').val();
       //children = (children === '') ? [] : children.split(',');
       this.model.set({'name': name, 'title': title,
                       'children': children, 'categories':categories,
-                      'tags': tags, 'seoimagesrc': seoimagesrc, 'seotext': seotext, 'published': published});
+                      'tags': tags, 'author': author, 'seoimagesrc': seoimagesrc, 'seotext': seotext, 'published': published, 'date': date});
 
       if($('#showNav').is(':checked')) {
         this.model.set({'showNav': true});
