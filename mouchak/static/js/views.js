@@ -168,6 +168,7 @@
       $(this.el).append(this.template(model.toJSON()));
     }
   });
+
   var PageView = Backbone.View.extend({
     tagName: 'div',
     className: 'pageview',
