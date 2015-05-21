@@ -20,7 +20,7 @@
       this.template = _.template($('#page-list-template').html());
       this.listTemplate = _.template($('#page-list-item-template').html());
       // append this.el to container #pages
-      this.$el.addClass('container animated fadeInUp');
+      this.$el.addClass('container animated fadeInRight');
       $('#content-container').append(this.$el);
       this.$el.append(this.template());
       this.$pagelist = $('#pagelist');
@@ -123,6 +123,7 @@
     },
     uploads: function(event) {
       event.preventDefault();
+      M.pagelistview.toggle();
       this.uploadview.render();
       //M.pagelistview.toggle();
       return false;
@@ -833,14 +834,17 @@
     id: 'page',
     events: {
       'click #upload-new-file': 'uploadFile',
-      'click .uploaded-item .remove': 'removeFile'
+      'click .uploaded-item .remove': 'removeFile',
+      'click #closeUploads' : 'closeUploads'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
       this.template = _.template($('#uploads-template').html());
     },
     render: function() {
+      this.toggle();
       $('#page').remove();
+      this.$el.addClass("container animated fadeInLeft");
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       var uploaded_files, self = this;
@@ -897,7 +901,7 @@
             var msg = 'Something went wrong. Please try again!';
           }
           M.editor.notifs.show('fail', 'Error!', msg);
-        }
+        },
       });
     },
     removeFile: function(event) {
@@ -916,6 +920,20 @@
           console.log(arguments);
         }
       });
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+      else {
+        this.$el.show();
+      }
+    },
+    closeUploads: function(e) {
+      e.preventDefault();
+      console.log("yayy");
+      M.pagelistview.toggle();
+      this.toggle();
     }
   });
 
