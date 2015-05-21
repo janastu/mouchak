@@ -40,24 +40,21 @@ from logging import FileHandler
 from werkzeug import secure_filename
 from utilities import ObjectIdCleaner
 
-PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                    'static/user_plugins')
-FILE_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                  'static/uploads')
-
-plugin_upload = UploadSet('plugins', ('js', 'css'),
-                          default_dest=lambda app: app.instance_path)
-plugin_upload._config = UploadConfiguration(PLUGIN_UPLOAD_FOLDER)
-
-
-files_upload = UploadSet('files', IMAGES + DOCUMENTS + DATA + ('pdf',),
-                         default_dest=lambda app: app.instance_path)
-files_upload._config = UploadConfiguration(FILE_UPLOAD_FOLDER)
-
 
 app = Flask(__name__)
 app.config.from_pyfile('conf.py')
 mongo = PyMongo(app)
+plugin_upload = UploadSet('plugins', ('js', 'css'),
+                          default_dest=lambda app: app.instance_path)
+plugin_upload._config = UploadConfiguration(app.config.get(
+    'PLUGIN_UPLOAD_FOLDER'))
+
+
+files_upload = UploadSet('files', IMAGES + DOCUMENTS + DATA + ('pdf',),
+                         default_dest=lambda app: app.instance_path)
+files_upload._config = UploadConfiguration(app.config.get(
+    'FILE_UPLOAD_FOLDER'))
+
 configure_uploads(app, plugin_upload)
 configure_uploads(app, files_upload)
 app.register_module(cache.cache, url_prefix='/cache')
@@ -331,6 +328,7 @@ def upload():
             return resp
 
     if request.method == 'GET':
+        print app.config.get('FILE_UPLOAD_FOLDER')
         uploaded_files = os.listdir(app.config.get('FILE_UPLOAD_FOLDER'))
         return jsonify({'uploaded_files': uploaded_files})
 
