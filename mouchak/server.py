@@ -66,12 +66,17 @@ app.register_module(cache.cache, url_prefix='/cache')
 bson.ObjId = bson.objectid.ObjectId  # handy reference to otherwise long name
 
 
-def getContent(key=None):
+def getContent(key=None, drafts=False):
     """Return a dictionary which contains the content from the particular
     collection.
     If key is None then return all collections.
+    Unpublished pages are not included in the return object by default.
+    Pass drafts=True to include unpublished pages in the content object.
     """
-    content = [i for i in mongo.db.content.find()]
+    if drafts:
+        content = [i for i in mongo.db.content.find()]
+    else:
+        content = [i for i in mongo.db.content.find({'published': True})]
     menu = mongo.db.menu.find_one()
     footer = mongo.db.footer.find_one()
     header = mongo.db.header.find_one()
@@ -114,7 +119,7 @@ def index():
 @app.route('/edit', methods=['GET'])
 def edit():
     if "logged_in" in session:
-        return render_template('editor.html', content=getContent(),
+        return render_template('editor.html', content=getContent(drafts=True),
                                title=app.config.get('SITE_TITLE'))
     else:
         return redirect(url_for('login'))
@@ -127,6 +132,8 @@ def listPages():
     # FIXME: this code has CSRF vulnerability.
     # http://pocoo.org/docs/0.10/security/#json-security
     # use jsonify
+    # Return only published pages by default, unpublished pages are included
+    # by specifying drafts=true as query parameters.
     if request.args.get('limit'):
         content = []
         limit = int(request.args.get('limit'))
@@ -134,12 +141,22 @@ def listPages():
             offset = int(request.args.get('offset'))
         else:
             offset = 0
-            content = [page for page in mongo.db.
-                       content.find().sort('id', 1)[offset:offset+limit]]
+            if 'drafts' in request.args and request.args.get(
+                    'drafts') == 'true':
+                content = [page for page in mongo.db.
+                           content.find().sort('id', 1)[offset:offset+limit]]
+            else:
+                content = [page for page in mongo.db.
+                           content.find({'published': True}).sort(
+                               'id', 1)[offset:offset+limit]]
         return make_response(json.dumps(content), '200 OK',
                              {'Content-Type': 'application/json'})
     else:
-        content = getContent('content')
+        if 'drafts' in request.args and request.args.get(
+                    'drafts') == 'true':
+            content = getContent('content', drafts=True)
+        else:
+            content = getContent('content')
         return make_response(json.dumps(content), '200 OK',
                              {'Content-Type': 'application/json'})
 
@@ -171,7 +188,7 @@ def updatePage(_id):
             return jsonify(changedPage)
 
     elif request.method == 'DELETE':
-        #        delPage = request.url
+        # delPage = request.url
         res = mongo.db.content.remove({'_id': bson.ObjId(_id)})
         if 'err' not in res:
             return jsonify(status='ok')
