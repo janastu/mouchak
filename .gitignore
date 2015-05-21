@@ -10,3 +10,6 @@ conf.py
 #uploads directory
 mouchak/static/uploads/*
 mouchak/static/user_plugins/*
+
+#Ignore examples directory of any library
+examples/
