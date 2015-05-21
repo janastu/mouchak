@@ -59,6 +59,8 @@
       pageview = new PageView({model: M.pages.get(id)});
       pageview.render();
       M.editor.pageview = pageview;
+      this.$el.hide();
+
     },
     addPage: function() {
       var newpage = new M.types.model.Page({name: 'newpage'});
@@ -372,6 +374,9 @@
     closePage: function(event) {
       event.preventDefault();
       M.editor.pageview.remove();
+      M.pagelistview.$el.show();
+      //M.pagelistview.initialize();
+      //M.pagelistview.delegateEvents();
     }
 
 
