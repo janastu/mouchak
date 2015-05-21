@@ -40,7 +40,7 @@
       _.each(M.pages.models, function(page) {
         this.$pagelist.append(this.listTemplate({
           title: page.get('title'),
-          published: page.get('published'), 
+          published: page.get('published'),
           categories: page.get('categories'),
           tags: page.get('tags'),
           name: page.get('name'),
@@ -49,7 +49,7 @@
           id: page.id
         }));
       }, this);
-      $('#pageTable').dataTable(); //http://www.datatables.net/ 
+      // $('#pageTable').dataTable(); //http://www.datatables.net/
       //The DataTable is open source jQuery plugin automatically provides column sorting, searching and
       //paging.
 
@@ -124,6 +124,14 @@
     validate: function()  {
       //TODO: validate if the menu order list matches with the list of pages
       //and provide relevant notifications
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+      else {
+        this.$el.show();
+      }
     }
   });
 
@@ -300,7 +308,8 @@
       //children = (children === '') ? [] : children.split(',');
       this.model.set({'name': name, 'title': title,
                       'children': children, 'categories':categories,
-                      'tags': tags, 'author': author, 'seoimagesrc': seoimagesrc, 'seotext': seotext, 'published': published, 'date': date});
+                      'tags': tags, 'author': author, 'seoimagesrc': seoimagesrc,
+                      'seotext': seotext, 'published': published, 'date': date});
 
       if($('#showNav').is(':checked')) {
         this.model.set({'showNav': true});
