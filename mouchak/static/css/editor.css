@@ -45,6 +45,10 @@ body {
   height: 300px;
   overflow-y: auto;
 }
+ .table thead>tr>th,
+ .table tbody>tr>td {
+   text-align: center;
+ }
 #pageActionBar{
   padding-right:0px;
   padding-left:0px;

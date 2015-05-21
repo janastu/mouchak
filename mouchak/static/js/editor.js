@@ -20,7 +20,7 @@
       this.template = _.template($('#page-list-template').html());
       this.listTemplate = _.template($('#page-list-item-template').html());
       // append this.el to container #pages
-      this.$el.addClass('container');
+      this.$el.addClass('container animated fadeInUp');
       $('#content-container').append(this.$el);
       this.$el.append(this.template());
       this.$pagelist = $('#pagelist');
@@ -63,6 +63,7 @@
 
     },
     addPage: function() {
+      M.pagelistview.toggle();
       var newpage = new M.types.model.Page({name: 'newpage'});
       M.pages.add(newpage);
       var self = this;
@@ -104,22 +105,26 @@
     },
     showMenu: function(event) {
       event.preventDefault();
+      M.pagelistview.toggle();
       this.menuconfigview.render();
       return false;
     },
     showFooterConfig: function(event) {
       event.preventDefault();
+      M.pagelistview.toggle();
       this.footerconfigview.render();
       return false;
     },
     showHeaderConfig: function(event) {
       event.preventDefault();
+      M.pagelistview.toggle();
       this.headerconfigview.render();
       return false;
     },
     uploads: function(event) {
       event.preventDefault();
       this.uploadview.render();
+      //M.pagelistview.toggle();
       return false;
     },
     // validate the page list with menu order list
@@ -163,7 +168,7 @@
       this.editing = false;
       this.edit_idx = -1;
       $('#page').remove();
-      this.$el.addClass("container");
+      this.$el.addClass("container animated fadeInLeft");
       $('#content-container').append(this.$el);
       this.template = _.template($('#page-template').html());
       this.contentListTemplate =
@@ -210,11 +215,7 @@
         $(event.currentTarget).removeClass('alert-info');
       });
       // init bootstrap js tooltip component  on this page view..
-      $("#copyPage").tooltip();
-      $("#closePage").tooltip();
-      $("#updatePage").tooltip();
-      //$('#page').tooltip(); tooltip init needs data-toggle and other
-      //attributes - and can init on DOM elements with the required attributes
+      $("[data-toggle='tooltip']").tooltip();
     },
     listContent: function() {
       var content = '';
@@ -579,6 +580,7 @@
     id: 'page',
     events: {
       'change #custom-menu': 'customMenuChange',
+      'click #closeNav': 'closeMenu',
       'click #updateMenu': 'saveMenu'
     },
     initialize: function() {
@@ -586,8 +588,10 @@
       this.template = _.template($('#menu-config-template').html());
     },
     render: function() {
+      this.toggle();
       $('#page').remove();
       this.delegateEvents();
+      this.$el.addClass("container animated fadeInLeft");
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
@@ -605,6 +609,7 @@
           M.editor.code.init('menu', 'html');
         }});
       }
+      $('[data-toggle="tooltip"]').tooltip()
     },
     showMenuOptions: function(bool) {
     if(bool === true) {
@@ -655,6 +660,20 @@
       });
       //alert('end of save menu');
       M.editor.showOverlay();
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+
+      else {
+        this.$el.show();
+      }
+    },
+    closeMenu: function(e) {
+      e.preventDefault();
+      M.pagelistview.toggle();
+      this.toggle();
     }
   });
 
@@ -664,21 +683,25 @@
     className: 'prettybox-lg',
     id: 'page',
     events: {
-      'click #updateFooter': 'saveFooter'
+      'click #updateFooter': 'saveFooter',
+      'click #closeFooter' : 'closeFooter'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
       this.template = _.template($('#footer-config-template').html());
     },
     render: function() {
+      this.toggle();
       $('#page').remove();
       this.delegateEvents();
+      this.$el.addClass("container animated fadeInLeft");
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
         footer: this.model.get('html')
       }));
       M.editor.code.init('footer-input', 'html');
+      $('[data-toggle="tooltip"]').tooltip()
     },
     saveFooter: function() {
       var html = M.editor.code.save('footer-input');
@@ -697,6 +720,19 @@
         }
       });
       M.editor.showOverlay();
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+      else {
+        this.$el.show();
+      }
+    },
+    closeFooter: function(e) {
+      e.preventDefault();
+      M.pagelistview.toggle();
+      this.toggle();
     }
   });
 
@@ -706,21 +742,25 @@
     className: 'prettybox-lg',
     id: 'page',
     events: {
-      'click #updateHeader': 'saveHeader'
+      'click #updateHeader': 'saveHeader',
+      'click #closeHeader' : 'closeHeader'
     },
     initialize: function() {
       _.bindAll.apply(_, [this].concat(_.functions(this)));
       this.template = _.template($('#header-config-template').html());
     },
     render: function() {
+      this.toggle();
       $('#page').remove();
       this.delegateEvents();
+      this.$el.addClass("container animated fadeInLeft");
       $('#content-container').append(this.$el);
       //console.log('rendering..', this.$el);
       this.$el.html(this.template({
         header: this.model.get('html')
       }));
       M.editor.code.init('header-input', 'html');
+      $('[data-toggle="tooltip"]').tooltip()
     },
     saveHeader: function() {
       var html = M.editor.code.save('header-input');
@@ -739,6 +779,19 @@
         }
       });
       M.editor.showOverlay();
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+      else {
+        this.$el.show();
+      }
+    },
+    closeHeader: function(e) {
+      e.preventDefault();
+      M.pagelistview.toggle();
+      this.toggle();
     }
   });
 

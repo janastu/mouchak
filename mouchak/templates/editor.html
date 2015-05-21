@@ -2,6 +2,7 @@
 
 {% block head %}
   <link rel="stylesheet" href="{{url_for('static', filename='css/editor.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/animate.min.css')}}">
   <link rel="stylesheet" href="{{url_for('static',
   filename='js/lib/DataTables-1.10.7/media/css/jquery.dataTables.min.css')}}">
   <title> Editing.. | {{ title }} </title>
@@ -54,9 +55,13 @@
 
   <!-- Underscore templates -->
   <script type="text/template" id="menu-config-template">
-    <div class="page">
+    <div class="page ">
       <div class="menu-config">
         <h4> Configure Navigation Menu </h4>
+      <button type="button" id="closeNav" class="btn btn-default pull-right"
+        aria-label="Close" data-toggle="tooltip" data-placement="bottom"
+        title="" data-original-title="Close "><span
+          aria-hidden="true">×</span></button>
 
         <div class="row">
           <div class="form-group col-lg-6">
@@ -118,6 +123,10 @@
   <script type="text/template" id="header-config-template">
     <div class="page">
       <div><h4> Write HTML for your header here </h4></div>
+      <button type="button" id="closeHeader" class="btn btn-default pull-right"
+        aria-label="Close" data-toggle="tooltip" data-placement="bottom"
+        title="" data-original-title="Close "><span
+          aria-hidden="true">×</span></button>
       <div id="header-input" class="ace-mouchak">
         <%= M.escapeHtml(header) %>
       </div>
@@ -131,6 +140,10 @@
   <script type="text/template" id="footer-config-template">
     <div class="page">
       <div><h4> Write HTML for your footer here </h4></div>
+      <button type="button" id="closeFooter" class="btn btn-default pull-right"
+        aria-label="Close" data-toggle="tooltip" data-placement="bottom"
+        title="" data-original-title="Close "><span
+          aria-hidden="true">×</span></button>
       <div id="footer-input" class="ace-mouchak">
         <%= M.escapeHtml(footer) %>
       </div>
@@ -145,22 +158,36 @@
   <div id="pagelistview">
     <table class="table table-condensed" >
       <tbody>
-        <tr><td> <span class="glyphicon glyphicon-plus"></span></td>
-          <td><span class="label label-primary" id="addPage">
-              Page</span></td>
-          <td> <span class="label label-primary" id="header-config"> Header
+        <tr>
+          <td> <span class="glyphicon glyphicon-plus"></span></td>
+          <td> <span class="label label-primary" id="header-config"
+              data-toggle="tooltip" data-placement="bottom" title="click to add
+              Header"> Header
             </span>
           </td>
-          <td> <span class="label label-primary" id="footer-config"> Footer 
-            </span>
-          </td>
-          <td> <span class="label label-primary" id="menu-config"> Navigation Menu 
+          <td> <span class="label label-primary"
+              id="menu-config"data-toggle="tooltip" data-placement="bottom"
+              title="click to add Navigation component" > Navigation Menu 
             </span>
           </td> 
-          <td> <span class="label label-primary" id="uploads">
+          <td> <span class="label label-primary"
+              id="footer-config" data-toggle="tooltip" data-placement="bottom"
+              title="click to add Footer" > Footer 
+            </span>
+          </td>
+          <td><span class="label label-primary" id="addPage"
+              data-toggle="tooltip" data-placement="bottom" title="click to add
+              Page ">
+              Page</span></td>
+
+          <td> <span class="label label-primary" id="uploads"
+              data-toggle="tooltip" data-placement="bottom" title="click to
+              upload media ">
                 Uploads </span> </td> 
             <td><a href="{{ url_for('index') }}" target="_blank"> <span
-                  class="label label-primary pull-right" id="logoutbtn">Go to site
+                  class="label label-primary pull-right" id="logoutbtn"
+                  data-toggle="tooltip" data-placement="bottom" title="click to
+                  see site preview">Go to site
             </span></a></td>
            </tr>
          </tbody>
@@ -174,6 +201,7 @@
             <th> <h4> Categories </h4> </th>
             <th> <h4> Tags </h4> </th>
             <th> <h4> Published </h4> </th>
+            <th> <h4> Date </h4> </th>
             <th> <h4> Delete </h4> </th>
           </tr>
         </thead>
@@ -193,11 +221,12 @@
       <td><%= categories %> </td>
       <td><%= tags %> </td>
       <td><%= published %>  </td>
-      <td><span class="pull-right">
+      <td><%= date %>  </td>
+      <td>
         <a href="javascript:void(0);" class="remove" for="<%= id %>">
           <span class="glyphicon glyphicon-trash"></span>
         </a>
-    </span></td>
+    </td>
       <span class="clearfix"></span>
     </tr>
   </script>
