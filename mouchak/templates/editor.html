@@ -2,7 +2,8 @@
 
 {% block head %}
   <link rel="stylesheet" href="{{url_for('static', filename='css/editor.css')}}">
-  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="{{url_for('static',
+  filename='js/lib/DataTables-1.10.7/media/css/jquery.dataTables.min.css')}}">
   <title> Editing.. | {{ title }} </title>
 {% endblock %}
 
@@ -44,7 +45,8 @@
   <script src="{{url_for('static', filename='js/models.js')}}"></script>
   <script src="{{url_for('static', filename='js/views.js')}}"></script>
   <script type="text/javascript" 
-    src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    src="{{url_for('static',
+    filename='js/lib/DataTables-1.10.7/media/js/jquery.dataTables.min.js')}}"></script>
   <script src="{{url_for('static', filename='js/editor.js')}}"></script>
 {% endblock %}
 
