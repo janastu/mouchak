@@ -49,8 +49,8 @@
           id: page.id
         }));
       }, this);
-      // $('#pageTable').dataTable(); //http://www.datatables.net/
-      //The DataTable is open source jQuery plugin automatically provides column sorting, searching and
+       $('#pageTable').dataTable(); //http://www.datatables.net/
+      //The DataTable is open source jQuery plugin,  provides column sorting, searching and
       //paging.
 
     },
@@ -59,6 +59,8 @@
       pageview = new PageView({model: M.pages.get(id)});
       pageview.render();
       M.editor.pageview = pageview;
+      M.pagelistview.toggle();
+
     },
     addPage: function() {
       var newpage = new M.types.model.Page({name: 'newpage'});
@@ -372,6 +374,7 @@
     closePage: function(event) {
       event.preventDefault();
       M.editor.pageview.remove();
+      M.pagelistview.toggle();
     }
 
 

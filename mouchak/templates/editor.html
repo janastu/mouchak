@@ -2,7 +2,8 @@
 
 {% block head %}
   <link rel="stylesheet" href="{{url_for('static', filename='css/editor.css')}}">
-  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="{{url_for('static',
+  filename='js/lib/DataTables-1.10.7/media/css/jquery.dataTables.min.css')}}">
   <title> Editing.. | {{ title }} </title>
 {% endblock %}
 
@@ -44,7 +45,8 @@
   <script src="{{url_for('static', filename='js/models.js')}}"></script>
   <script src="{{url_for('static', filename='js/views.js')}}"></script>
   <script type="text/javascript" 
-    src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    src="{{url_for('static',
+    filename='js/lib/DataTables-1.10.7/media/js/jquery.dataTables.min.js')}}"></script>
   <script src="{{url_for('static', filename='js/editor.js')}}"></script>
 {% endblock %}
 
@@ -203,51 +205,7 @@
   <script type="text/template" id="page-template">
     <div class="page">
       <div class="row">
-        <div class="col-md-6 col-lg-6">
-          <h4>Page Details: <strong><%= title %></strong> </h4>
-        </div>
-        <div class="col-md-6 col-lg-6 col-sm-6"> 
-          <div class="input-group">
-            <span class="input-group-addon"> <strong>Posted on</strong> </span>
-            <input class="form-control"  id="publishDate" type="date"
-            placeholder="Date of Publish" format="dd/mm/yyyy"
-            value="<%= date %>">
-          </div>
-          <span class="help-block">
-            <small>Date of publishing</small>
-          </span>
-        </div>
-        <div class="col-md-3 col-lg-3">
-          <div class="form-group">
-            <div class="input-group">
-              <span class="input-group-addon">
-                <% if (published) { %>
-                  <input id="publish-status" type="checkbox" class="pull-left" name="" checked='' />
-                  <% } else { %>
-                  <input id="publish-status" type="checkbox" class="pull-left" name=""/>
-                  <% } %>
-              </span>
-              <input class="form-control" type="text" value="publish" disabled>
-            </div>
-            <span class="help-block">
-              <small>Publish this page? </small>
-            </span>
-          </div>
-        </div>
-        <div class="col-md-5 col-lg-5 col-sm-5">
-          <div class="form-group" id="navChoice">
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input id="showNav" type="checkbox" <%= checked %> >
-              </span>
-              <input class="form-control" type="text" value="Navigation menu" disabled>
-            </div>
-            <span class="help-block">
-              <small>Show navigation menu in this page? </small>
-            </span>
-          </div>
-        </div>
-        <div class="col-md-4 col-lg-4 col-sm-4" id="pageActionBar">
+        <div class="col-md-6 col-lg-6 pull-right" id="pageActionBar">
           <button id="copyPage" type="submit" class="btn btn-default" data-toggle="tooltip"
             data-placement="bottom" title="Make a copy of this page to use it as template for another page">
             <span class="glyphicon glyphicon-share"></span>Copy
@@ -255,11 +213,12 @@
           <button id="updatePage" type="submit" class="btn btn-default " data-toggle="tooltip"
             data-placement="bottom" title="Save Page">  <span class="glyphicon
               glyphicon-save"></span>Save </button>
-          <button type="button" id="closePage" class="close" aria-label="Close" data-toggle="tooltip"
+          <button type="button" id="closePage" class="btn btn-default
+            pull-right" aria-label="Close" data-toggle="tooltip"
             data-placement="bottom" title="Close page"><span
               aria-hidden="true">&times;</span></button>
         </div>
-      </div>
+          <h4>Page Details: <strong><%= title %></strong> </h4>
       <hr/>
       <form class="form-horizontal">
         <div class="form-group">
@@ -310,23 +269,62 @@
           <span class="input-group-addon"> <strong>SEO Image URL</strong> </span>
           <input class="form-control"  id="seoimageurl" type="text" 
           placeholder="SEO Image URL for the page"
-                 value="<%= seoimagesrc %>">
+          value="<%= seoimagesrc %>">
         </div>
         <span class="help-block">
           <small>Add a Image URL for snippets</small>
         </span>
-        <div class="input-group">
-          <span class="input-group-addon"> <strong>Author</strong> </span>
-          <input class="form-control"  id="author" type="text" 
-          placeholder="Author" value="<%=author%>">
+        <div class="col-md-6 col-lg-6">
+          <div class="form-group" id="leftGrid">
+            <div class="input-group">
+              <span class="input-group-addon"> <strong>Author</strong> </span>
+              <input class="form-control"  id="author" type="text" 
+              placeholder="Author" value="<%=author%>">
+            </div>
+            <span class="help-block">
+              <small>Author of the page</small>
+            </span>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <% if (published) { %>
+                  <input id="publish-status" type="checkbox" class="pull-left" name="" checked='' />
+                  <% } else { %>
+                  <input id="publish-status" type="checkbox" class="pull-left" name=""/>
+                  <% } %>
+              </span>
+              <input class="form-control" type="text" value="publish" disabled>
+            </div>
+            <span class="help-block">
+              <small>Publish this page? </small>
+            </span>
+          </div>
         </div>
-        <span class="help-block">
-          <small>Author of the page</small>
-        </span>
+      <div class="col-md-6 col-lg-6">
+        <div class="form-group" id="navChoice">
+          <div class="input-group">
+            <span class="input-group-addon"> <strong>Posted on</strong> </span>
+            <input class="form-control"  id="publishDate" type="date"
+            placeholder="Date of Publish" format="dd/mm/yyyy"
+            value="<%= date %>">
+          </div>
+          <span class="help-block">
+            <small>Date of publishing</small>
+          </span>
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input id="showNav" type="checkbox" <%= checked %> >
+            </span>
+            <input class="form-control" type="text" value="Navigation menu" disabled>
+          </div>
+          <span class="help-block">
+            <small>Show navigation menu in this page? </small>
+          </span>
+        </div>
+      </div>
 
 
         <div class="form-group">
-          <strong> Content </strong>
+          <span id="contentBox"><strong> Content </strong></span>
           <div id="content" class="content well">
             <%= content %>
             <p></p>
