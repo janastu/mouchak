@@ -193,6 +193,10 @@
     render: function() {
       $('#page').html('');
       //console.log('content: ', this.model.get('content'));
+      // set title, if empty, of the page from slug
+      if(!(this.model.get('title'))) {
+        this.model.set({'title': this.model.get('name').replace(/-/g, ' ')});
+      }
 
       this.$el.html(this.template({
         name: this.model.get('name'),
@@ -617,7 +621,7 @@
           M.editor.code.init('menu', 'html');
         }});
       }
-      $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip();
     },
     showMenuOptions: function(bool) {
     if(bool === true) {
