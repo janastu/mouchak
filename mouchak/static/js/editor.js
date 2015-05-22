@@ -302,7 +302,7 @@
     },
     updatePage: function(event) {
       event.preventDefault();
-      var name = $('#title').val().replace(/\s+/g, '-').toLowerCase();
+      var name = $('#title').val().replace(/[^A-Za-z0-9]/g, ' ').replace(/\s+/g, '-').toLowerCase();
       var title = $('#title').val();
       var categories = $("#categories").val().split(',');
       var tags = $("#tags").val().split(',');
