@@ -45,7 +45,7 @@
   <script src="{{url_for('static', filename='js/mouchak.js')}}"></script>
   <script src="{{url_for('static', filename='js/models.js')}}"></script>
   <script src="{{url_for('static', filename='js/views.js')}}"></script>
-  <script type="text/javascript" 
+  <script type="text/javascript"
     src="{{url_for('static',
     filename='js/lib/DataTables-1.10.7/media/js/jquery.dataTables.min.js')}}"></script>
   <script src="{{url_for('static', filename='js/editor.js')}}"></script>
@@ -167,12 +167,12 @@
           </td>
           <td> <span class="label label-primary"
               id="menu-config"data-toggle="tooltip" data-placement="bottom"
-              title="click to add Navigation component" > Navigation Menu 
+              title="click to add Navigation component" > Navigation Menu
             </span>
-          </td> 
+          </td>
           <td> <span class="label label-primary"
               id="footer-config" data-toggle="tooltip" data-placement="bottom"
-              title="click to add Footer" > Footer 
+              title="click to add Footer" > Footer
             </span>
           </td>
           <td><span class="label label-primary" id="addPage"
@@ -183,7 +183,7 @@
           <td> <span class="label label-primary" id="uploads"
               data-toggle="tooltip" data-placement="bottom" title="click to
               upload media ">
-                Uploads </span> </td> 
+                Uploads </span> </td>
             <td><a href="{{ url_for('index') }}" target="_blank"> <span
                   class="label label-primary pull-right" id="logoutbtn"
                   data-toggle="tooltip" data-placement="bottom" title="click to
@@ -214,9 +214,9 @@
 
   <script type="text/template" id="page-list-item-template">
     <tr class="pagename">
-      <td><a class="disp" id="<%= id %>" href="javascript:void(0);"><%=name 
+      <td><a class="disp" id="<%= id %>" href="javascript:void(0);"><%=name
           %></a></td>
-      <td><%= title %></td> 
+      <td><%= title %></td>
       <td><%= author %> </td>
       <td><%= categories %> </td>
       <td><%= tags %> </td>
@@ -287,7 +287,7 @@
         </span>
         <div class="input-group">
           <span class="input-group-addon"> <strong>SEO Text</strong> </span>
-          <input class="form-control"  id="seotext" type="text" 
+          <input class="form-control"  id="seotext" type="text"
           placeholder="SEO text for the page"
                  value="<%= seotext %>">
         </div>
@@ -296,7 +296,7 @@
         </span>
         <div class="input-group">
           <span class="input-group-addon"> <strong>SEO Image URL</strong> </span>
-          <input class="form-control"  id="seoimageurl" type="text" 
+          <input class="form-control"  id="seoimageurl" type="text"
           placeholder="SEO Image URL for the page"
           value="<%= seoimagesrc %>">
         </div>
@@ -307,7 +307,7 @@
           <div class="form-group" id="leftGrid">
             <div class="input-group">
               <span class="input-group-addon"> <strong>Author</strong> </span>
-              <input class="form-control"  id="author" type="text" 
+              <input class="form-control"  id="author" type="text"
               placeholder="Author" value="<%=author%>">
             </div>
             <span class="help-block">
@@ -321,7 +321,7 @@
                   <input id="publish-status" type="checkbox" class="pull-left" name=""/>
                   <% } %>
               </span>
-              <input class="form-control" type="text" value="publish" disabled>
+              <input class="form-control" type="text" value="Publish" disabled>
             </div>
             <span class="help-block">
               <small>Publish this page? </small>

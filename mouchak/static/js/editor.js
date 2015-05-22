@@ -377,9 +377,15 @@
       event.preventDefault();
       M.editor.pageview.remove();
       M.pagelistview.toggle();
+    },
+    toggle: function() {
+      if(this.$el.is(':visible')) {
+        this.$el.hide();
+      }
+      else {
+        this.$el.show();
+      }
     }
-
-
   });
 
   /* view to manage, render and update each content */
@@ -540,8 +546,9 @@
     cleanUp: function() {
       //this.$el.remove();
       this.remove();
-      $('#pages').show();
-      $('#page').show();
+      // $('#pages').show();
+      // $('#page').show();
+      M.editor.pageview.toggle();
     },
     done: function() {
       this.update();
@@ -666,7 +673,6 @@
       if(this.$el.is(':visible')) {
         this.$el.hide();
       }
-
       else {
         this.$el.show();
       }
@@ -702,7 +708,7 @@
         footer: this.model.get('html')
       }));
       M.editor.code.init('footer-input', 'html');
-      $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip();
     },
     saveFooter: function() {
       var html = M.editor.code.save('footer-input');
@@ -761,7 +767,7 @@
         header: this.model.get('html')
       }));
       M.editor.code.init('header-input', 'html');
-      $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip();
     },
     saveHeader: function() {
       var html = M.editor.code.save('header-input');
