@@ -88,6 +88,11 @@ def getContent(key=None, drafts=False):
                 header}
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit(
+        '.', 1)[1] in app.config.get('ALLOWED_EXTENSIONS')
+
+
 @app.before_first_request
 def setBeforeRequestHandlers():
     mongo.db.add_son_manipulator(ObjectIdCleaner())
@@ -283,10 +288,13 @@ def logout():
 @app.route('/static/user_plugins/<filename>', methods=['POST'])
 def savePlugin(filename):
     try:
-        plugin_upload.save(request.form.get('code'),
-                           name=secure_filename(filename))
-        return jsonify(saved=True)
-
+        if filename and allowed_file(filename):
+            data = request.form['code']
+            filename = secure_filename(filename)
+            with open(os.path.join(app.config.get('PLUGIN_UPLOAD_FOLDER'),
+                                   filename), 'w') as fh:
+                fh.write(data)
+            return jsonify(saved=True)
     except:
         resp = make_response()
         resp.status_code = 400
