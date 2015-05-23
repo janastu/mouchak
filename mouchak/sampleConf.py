@@ -18,3 +18,4 @@ PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                     'static/user_plugins')
 FILE_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                   'static/uploads')
+ALLOWED_EXTENSIONS = set(['js', 'css'])
