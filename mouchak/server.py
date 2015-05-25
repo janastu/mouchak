@@ -32,7 +32,7 @@ import logging
 import cache
 from flask import (Flask, make_response, request, jsonify, session,
                    render_template, redirect, url_for, send_from_directory,
-                   flash)
+                   flash, abort)
 from flask.ext.pymongo import PyMongo
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
                               DATA, DOCUMENTS, UploadConfiguration)
@@ -354,6 +354,25 @@ def removeFile(filename):
         resp = make_response()
         resp.status_code = 400
         return resp
+
+
+@app.route('/analytics', methods=['GET', 'POST'])
+def analytics():
+    if request.method == 'GET':
+        # TODO: gather analytics data from db and send back a HTML rendering it
+        pass
+    elif request.method == 'POST':
+        if 'type' not in request.form:
+            abort(400)
+
+        data = {}
+        data['type'] = request.form['type']
+        if data['type'] == 'pageview':
+            data['page'] = request.form['page']
+
+        mongo.db.analytics.save(data)
+        total_hits = mongo.db.analytics.find({'type': 'pageview'}).count()
+        return jsonify(total_hits=total_hits)
 
 
 @app.route('/robots.txt')

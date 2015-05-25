@@ -32,6 +32,7 @@
     M.PluginUploadURL = function() { return "{{ url_for('uploadPlugin') }}"; };
     M.UploadsURL = function() { return "{{ url_for('static', filename='uploads/') }}"; };
     M.site_content = {{ content|tojson|safe }};
+    M.AnalyticsURL = function() { return "{{ url_for('analytics') }}"; };
     window.onload = function() {
       M.editor.init();
     };

@@ -22,6 +22,7 @@
     window.M = window.M || {};
     M.MenuURL = function() { return "{{ url_for('insertMenu') }}"};
     M.PageURL = function() { return "{{ url_for('insertPage') }}"; };
+    M.AnalyticsURL = function() { return "{{ url_for('analytics') }}"; };
     M.site_content = {{ content|tojson|safe }};
     window.onload = function() {
       M.init();

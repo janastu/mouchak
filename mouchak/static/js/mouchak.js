@@ -22,6 +22,25 @@ var AppView = Backbone.View.extend({
   updateBreadcrumbs: function(event) {
     //TODO: write code to use bootstrap's breadcrumbs to render a
     // navigational breadcrumb
+  },
+  recordPageView: function(page) {
+    var self = this;
+    $.ajax({
+      url: M.AnalyticsURL(),
+      type: 'POST',
+      data: {'type': 'pageview', 'page': page},
+      success: function(data) {
+        //console.log('recorded by server');
+        self.updatePageViewCounter(data);
+      },
+      error: function(jqxhr, error, status_text) {
+        console.log('Unable to post page view analytics');
+        console.log(error, status_text);
+      }
+    });
+  },
+  updatePageViewCounter: function(data) {
+    this.$pageview_counter.html(data.total_hits);
   }
 });
 
