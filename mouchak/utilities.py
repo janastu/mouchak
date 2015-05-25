@@ -7,4 +7,4 @@ class ObjectIdCleaner(SONManipulator):
         if '_id' in son:
             son['id'] = str(son['_id'])
             del(son['_id'])
-            return son
+        return son
