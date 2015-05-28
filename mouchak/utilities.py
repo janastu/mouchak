@@ -10,5 +10,5 @@ class ObjectIdCleaner(SONManipulator):
         if 'date' in son and son['date'] == '':
             son['date'] = "1970-01-01"
         if 'date' in son and son['date'].find('/') > 0:
-            son['date'] = son['date'].replace('/', '-')
+            son['date'] = son['date'].replace('/', '-').strip()
         return son
