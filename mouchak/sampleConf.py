@@ -13,6 +13,10 @@ DEBUG = True  # Set false for production
 SECRET_KEY = 'a-uuid-string-see-python-uuid'
 ADMIN_USERNAME = 'youradminusername'
 ADMIN_PASSWORD = 'youradminpassword'
+SEARCH = False  # Set true if you want to enable search on website
+SEARCH_SITE = 'http://pensieve.pantoto.org'
+INDEX_UPDATE = '/update/index_name/doc_name'  """Look at elastic search docs
+for more information"""
 # DO NOT CHANGE THE FOLLOWING VARIABLES
 PLUGIN_UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                     'static/user_plugins')

@@ -186,6 +186,10 @@ def updatePage(_id):
         res = mongo.db.content.update({'_id': bson.ObjId(_id)},
                                       changedPage)
         if 'ok' in res and res['ok'] == 1:
+            if app.config.get('SEARCH') and changedPage.get('published'):
+                requests.post(app.config.get('SEARCH_SITE') +
+                              app.config.get('INDEX_UPDATE'),
+                              {'content': changedPage, 'id': _id})
             # return jsonify(status='ok', page=changedPage)
             return jsonify(changedPage)
 
