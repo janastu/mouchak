@@ -1,0 +1,72 @@
+#!/bin/bash
+# Installer script to install Mouchak.
+# Installs external dependencies and then run the setup.py script to install
+# python packages.
+
+# return the requirements based on the current distro and version
+return_requirements() {
+  distro_string=$(cat /etc/issue)
+
+  if [[ $(expr match "$distro_string" "Ubuntu") -gt 0 ]]; then
+    packages=("python-dev" "python-pip" "mongodb" "libffi-dev" "libjpeg-dev"
+    "build-essential")
+    package_manager="apt-get"
+    distro="Ubuntu"
+  elif [[ $(expr match "$distro_string" "Debian") -gt 0 ]]; then
+    packages=("python-dev" "python-pip" "mongodb" "libffi-dev" "libjpeg-dev"
+    "libturbojpeg1-dev" "build-essential")
+    package_manager="apt-get"
+    distro="Debian"
+  elif [[ $(expr match "$distro_string" "CentOS") -gt 0 ]]; then
+    packages=("python-devel" "python-setuptools" "mongodb-org" "libffi-devel"
+    "libjpeg-turbo-devel" "gcc" "gcc-c++" "make" "openssl-devel")
+    package_manager="yum"
+    distro="CentOS"
+  fi
+  # return multiple values separating via magic character "%" ! :-P
+  echo "$distro%$package_manager%${packages[@]}"
+}
+
+install_pip_on_centos() {
+  easy_install pip
+}
+
+result=$(return_requirements)
+# break the return string using the magic character!
+distro=$(echo "$result" | cut -d '%' -f 1)
+package_manager=$(echo "$result" | cut -d '%' -f 2)
+packages=($(echo "$result" | cut -d "%" -f 3))
+
+echo "Installing external dependencies.."
+echo "Following packages will be installed"
+echo "${packages[@]}"
+read -p "Do you want to continue [y/N]?: "
+
+if [[ $REPLY != "y" && $REPLY != "Y" ]]; then
+  echo "Installation aborted."
+  exit 0
+fi
+
+# install the external dependencies..
+echo "$package_manager install -y ${packages[@]}"
+$package_manager install -y ${packages[@]}
+if [[ $? -ne 0 ]]; then
+  echo "Installation failed due to some error."
+  echo "Please install the following packages manually."
+  echo ${packages[@]}
+  exit 1
+fi
+
+if [[ $distro == "CentOS" ]]; then
+  install_pip_on_centos
+fi
+
+echo "Running setup.py to install python packages.."
+python setup.py install
+if [[ $? -ne 0 ]]; then
+  echo "Installation failed due to some error."
+  echo "Please run: 'python setup.py install' manually."
+  exit 1
+fi
+
+exit 0

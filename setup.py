@@ -10,6 +10,7 @@ requires = [
     'requests',
     'jpegtran-cffi',
     'cffi',
+    'pycparser',
     'flask-pymongo',
     'flask-uploads'
     ]
