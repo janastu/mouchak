@@ -10,6 +10,11 @@ conf.py
 #uploads directory
 mouchak/static/uploads/*
 mouchak/static/user_plugins/*
+mouchak/logme
 
 #Ignore examples directory of any library
 examples/
+
+Mouchak.egg-info/
+dist/
+
