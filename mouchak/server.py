@@ -34,7 +34,7 @@ from flask import (Flask, make_response, request, jsonify, session,
                    render_template, redirect, url_for, send_from_directory,
                    flash, abort)
 from flask.ext.pymongo import PyMongo
-from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
+from flask_uploads import (UploadSet, configure_uploads, IMAGES,
                               DATA, DOCUMENTS, UploadConfiguration)
 from logging import FileHandler
 from werkzeug import secure_filename
@@ -57,7 +57,7 @@ files_upload._config = UploadConfiguration(app.config.get(
 
 configure_uploads(app, plugin_upload)
 configure_uploads(app, files_upload)
-app.register_module(cache.cache, url_prefix='/cache')
+app.register_blueprint(cache.cache, url_prefix='/cache')
 
 
 bson.ObjId = bson.objectid.ObjectId  # handy reference to otherwise long name

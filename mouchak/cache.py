@@ -1,11 +1,11 @@
-from flask import Module, make_response
+from flask import Blueprint, make_response
 from urlparse import urlparse
 from jpegtran import JPEGImage
 import os
 import requests
 import flask
 
-cache = Module(__name__, name="cache")
+cache = Blueprint('cache', __name__)
 
 
 @cache.route('/')

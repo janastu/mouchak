@@ -9,8 +9,8 @@ requires = [
     'Flask',
     'pymongo',
     'requests',
-    'jpegtran-cffi',
     'cffi',
+    'jpegtran-cffi',
     'flask-pymongo',
     'flask-uploads'
     ]
