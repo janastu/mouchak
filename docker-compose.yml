@@ -15,7 +15,4 @@ services:
   mouchak_mongo:
     image: mongo
 
-networks:
-  default:
-    external:
-      name: services_default   
+
