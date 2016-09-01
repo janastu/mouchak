@@ -18,3 +18,4 @@ examples/
 Mouchak.egg-info/
 dist/
 
+docker-compose.override.yml
