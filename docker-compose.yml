@@ -1,0 +1,21 @@
+version: "2"
+
+services:
+  mouchak:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    links:
+      - mouchak_mongo:mongo
+    expose:
+      - "80"
+    environment:
+      - MOUCHAK_SITE=Mouchak Test
+    
+  mouchak_mongo:
+    image: mongo
+
+networks:
+  default:
+    external:
+      name: services_default   
